@@ -21,7 +21,7 @@
 
 
         } catch (Exception $e) {
-            echo "No se logró conectar correctamente con la base de datos: $bbdd, error: " . $e->getMessage();
+            echo "No se logró conectar correctamente con la base de datos: $bbdd.\nerror:  " . $e->getMessage() ;
             return null;
         }
 
