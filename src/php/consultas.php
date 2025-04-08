@@ -1,6 +1,7 @@
 <?php
     require_once 'Conexion.php';
 
+
     function comprueba_usuario($usuario, $contrasena) {
         try {
             // Llamada a la función ConexionBD() para conectar con la base de datos

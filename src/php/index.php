@@ -1,31 +1,36 @@
 <?php
-// Asegúrate de incluir el archivo de consultas donde tienes la función 'comprueba_usuario'
-include 'consultas.php'; 
 
-// Verificar si se recibieron los datos del formulario
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Recoger los datos del formulario
-    $usuario = $_POST['username'];  // Nombre de usuario
-    $contrasena = $_POST['password'];  // Contraseña
+//Asignar la faltaq de valores como error fatal en vez de como warming
+set_error_handler(function($errno, $errstr, $errfile, $errline) {
+    $error_message = "Error [$errno] en $errfile:$errline: $errstr";
+    file_put_contents('errores.txt', $error_message . "\n", FILE_APPEND);
+    file_put_contents('errores.txt', '['.date('Y-m-d H:i:s').']' . ' -> ' . $error_message . ' -> ', FILE_APPEND);
+});
 
-    // Llamar a la función para comprobar si el usuario existe
-    $result = comprueba_usuario($usuario, $contrasena);
+require_once "clases/controlador.php";
+require_once 'clases/estado.php';
+session_start();
 
-    // Verificar el resultado de la función
-    if ($result === 0) {
-        // Si el usuario o la contraseña son incorrectos, redirigir con un mensaje de error
-        header('Location: ../../index.html?error=1');
-        exit();
-    } else {
-        // Si el usuario es válido, redirigir a un área protegida (ej. dashboard)
-        session_start();
-        $_SESSION['usuario'] = $result[1];  // Almacenar el nombre de usuario en la sesión
-        header('Location: ../php/dashboard.php');  // Redirigir a una página protegida
-        exit();
+try {
+    if (!isset($_SESSION["Controlador"])) {
+        $_SESSION["Controlador"] = new Controlador;
     }
-} else {
-    // Si no es una solicitud POST, redirigir al formulario de login
-    header('Location: ../../index.html');
-    exit();
+    
+    function devuelveContenido(){
+        if(!isset($_POST['arrayDatos'])){
+            return $_SESSION["Controlador"] -> generarContenido();
+        }else{
+            return $_SESSION["Controlador"] -> generarContenido($_POST['arrayDatos']);   
+        }  
+    }
+    $respuestaJSON = json_encode(devuelveContenido());
+    //throw new Exception("Error intencional");
+} catch (Exception $e) {
+    // $error_message = "Error: " . $e->getMessage();
+    // file_put_contents('errores.txt', $error_message . "\n", FILE_APPEND);
+    $respuestaJSON = json_encode(array("Ha ocurrido un error inesperado",null,0));
 }
+
+// $respuestaJSON = json_encode(array($_SESSION["TipoPortal"],0,0));
+echo $respuestaJSON;
 ?>
