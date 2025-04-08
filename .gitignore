@@ -1,0 +1,69 @@
+# Ignorar dependencias de Composer
+/vendor/
+
+# Ignorar archivos temporales de Composer
+/composer.lock
+
+# Ignorar directorios de configuración locales
+/.idea/
+/.vscode/
+
+# Ignorar archivos de cache de PHP
+/cache/
+/tmp/
+
+# Ignorar archivos de log
+*.log
+
+# Ignorar archivos de configuración locales específicos del entorno
+/.env
+/.env.local
+/.env.*.local
+
+# Ignorar archivos de sesiones de PHP
+*.session
+*.sess
+
+# Ignorar directorios y archivos generados por PHP
+*.phar
+*.tar.gz
+*.zip
+
+# Ignorar archivos de base de datos
+*.sql
+*.sqlite
+
+# Ignorar archivos generados por el sistema operativo
+.DS_Store
+Thumbs.db
+
+# Ignorar archivos de backups
+*~ 
+*.bak
+*.swp
+
+# Ignorar archivos de configuración y temporales de Visual Studio Code
+/.vscode/
+.vscode/
+
+# Ignorar archivos de compilación temporales
+*.compiled
+
+# Ignorar el directorio de pruebas de PHPUnit
+/tests/_output/
+
+# Ignorar los archivos de cobertura de código de PHPUnit
+*.cov
+
+# Ignorar carpetas de builds
+/build/
+
+# Ignorar archivos de artefactos generados por el entorno de desarrollo
+*.min.js
+*.min.css
+
+# Ignorar los archivos de herramientas de desarrollo, como los de debugging
+*.debug
+
+#Archivos a ignorar
+src/php/errores.txt

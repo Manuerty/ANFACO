@@ -43,7 +43,6 @@ Class Controlador{
         
         }
         $txtErr = "";
-        var_dump(pinta_contenido($this -> miEstado -> Estado));
         return array(pinta_contenido($this -> miEstado -> Estado).$txtErr,$msgError,$AccionSinRepintar,$arrayAuxiliarHtml,$accionJs);
     }
 }
