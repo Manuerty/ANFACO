@@ -15,7 +15,14 @@
                 $titulo = "Dashboard";
                 $filename = "../html/dashboard.html";
                 break;
-
+            case 2:
+                $titulo = "Barcos";
+                $filename = "../html/barcos.html";
+                break;
+            case 3:
+                $titulo = "Almacenes";
+                $filename = "../html/almacenes.html";
+                break;
         }
 
         if ($cabecera != ""){
