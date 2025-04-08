@@ -11,6 +11,8 @@ require_once "clases/controlador.php";
 require_once 'clases/estado.php';
 session_start();
 
+//var_dump($_SESSION['Controlador']);
+
 try {
     if (!isset($_SESSION["Controlador"])) {
         $_SESSION["Controlador"] = new Controlador;

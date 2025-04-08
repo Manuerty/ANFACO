@@ -2,6 +2,7 @@
 
 require_once 'estado.php';
 require_once 'pinta.php'; 
+require_once "consultas.php";
 
 Class Controlador{
 
@@ -16,6 +17,11 @@ Class Controlador{
         $this -> miEstado -> acciones = array("archivos"=> 0,
                                         "observaciones" => 0,
                                         "añadir" => 0);
+        $this -> miEstado -> EstadosAnteriores = array();
+    }
+
+    function __destruct(){
+        $_SESSION["Controlador"] = $this;
     }
 
     function navegarPestanas($ps){
@@ -59,24 +65,28 @@ Class Controlador{
 
 
     function generarContenido($arrayDatos = array()){
+        $this -> miEstado -> Estado = 0;
         $arrayAuxiliarHtml = array();
         $accionJs = null;
         $msgError = "" ;
         $AccionSinRepintar = 0;
         $c = $this -> miEstado -> Estado; 
-
         $nav = "";
-        if($c === 0 && !empty($arrayDatos) && $arrayDatos[0] != -1 && ($this -> miEstado -> tipo_App == 1 || $this -> miEstado -> tipo_App == 2)){
+        if($c === 0 && !empty($arrayDatos) && $arrayDatos[0] != -1 ){
             $nav = 0;
-            echo"$arrayDatos[0] $arrayDatos[1]";
+            
             $InicioS = $this -> IniciarSesion($arrayDatos[0], $arrayDatos[1]);
             if($InicioS ===false){
                 $msgError = "Error de conexión con el servidor, por favor inténtelo más tarde.";
             }elseif($InicioS === 0){
                 $msgError = "Usuario o contraseña incorrectos.";
+            }elseif($InicioS === true){
+                $this -> miEstado -> Estado = 1;
+                $nav = 1;
             }
-        
+            $this -> navegarPestanas($nav);
         }
+        //$this -> navegarPestanas(1);
         $txtErr = "";
         return array(pinta_contenido($this -> miEstado -> Estado).$txtErr,$msgError,$AccionSinRepintar,$arrayAuxiliarHtml,$accionJs);
     }
