@@ -1,7 +1,7 @@
 <?php
 
-echo "Intentando cargar pinta.php desde: " . realpath('../pinta.php');
-require_once '../pinta.php'; 
+
+require_once 'pinta.php'; 
 Class Controlador{
 
     
