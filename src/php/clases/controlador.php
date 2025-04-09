@@ -28,8 +28,8 @@ Class Controlador{
         //volver a la anterior
         if($ps == -1){
             //salir del modo formulario
-            if($this->miEstado->cargarForm == 1){
-                $this->miEstado->cargarForm = 0;
+            if($this -> miEstado-> EstadosAnteriores[""] == 0 && $this->miEstado->Estado == 1){
+                $this->miEstado->Estado = 0;
             } else {
                 $estadoAnterior = array_shift($this->miEstado->EstadosAnteriores);
                 $this->miEstado->Estado = $estadoAnterior;
