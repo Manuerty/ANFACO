@@ -60,22 +60,34 @@ Class Controlador{
     
 
     function IniciarSesion($usuario, $contrasena){
-        
+    
         $datosSesion = comprueba_usuario($usuario, $contrasena);
-        $this -> miEstado = new Estado();
-        $this -> miEstado -> Estado = 0;
-        $this -> miEstado-> IdPersonal = $datosSesion[0];
-        
-        if($datosSesion != false && $datosSesion != 0){
+        $this->miEstado = new Estado();
+        $this->miEstado->Estado = 0;
+    
+        if ($datosSesion != false && $datosSesion != 0) {
+            $this->miEstado->IdPersonal = $datosSesion[0];
+    
+            // ⚡ Aquí obtienes los barcos y los guardas en sesión
+            require_once "consultas.php"; // Asegúrate de tener acceso a la función get_barcos_usuario
+    
+            $barcos = get_barcos_usuario($datosSesion[0]); // Suponiendo que $datosSesion[0] es el ID del usuario
+            if ($barcos !== false) {
+                $_SESSION["barcos"] = $barcos;
+            } else {
+                $_SESSION["barcos"] = []; // O manejar el error como prefieras
+            }
+    
             return true;
         }
-        elseif($datosSesion == 0){
+        elseif ($datosSesion == 0) {
             return 0;
         }
-        else{
+        else {
             return false;
         }
     }
+    
 
     function cerrarSesion(){
         //Cerrar sesion reinicializando variables
@@ -144,7 +156,7 @@ Class Controlador{
         }
         $txtErr = "";
 
-        
+
         return array(pinta_contenido($this -> miEstado -> Estado).$txtErr,$msgError,$AccionSinRepintar,$arrayAuxiliarHtml,$accionJs);
     }
 }

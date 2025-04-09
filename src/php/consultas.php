@@ -50,41 +50,43 @@
     }
     
     function get_barcos_usuario($id) {
-
         try {
             $conn = ConexionBD("localhost", "prueba_1", "root", ""); 
     
             if (!$conn) {
                 return false; 
             }
-
-            $sql = "SELECT IdBarco, IdUsuario, Nombre, Codigo FROM barcos WHERE IdUsuario = ? ";
-
+    
+            $sql = "SELECT IdBarco, IdUsuario, Nombre, Codigo FROM barcos WHERE IdUsuario = ?";
+    
             $stmt = $conn->prepare($sql);
             
             if (!$stmt) {
                 return false;
             }
-
-            $stmt->bind_param("ss", $id );
-
+    
+            $stmt->bind_param("s", $id); // Corregido: solo un parámetro, por eso un solo "s"
+    
             if (!$stmt->execute()) {
                 $conn->close();
                 return false;
             }
-
+    
             $result = $stmt->get_result();
-
-            if ($row = $result->fetch_assoc()) {
-                $conn->close();
-                return array($row['IdBarco'], $row["IdUsuario"], $row["Nombre"], $row["Codigo"]);
+    
+            $barcos = [];
+    
+            while ($row = $result->fetch_assoc()) {
+                $barcos[] = $row; // Guardamos cada barco como array asociativo
             }
-
+    
             $conn->close();
-            return 0;
+    
+            return $barcos;
     
         } catch (Exception $e) {
             return false; 
         }
     }
+    
 ?>

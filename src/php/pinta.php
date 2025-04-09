@@ -17,7 +17,7 @@
                 break;
             case 2:
                 $titulo = "Barcos";
-                $filename = "../html/barcos.html";
+                $filename = "../html/documentos.html";
                 break;
             case 3:
                 $titulo = "Capturas";
@@ -47,8 +47,48 @@
             $filetext = "";
         }
 
+        if($_SESSION["Controlador"] -> miEstado -> Estado == 2){
+            $filetext = str_replace("%LineasE%", DibujaTablaBarcos(),$filetext);
+        }
+
+       
+
         return $filetext;
     }
+
+    function DibujaTablaBarcos() {
+        $listaBarcos = "<section>";
+
+    
+        if (!empty($_SESSION["barcos"])) {
+            $listaBarcos .= "<table class='table table-striped table-bordered-bottom'>";
+            $listaBarcos .= "<thead><tr>
+                                <th>ID Barco</th>
+                                <th>ID Usuario</th>
+                                <th>Nombre</th>
+                                <th>Código</th>
+                             </tr></thead>";
+            $listaBarcos .= "<tbody>";
+
+            
+    
+            foreach ($_SESSION["barcos"] as $barco) {
+                $listaBarcos .= "<tr>";
+                $listaBarcos .= "<td>" . htmlspecialchars($barco["IdBarco"]) . "</td>";
+                $listaBarcos .= "<td>" . htmlspecialchars($barco["IdUsuario"]) . "</td>";
+                $listaBarcos .= "<td>" . htmlspecialchars($barco["Nombre"]) . "</td>";
+                $listaBarcos .= "<td>" . htmlspecialchars($barco["Codigo"]) . "</td>";
+                $listaBarcos .= "</tr>";
+            }
+
+        } else {
+            $listaBarcos .= "<p>No hay barcos registrados.</p>";
+        }
+    
+        $listaBarcos .= "</section>";
+        return $listaBarcos;
+    }
+    
 
 
 ?>
