@@ -59,34 +59,29 @@ Class Controlador{
     }
     
 
-    function IniciarSesion($usuario, $contrasena){
-    
+    function IniciarSesion($usuario, $contrasena) {
         $datosSesion = comprueba_usuario($usuario, $contrasena);
         $this->miEstado = new Estado();
         $this->miEstado->Estado = 0;
     
         if ($datosSesion != false && $datosSesion != 0) {
             $this->miEstado->IdPersonal = $datosSesion[0];
+            
+            $barcos = get_barcos_usuario($datosSesion[0]);
+            $_SESSION["barcos"] = $barcos !== false ? $barcos : [];
     
-            // ⚡ Aquí obtienes los barcos y los guardas en sesión
-            require_once "consultas.php"; // Asegúrate de tener acceso a la función get_barcos_usuario
-    
-            $barcos = get_barcos_usuario($datosSesion[0]); // Suponiendo que $datosSesion[0] es el ID del usuario
-            if ($barcos !== false) {
-                $_SESSION["barcos"] = $barcos;
-            } else {
-                $_SESSION["barcos"] = []; // O manejar el error como prefieras
-            }
+            
+            $capturas = get_capturas();
+            $_SESSION["capturas"] = $capturas !== false ? $capturas : [];
     
             return true;
-        }
-        elseif ($datosSesion == 0) {
+        } elseif ($datosSesion == 0) {
             return 0;
-        }
-        else {
+        } else {
             return false;
         }
     }
+    
     
 
     function cerrarSesion(){

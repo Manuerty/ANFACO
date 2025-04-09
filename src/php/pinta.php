@@ -48,46 +48,57 @@
         }
 
         if($_SESSION["Controlador"] -> miEstado -> Estado == 2){
-            $filetext = str_replace("%LineasE%", DibujaTablaBarcos(),$filetext);
+            $filetext = str_replace("%LineasE%", DibujaTablaGenerica("barcos"),$filetext);
+        }elseif($_SESSION["Controlador"] -> miEstado -> Estado == 3){
+            $filetext = str_replace("%LineasE%", DibujaTablaGenerica("capturas"),$filetext);
         }
-
-       
-
         return $filetext;
     }
 
-    function DibujaTablaBarcos() {
-        $listaBarcos = "<section>";
-
-    
-        if (!empty($_SESSION["barcos"])) {
-            $listaBarcos .= "<table class='table table-striped table-bordered-bottom'>";
-            $listaBarcos .= "<thead><tr>
-                                <th>ID Barco</th>
-                                <th>ID Usuario</th>
-                                <th>Nombre</th>
-                                <th>Código</th>
-                             </tr></thead>";
-            $listaBarcos .= "<tbody>";
+    function DibujaTablaGenerica($nombreVariableSesion, $tituloAlternativo = "No hay datos disponibles.") {
+        $html = "<section>";
+        
+        
+        if (!empty($_SESSION[$nombreVariableSesion]) && is_array($_SESSION[$nombreVariableSesion])) {
+            $datos = $_SESSION[$nombreVariableSesion];
 
             
     
-            foreach ($_SESSION["barcos"] as $barco) {
-                $listaBarcos .= "<tr>";
-                $listaBarcos .= "<td>" . htmlspecialchars($barco["IdBarco"]) . "</td>";
-                $listaBarcos .= "<td>" . htmlspecialchars($barco["IdUsuario"]) . "</td>";
-                $listaBarcos .= "<td>" . htmlspecialchars($barco["Nombre"]) . "</td>";
-                $listaBarcos .= "<td>" . htmlspecialchars($barco["Codigo"]) . "</td>";
-                $listaBarcos .= "</tr>";
-            }
+            // Comprobar que hay al menos un elemento y es un array asociativo
+            if (!empty($datos[0]) && is_array($datos[0])) {
+                $html .= "<table class='table table-striped table-bordered-bottom'>";
+                $html .= "<thead><tr>";
+    
+                // Cabecera: obtener las claves del primer elemento
+                foreach (array_keys($datos[0]) as $columna) {
+                    $html .= "<th>" . htmlspecialchars($columna) . "</th>";
+                }
 
+                
+    
+                $html .= "</tr></thead><tbody>";
+    
+                // Filas
+                foreach ($datos as $fila) {
+                    $html .= "<tr>";
+                    foreach ($fila as $valor) {
+                        $html .= "<td>" . htmlspecialchars($valor) . "</td>";
+                    }
+                    $html .= "</tr>";
+                }
+    
+                $html .= "</tbody></table>";
+            } else {
+                $html .= "<p>$tituloAlternativo</p>";
+            }
         } else {
-            $listaBarcos .= "<p>No hay barcos registrados.</p>";
+            $html .= "<p>$tituloAlternativo</p>";
         }
     
-        $listaBarcos .= "</section>";
-        return $listaBarcos;
+        $html .= "</section>";
+        return $html;
     }
+    
     
 
 

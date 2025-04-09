@@ -88,5 +88,43 @@
             return false; 
         }
     }
+    function get_capturas() {
+        try {
+            $conn = ConexionBD("localhost", "prueba_1", "root", ""); 
+    
+            if (!$conn) {
+                return false; 
+            }
+    
+            $sql = "SELECT Id, Fecha, LectorRFID, TagPez, DatosTemp, IdTipoAlmacen FROM almacen";
+    
+            $stmt = $conn->prepare($sql);
+            
+            if (!$stmt) {
+                return false;
+            }
+    
+            if (!$stmt->execute()) {
+                $conn->close();
+                return false;
+            }
+    
+            $result = $stmt->get_result();
+    
+            $capturas = [];
+    
+            while ($row = $result->fetch_assoc()) {
+                $capturas[] = $row;
+            }
+    
+            $conn->close();
+    
+            return $capturas;
+    
+        } catch (Exception $e) {
+            return false; 
+        }
+    }
+    
     
 ?>
