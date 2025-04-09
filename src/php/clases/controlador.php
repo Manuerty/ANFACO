@@ -64,6 +64,7 @@ Class Controlador{
         $datosSesion = comprueba_usuario($usuario, $contrasena);
         $this -> miEstado = new Estado();
         $this -> miEstado -> Estado = 0;
+        $this -> miEstado-> IdPersonal = $datosSesion[0];
         
         if($datosSesion != false && $datosSesion != 0){
             return true;
@@ -142,6 +143,8 @@ Class Controlador{
             $this -> navegarPestanas(-1);
         }
         $txtErr = "";
+
+        $txtErr .= $this -> miEstado -> IdPersonal;
 
         return array(pinta_contenido($this -> miEstado -> Estado).$txtErr,$msgError,$AccionSinRepintar,$arrayAuxiliarHtml,$accionJs);
     }
