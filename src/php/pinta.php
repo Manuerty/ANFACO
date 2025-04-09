@@ -20,7 +20,7 @@
                 $filename = "../html/barcos.html";
                 break;
             case 3:
-                $titulo = "Almacenes";
+                $titulo = "Capturas";
                 $filename = "../html/documentos.html";
                 break;
         }
