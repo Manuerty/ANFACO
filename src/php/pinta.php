@@ -4,7 +4,7 @@
         $titulo = ""; 
         $cabecera = "../html/header.html";
         $fileheadertext = "";
-
+        
         switch($estado){
 
             case 0:
@@ -21,7 +21,7 @@
                 break;
             case 3:
                 $titulo = "Almacenes";
-                $filename = "../html/almacenes.html";
+                $filename = "../html/documentos.html";
                 break;
         }
 
