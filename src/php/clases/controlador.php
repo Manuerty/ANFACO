@@ -144,8 +144,7 @@ Class Controlador{
         }
         $txtErr = "";
 
-        $txtErr .= $this -> miEstado -> IdPersonal;
-
+        
         return array(pinta_contenido($this -> miEstado -> Estado).$txtErr,$msgError,$AccionSinRepintar,$arrayAuxiliarHtml,$accionJs);
     }
 }
