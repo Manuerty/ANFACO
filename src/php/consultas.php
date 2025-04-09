@@ -91,40 +91,62 @@
     function get_capturas() {
         try {
             $conn = ConexionBD("localhost", "prueba_1", "root", ""); 
-    
-            if (!$conn) {
-                return false; 
-            }
-    
+        
+            if (!$conn) return false;
+        
             $sql = "SELECT Id, Fecha, LectorRFID, TagPez, DatosTemp, IdTipoAlmacen FROM almacen";
-    
-            $stmt = $conn->prepare($sql);
-            
-            if (!$stmt) {
-                return false;
-            }
-    
-            if (!$stmt->execute()) {
-                $conn->close();
-                return false;
-            }
-    
-            $result = $stmt->get_result();
-    
+            $result = $conn->query($sql);
+        
             $capturas = [];
-    
+        
+            require_once "consultas.php"; // Para asegurarte de tener acceso a get_temperaturas_por_almacen
+        
             while ($row = $result->fetch_assoc()) {
+                // 🔁 Añadir las temperaturas relacionadas
+                $temperaturas = get_temperaturas_por_almacen($row["Id"]);
+                $row["Temperaturas"] = $temperaturas !== false ? $temperaturas : [];
+        
                 $capturas[] = $row;
             }
-    
+        
             $conn->close();
-    
             return $capturas;
-    
+        
         } catch (Exception $e) {
-            return false; 
+            return false;
         }
     }
+    
+
+    function get_temperaturas_por_almacen($idAlmacen) {
+        try {
+            $conn = ConexionBD("localhost", "prueba_1", "root", ""); 
+        
+            if (!$conn) return false;
+        
+            $sql = "SELECT IdAlmacen_Temperatura, Id, Temperatura, Fecha FROM almacen_temperaturas WHERE Id = ?";
+            $stmt = $conn->prepare($sql);
+        
+            if (!$stmt) return false;
+        
+            $stmt->bind_param("i", $idAlmacen);
+            $stmt->execute();
+        
+            $result = $stmt->get_result();
+            $temperaturas = [];
+        
+            while ($row = $result->fetch_assoc()) {
+                $temperaturas[] = $row;
+            }
+        
+            $conn->close();
+            return $temperaturas;
+        
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+    
     
     
 ?>
