@@ -64,87 +64,105 @@
             $contenido .= "<table class='table table-striped table-bordered-bottom'>";
     
             // Lógica específica para capturas
-            if ($nombreVariableSesion == "capturas") {
-                foreach ($_SESSION[$nombreVariableSesion] as $index => $captura) {
-                    
-                    // Obtener los valores de las temperaturas máximas, mínimas y el total
-                    $totalTemperaturas = htmlspecialchars($captura["TotalTemperaturas"]);
-                    $temperaturaMaxima = htmlspecialchars($captura["TemperaturaMaxima"]);
-                    $temperaturaMinima = htmlspecialchars($captura["TemperaturaMinima"]);
+        if ($nombreVariableSesion == "capturas") {
+            foreach ($_SESSION[$nombreVariableSesion] as $index => $captura) {
 
-                
-                    // ID único para el collapse
-                    $collapseId = "temperaturasCollapse_" . $index;
-                
-                    $contenido .= "<div class='card mb-3 p-3 border shadow-sm'>";
-                
-                    // Cabecera: título con TagPez y etiquetas para las temperaturas
-                    $contenido .= "<div class='d-flex justify-content-between align-items-start mb-2'>";
-                    $contenido .= "<h5 class='card-title mb-0'><strong>Tag Pescado:</strong> " . htmlspecialchars($captura["TagPez"]) . "</h5>";
-                
-                    $contenido .= "</div>"; // fin cabecera
-                
-                    // Fila para los datos de las temperaturas
-                    $contenido .= "<div class='d-flex justify-content-between align-items-center' style='padding-right: 930px;'>"; // Ajuste de padding para mayor control de espacio
-                
-                    // Nueva columna para las temperaturas (Temperatura Máxima y Mínima)
-                    $contenido .= "<div class='d-flex flex-column align-items-start'>";
-                
-                    // Temperatura Máxima en la misma fila que TagPez
-                    $claseTemperaturaMaxima = ($temperaturaMaxima > 4) ? "text-danger" : ""; // Clase CSS para texto en rojo si es mayor a 4°C
-                    $contenido .= "<div><strong>Temperatura Máxima:</strong> <span class='$claseTemperaturaMaxima'>" . $temperaturaMaxima . "°C</span></div>";
-                
-                    // Temperatura Mínima en la misma fila que LectorRFID
-                    $claseTemperaturaMinima = ($temperaturaMinima > 4) ? "text-danger" : ""; // Clase CSS para texto en rojo si es mayor a 4°C
-                    $contenido .= "<div><strong>Temperatura Mínima:</strong> <span class='$claseTemperaturaMinima'>" . $temperaturaMinima . "°C</span></div>";
-                
-                    // Número de temperaturas registradas debajo de Temperatura Mínima
-                    $contenido .= "<div><strong>Número de Temperaturas Registradas:</strong> " . $totalTemperaturas . "</div>";
-                
-                    $contenido .= "</div>"; // fin de la columna de temperaturas
-                
-                    $contenido .= "</div>"; // fin d-flex
-                
-                    // Botón para desplegar temperaturas
-                    $contenido .= "<div class='mt-2'>";
-                    $contenido .= "<button class='btn btn-sm btn-outline-secondary' type='button' data-bs-toggle='collapse' data-bs-target='#$collapseId' aria-expanded='false' aria-controls='$collapseId'>";
-                    $contenido .= "Mostrar temperaturas 🔽";
-                    $contenido .= "</button>";
-                    $contenido .= "</div>";
-                
-                    // Contenedor colapsable para mostrar las temperaturas
-                    $contenido .= "<div class='collapse mt-2' id='$collapseId'>";
-                    if (!empty($captura["Temperaturas"])) {
-                        $contenido .= "<ol class='mb-0'>";
-                        foreach ($captura["Temperaturas"] as $temperatura) {
-                            // Verificar si la temperatura es mayor a 4°C
-                            $claseTemperatura = "";
-                            if ($temperatura["Temperatura"] > 4) {
-                                $claseTemperatura = "text-danger"; // Clase CSS para texto en rojo
-                            }
-                
-                            // Mostrar la temperatura y la fecha de la temperatura con la clase si es mayor a 4°C
-                            $contenido .= "<li>";
-                            $contenido .= "<span class='$claseTemperatura'>Temperatura: " . htmlspecialchars($temperatura["Temperatura"]) . "°C</span>";
-                
-                            if (!empty($temperatura["FechaTemperatura"])) {
-                                // Formato para la fecha de la temperatura (dd/mm/yyyy HH:mm)
-                                $fechaTemperatura = DateTime::createFromFormat('Y-m-d H:i:s', $temperatura["FechaTemperatura"]);
-                                if ($fechaTemperatura) {
-                                    $contenido .= " <span class='text-muted'>(registrada el " . $fechaTemperatura->format('d/m/Y') . " a las " . $fechaTemperatura->format('H:i') . ")</span>";
-                                }
-                            }
-                            $contenido .= "</li>";
-                        }
-                        $contenido .= "</ol>";
-                    } else {
-                        $contenido .= "<div class='text-muted'>No hay temperaturas</div>";
-                    }
-                    $contenido .= "</div>"; // fin collapse
-                
-                    $contenido .= "</div>"; // cierre tarjeta
+                // Obtener los valores de las temperaturas máximas, mínimas, el total y las fechas
+                $totalTemperaturas = htmlspecialchars($captura["TotalTemperaturas"]);
+                $temperaturaMaxima = htmlspecialchars($captura["TemperaturaMaxima"]);
+                $temperaturaMinima = htmlspecialchars($captura["TemperaturaMinima"]);
+                $fechaUltimaTemperatura = htmlspecialchars($captura["FechaUltimaTemperatura"]);
+                $fechaTemperaturaMaxima = htmlspecialchars($captura["FechaTemperaturaMaxima"]);
+                $fechaTemperaturaMinima = htmlspecialchars($captura["FechaTemperaturaMinima"]);
+
+                // ID único para el collapse
+                $collapseId = "temperaturasCollapse_" . $index;
+
+                // Contenedor principal de la tarjeta
+                $contenido .= "<div class='card mb-3 p-3 border shadow-sm'>";
+
+                // Cabecera: Título con el TagPez
+                $contenido .= "<div class='d-flex justify-content-between align-items-start mb-2'>";
+                $contenido .= "<h5 class='card-title mb-0'><strong>Tag Pescado:</strong> " . htmlspecialchars($captura["TagPez"]) . "</h5>";
+                $contenido .= "</div>"; // fin cabecera
+
+                // Fila para los datos de las temperaturas
+                $contenido .= "<div class='d-flex justify-content-between align-items-center'>"; // Espaciado por defecto entre elementos
+
+                // Nueva columna para las temperaturas (Temperatura Máxima y Mínima)
+                $contenido .= "<div class='d-flex flex-column align-items-start'>";
+
+                // Mostrar la temperatura máxima y su fecha asociada
+                $claseTemperaturaMaxima = ($temperaturaMaxima > 4) ? "text-danger" : ""; // Si es mayor a 4°C, aplicar color rojo
+                $contenido .= "<div><strong>Temperatura Máxima:</strong> <span class='$claseTemperaturaMaxima'>" . $temperaturaMaxima . "°C</span></div>";
+                // Fecha de la temperatura máxima a la derecha
+                if (!empty($fechaTemperaturaMaxima)) {
+                    $contenido .= "<div class='text-muted' style='text-align: right;'><strong>Fecha:</strong> " . date('d/m/Y H:i', strtotime($fechaTemperaturaMaxima)) . "</div>";
                 }
+
+                // Mostrar la temperatura mínima y su fecha asociada
+                $claseTemperaturaMinima = ($temperaturaMinima > 4) ? "text-danger" : ""; // Si es mayor a 4°C, aplicar color rojo
+                $contenido .= "<div><strong>Temperatura Mínima:</strong> <span class='$claseTemperaturaMinima'>" . $temperaturaMinima . "°C</span></div>";
+                // Fecha de la temperatura mínima a la derecha
+                if (!empty($fechaTemperaturaMinima)) {
+                    $contenido .= "<div class='text-muted' style='text-align: right;'><strong>Fecha:</strong> " . date('d/m/Y H:i', strtotime($fechaTemperaturaMinima)) . "</div>";
+                }
+
+                // Número de temperaturas registradas debajo de la temperatura mínima
+                $contenido .= "<div><strong>Número de Temperaturas Registradas:</strong> " . $totalTemperaturas . "</div>";
+                // Fecha de la última temperatura registrada a la derecha del número de registros
+                if (!empty($fechaUltimaTemperatura)) {
+                    $contenido .= "<div class='text-muted' style='text-align: right;'><strong>Última Temperatura Registrada:</strong> " . date('d/m/Y H:i', strtotime($fechaUltimaTemperatura)) . "</div>";
+                }
+
+                $contenido .= "</div>"; // fin de la columna de temperaturas
+
+                $contenido .= "</div>"; // fin d-flex
+
+                // Botón para desplegar las temperaturas
+                $contenido .= "<div class='mt-2'>";
+                $contenido .= "<button class='btn btn-sm btn-outline-secondary' type='button' data-bs-toggle='collapse' data-bs-target='#$collapseId' aria-expanded='false' aria-controls='$collapseId'>";
+                $contenido .= "Mostrar temperaturas 🔽";
+                $contenido .= "</button>";
+                $contenido .= "</div>";
+
+                // Contenedor colapsable para mostrar las temperaturas registradas
+                $contenido .= "<div class='collapse mt-2' id='$collapseId'>";
+                if (!empty($captura["Temperaturas"])) {
+                    $contenido .= "<ol class='mb-0'>";
+                    foreach ($captura["Temperaturas"] as $temperatura) {
+                        // Verificar si la temperatura es mayor a 4°C
+                        $claseTemperatura = "";
+                        if ($temperatura["Temperatura"] > 4) {
+                            $claseTemperatura = "text-danger"; // Clase CSS para texto en rojo
+                        }
+
+                        // Mostrar la temperatura y la fecha de la temperatura con la clase si es mayor a 4°C
+                        $contenido .= "<li>";
+                        $contenido .= "<span class='$claseTemperatura'>Temperatura: " . htmlspecialchars($temperatura["Temperatura"]) . "°C</span>";
+
+                        // Si existe la fecha de la temperatura, mostrarla
+                        if (!empty($temperatura["FechaTemperatura"])) {
+                            // Formateo de la fecha
+                            $fechaTemperatura = DateTime::createFromFormat('Y-m-d H:i:s', $temperatura["FechaTemperatura"]);
+                            if ($fechaTemperatura) {
+                                $contenido .= " <span class='text-muted'>(registrada el " . $fechaTemperatura->format('d/m/Y') . " a las " . $fechaTemperatura->format('H:i') . ")</span>";
+                            }
+                        }
+                        $contenido .= "</li>";
+                    }
+                    $contenido .= "</ol>";
+                } else {
+                    // En caso de que no haya temperaturas registradas
+                    $contenido .= "<div class='text-muted'>No hay temperaturas</div>";
+                }
+                $contenido .= "</div>"; // fin collapse
+
+                $contenido .= "</div>"; // cierre tarjeta
             }
+        }
+
+            
             
             
 

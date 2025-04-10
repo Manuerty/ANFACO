@@ -122,6 +122,9 @@
                     $row["TotalTemperaturas"] = $temperaturasMaxMin['totalTemperaturas'];
                     $row["TemperaturaMaxima"] = $temperaturasMaxMin['temperaturaMaxima'];
                     $row["TemperaturaMinima"] = $temperaturasMaxMin['temperaturaMinima'];
+                    $row["FechaUltimaTemperatura"] = $temperaturasMaxMin['fechaUltimaTemperatura'];
+                    $row["FechaTemperaturaMaxima"] = $temperaturasMaxMin['fechaTemperaturaMaxima'];
+                    $row["FechaTemperaturaMinima"] = $temperaturasMaxMin['fechaTemperaturaMinima'];
                 } else {
                     $row["TotalTemperaturas"] = 0;
                     $row["TemperaturaMaxima"] = null;
@@ -180,48 +183,82 @@
     
 
     function get_temperaturas_max_min_por_tag($tagPez) {
-        try {
-            // Conectar a la base de datos
-            $conn = ConexionBD("localhost", "prueba_1", "root", "");
-            
-            if (!$conn) return false;
-            
-            // Consulta SQL que utiliza funciones agregadas MAX, MIN y COUNT para un TagPez
-            $sql = "
-                SELECT 
-                    COUNT(*) AS totalTemperaturas, 
-                    MAX(Temperatura) AS temperaturaMaxima, 
-                    MIN(Temperatura) AS temperaturaMinima 
-                FROM almacen_temperaturas 
-                WHERE Id IN (SELECT Id FROM almacen WHERE TagPez = ?)
-            ";
-            
-            // Preparar la consulta
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("s", $tagPez);  // Usamos 's' porque TagPez es un string
-            $stmt->execute();
-            $result = $stmt->get_result();
-            
-            // Verificar si la consulta devuelve resultados
-            if ($row = $result->fetch_assoc()) {
-                // Cerrar la conexión
-                $stmt->close();
-                $conn->close();
+    try {
+        // Conectar a la base de datos
+        $conn = ConexionBD("localhost", "prueba_1", "root", "");
+        
+        if (!$conn) return false;
+        
+        // Consulta SQL que utiliza funciones agregadas MAX, MIN y COUNT para un TagPez,
+        // además de obtener las fechas de la temperatura máxima, mínima y la última temperatura
+        $sql = "
+            SELECT 
+                COUNT(*) AS totalTemperaturas, 
+                MAX(Temperatura) AS temperaturaMaxima, 
+                MIN(Temperatura) AS temperaturaMinima,
                 
-                // Retornar los resultados en un array
-                return [
-                    'totalTemperaturas' => $row['totalTemperaturas'],
-                    'temperaturaMaxima' => $row['temperaturaMaxima'],
-                    'temperaturaMinima' => $row['temperaturaMinima']
-                ];
-            } else {
-                // Si no hay resultados
-                return false;
-            }
+                -- Obtener la fecha de la última temperatura registrada
+                (SELECT Fecha FROM almacen_temperaturas 
+                 WHERE Id IN (SELECT Id FROM almacen WHERE TagPez = ?) 
+                 ORDER BY Fecha DESC LIMIT 1) AS fechaUltimaTemperatura,
+                
+                -- Obtener la fecha de la temperatura máxima
+                (SELECT Fecha FROM almacen_temperaturas 
+                 WHERE Id IN (SELECT Id FROM almacen WHERE TagPez = ?) 
+                 AND Temperatura = (SELECT MAX(Temperatura) 
+                                    FROM almacen_temperaturas 
+                                    WHERE Id IN (SELECT Id FROM almacen WHERE TagPez = ?)) 
+                 LIMIT 1) AS fechaTemperaturaMaxima,
+                
+                -- Obtener la fecha de la temperatura mínima
+                (SELECT Fecha FROM almacen_temperaturas 
+                 WHERE Id IN (SELECT Id FROM almacen WHERE TagPez = ?) 
+                 AND Temperatura = (SELECT MIN(Temperatura) 
+                                    FROM almacen_temperaturas 
+                                    WHERE Id IN (SELECT Id FROM almacen WHERE TagPez = ?)) 
+                 LIMIT 1) AS fechaTemperaturaMinima
+
+            FROM almacen_temperaturas 
+            WHERE Id IN (SELECT Id FROM almacen WHERE TagPez = ?);
+        ";
+        
+        // Preparar la consulta
+        $stmt = $conn->prepare($sql);
+        
+        // Enlazar los parámetros (solo 3 parámetros en lugar de 7)
+        $stmt->bind_param("ssssss", $tagPez, $tagPez, $tagPez, $tagPez, $tagPez, $tagPez);  
+        
+        // Ejecutar la consulta
+        $stmt->execute();
+        
+        // Obtener los resultados
+        $result = $stmt->get_result();
+        
+        // Verificar si la consulta devuelve resultados
+        if ($row = $result->fetch_assoc()) {
+            // Cerrar la conexión
+            $stmt->close();
+            $conn->close();
             
-        } catch (Exception $e) {
-            return false; // Si ocurre algún error, retornar false
+            // Retornar los resultados en un array
+            return [
+                'totalTemperaturas' => $row['totalTemperaturas'],
+                'temperaturaMaxima' => $row['temperaturaMaxima'],
+                'temperaturaMinima' => $row['temperaturaMinima'],
+                'fechaUltimaTemperatura' => $row['fechaUltimaTemperatura'],
+                'fechaTemperaturaMaxima' => $row['fechaTemperaturaMaxima'],
+                'fechaTemperaturaMinima' => $row['fechaTemperaturaMinima']
+            ];
+        } else {
+            // Si no hay resultados
+            return false;
         }
+        
+    } catch (Exception $e) {
+        return false; // Si ocurre algún error, retornar false
     }
+}
+
+    
     
 ?>
