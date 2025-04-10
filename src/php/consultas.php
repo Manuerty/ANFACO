@@ -90,32 +90,64 @@
     }
     function get_capturas() {
         try {
-            $conn = ConexionBD("localhost", "prueba_1", "root", ""); 
-        
+            $conn = ConexionBD("localhost", "prueba_1", "root", "");
+    
             if (!$conn) return false;
-        
+    
             $sql = "SELECT Id, Fecha, LectorRFID, TagPez, DatosTemp, IdTipoAlmacen FROM almacen";
             $result = $conn->query($sql);
-        
+    
             $capturas = [];
-        
-            require_once "consultas.php"; // Para asegurarte de tener acceso a get_temperaturas_por_almacen
-        
+    
+            require_once "consultas.php"; // Para asegurarte de tener acceso a get_temperaturas_por_almacen y get_temperaturas_max_min
+    
             while ($row = $result->fetch_assoc()) {
-                // 🔁 Añadir las temperaturas relacionadas
+                // 🔁 Añadir las temperaturas relacionadas y las fechas
                 $temperaturas = get_temperaturas_por_almacen($row["Id"]);
+                
+                // Si se obtienen temperaturas, añadimos la fecha a cada una
+                if ($temperaturas !== false) {
+                    // Aquí agregamos la fecha a cada temperatura
+                    foreach ($temperaturas as &$temperatura) {
+                        $temperatura["FechaTemperatura"] = $temperatura["Fecha"]; // Guardamos la fecha de la temperatura
+                        unset($temperatura["Fecha"]); // Opcional: Eliminar el campo 'Fecha' si no lo necesitas
+                    }
+                }
+                
+                // Obtener datos de temperaturas máximas, mínimas y el total
+                $temperaturasMaxMin = get_temperaturas_max_min($row["Id"]);
+                
+                
+                // Si la consulta de max/min retorna datos, agregarlos al array
+                if ($temperaturasMaxMin) {
+                    $row["TotalTemperaturas"] = $temperaturasMaxMin['totalTemperaturas'];
+                    $row["TemperaturaMaxima"] = $temperaturasMaxMin['temperaturaMaxima'];
+                    $row["TemperaturaMinima"] = $temperaturasMaxMin['temperaturaMinima'];
+                } else {
+                    $row["TotalTemperaturas"] = 0;
+                    $row["TemperaturaMaxima"] = null;
+                    $row["TemperaturaMinima"] = null;
+                }
+    
+                // Añadir las temperaturas al array principal
                 $row["Temperaturas"] = $temperaturas !== false ? $temperaturas : [];
-        
+
+                
+
+    
                 $capturas[] = $row;
+
+                
             }
-        
             $conn->close();
             return $capturas;
-        
+    
         } catch (Exception $e) {
             return false;
         }
     }
+    
+    
     
 
     function get_temperaturas_por_almacen($idAlmacen) {
@@ -146,6 +178,52 @@
             return false;
         }
     }
+
+    function get_temperaturas_max_min($idAlmacen) {
+        try {
+            // Conectar a la base de datos
+            $conn = ConexionBD("localhost", "prueba_1", "root", ""); 
+            
+            if (!$conn) return false; // Verifica si la conexión es exitosa
+            
+            // Consulta SQL que utiliza funciones agregadas MAX, MIN y COUNT
+            $sql = "
+                SELECT 
+                    COUNT(*) AS totalTemperaturas, 
+                    MAX(Temperatura) AS temperaturaMaxima, 
+                    MIN(Temperatura) AS temperaturaMinima 
+                FROM almacen_temperaturas 
+                WHERE Id = ?
+            ";
+            
+            // Preparar la consulta
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("i", $idAlmacen);  // Asegura que el parámetro es un entero
+            $stmt->execute();
+            $result = $stmt->get_result();
+            
+            // Verificar si la consulta devuelve resultados
+            if ($row = $result->fetch_assoc()) {
+                // Cerrar la conexión
+                $stmt->close();
+                $conn->close();
+                
+                // Retornar los resultados en un array
+                return [
+                    'totalTemperaturas' => $row['totalTemperaturas'],
+                    'temperaturaMaxima' => $row['temperaturaMaxima'],
+                    'temperaturaMinima' => $row['temperaturaMinima']
+                ];
+            } else {
+                // Si no hay resultados
+                return false;
+            }
+            
+        } catch (Exception $e) {
+            return false; // Si ocurre algún error, retornar false
+        }
+    }
+    
     
     
     
