@@ -65,53 +65,83 @@
     
             // Lógica específica para capturas
             if ($nombreVariableSesion == "capturas") {
-                foreach ($_SESSION[$nombreVariableSesion] as $captura) {
+                foreach ($_SESSION[$nombreVariableSesion] as $index => $captura) {
+                    // Separar fecha y hora
+                    $fechaCompleta = htmlspecialchars($captura["Fecha"]);
+                    $fechaPartes = explode(" ", $fechaCompleta);
+
+                    // Convertimos la fecha al formato dd/mm/yyyy
+                    $soloFecha = '';
+                    if (!empty($fechaPartes[0])) {
+                        $fechaObj = DateTime::createFromFormat('Y-m-d', $fechaPartes[0]);
+                        if ($fechaObj) {
+                            $soloFecha = $fechaObj->format('d/m/Y');
+                        }
+                    }
+
+                    $soloHora = $fechaPartes[1] ?? '';
+
+                    // ID único para el collapse
+                    $collapseId = "temperaturasCollapse_" . $index;
+
                     $contenido .= "<div class='card mb-3 p-3 border shadow-sm'>";
-            
-                    // Cabecera con título a la izquierda y fecha a la derecha
+
+                    // Cabecera: título + fecha/hora
                     $contenido .= "<div class='d-flex justify-content-between align-items-start mb-2'>";
                     $contenido .= "<h5 class='card-title mb-0'>" . ($tituloAlternativo ?? "ID: " . htmlspecialchars($captura["Id"])) . "</h5>";
-                    $contenido .= "<small class='text-muted'>" . htmlspecialchars($captura["Fecha"]) . "</small>";
+                    $contenido .= "<div class='text-end'>";
+                    $contenido .= "<div class='fw-bold text-muted'>" . $soloFecha . "</div>";
+                    $contenido .= "<div class='text-muted'>" . $soloHora . "</div>";
                     $contenido .= "</div>";
-            
+                    $contenido .= "</div>";
+
                     $contenido .= "<div><strong>TagPez:</strong> " . htmlspecialchars($captura["TagPez"]) . "</div>";
                     $contenido .= "<div><strong>Lector RFID:</strong> " . htmlspecialchars($captura["LectorRFID"]) . "</div>";
-            
+
+                    // Botón para desplegar temperaturas
+                    $contenido .= "<div class='mt-2'>";
+                    $contenido .= "<button class='btn btn-sm btn-outline-secondary' type='button' data-bs-toggle='collapse' data-bs-target='#$collapseId' aria-expanded='false' aria-controls='$collapseId'>";
+                    $contenido .= "Mostrar temperaturas 🔽";
+                    $contenido .= "</button>";
+                    $contenido .= "</div>";
+
+                    // Contenedor colapsable
+                    $contenido .= "<div class='collapse mt-2' id='$collapseId'>";
                     if (!empty($captura["Temperaturas"])) {
-                        $contenido .= "<div><strong>Temperaturas:</strong><ol class='mb-0'>";
+                        $contenido .= "<ol class='mb-0'>";
                         foreach ($captura["Temperaturas"] as $temperatura) {
                             $contenido .= "<li>Temperatura: " . htmlspecialchars($temperatura["Temperatura"]) . "°C</li>";
                         }
-                        $contenido .= "</ol></div>";
+                        $contenido .= "</ol>";
                     } else {
-                        $contenido .= "<div><strong>Temperaturas:</strong> No hay temperaturas</div>";
+                        $contenido .= "<div class='text-muted'>No hay temperaturas</div>";
                     }
+                    $contenido .= "</div>"; // fin collapse
+
+                    $contenido .= "</div>"; // cierre tarjeta
+                }
+            }
+
+            
+            // Lógica específica para barcos
+            elseif ($nombreVariableSesion == "barcos") {
+                foreach ($_SESSION[$nombreVariableSesion] as $barco) {
+                    $contenido .= "<div class='card mb-3 p-3 border shadow-sm'>";
+            
+                    // Cabecera con ID del barco
+                    $contenido .= "<div class='d-flex justify-content-between align-items-start mb-2'>";
+                    $contenido .= "<h5 class='card-title mb-0'>" . ($tituloAlternativo ?? "ID Barco: " . htmlspecialchars($barco["IdBarco"])) . "</h5>";
+                    $contenido .= "</div>";
+            
+                    // Detalles del barco
+                    $contenido .= "<div><strong>Nombre:</strong> " . htmlspecialchars($barco["Nombre"]) . "</div>";
+                    $contenido .= "<div><strong>Código:</strong> " . htmlspecialchars($barco["Codigo"]) . "</div>";
+                    $contenido .= "<div><strong>ID Usuario:</strong> " . htmlspecialchars($barco["IdUsuario"]) . "</div>";
             
                     $contenido .= "</div>"; // cierre de tarjeta
                 }
             }
             
-            // Lógica específica para barcos
-            elseif ($nombreVariableSesion == "barcos") {
-                // Generamos los encabezados de la tabla para barcos
-                if ($tituloAlternativo) {
-                    $contenido .= "<thead><tr><th>$tituloAlternativo</th><th>Nombre</th><th>Código</th><th>Id Usuario</th></tr></thead>";
-                } else {
-                    $contenido .= "<thead><tr><th>ID Barco</th><th>Nombre</th><th>Código</th><th>Id Usuario</th></tr></thead>";
-                }
-    
-                $contenido .= "<tbody>";
-    
-                // Iterar sobre los barcos
-                foreach ($_SESSION[$nombreVariableSesion] as $barco) {
-                    $contenido .= "<tr>";
-                    $contenido .= "<td>" . htmlspecialchars($barco["IdBarco"]) . "</td>";
-                    $contenido .= "<td>" . htmlspecialchars($barco["Nombre"]) . "</td>";
-                    $contenido .= "<td>" . htmlspecialchars($barco["Codigo"]) . "</td>";
-                    $contenido .= "<td>" . htmlspecialchars($barco["IdUsuario"]) . "</td>";
-                    $contenido .= "</tr>";
-                }
-            }
     
             $contenido .= "</tbody></table>";
         } else {
