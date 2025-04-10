@@ -68,18 +68,21 @@
                 foreach ($_SESSION[$nombreVariableSesion] as $index => $captura) {
             
                     // Obtener los valores de las temperaturas máximas, mínimas, el total y las fechas
-                    $totalTemperaturas = htmlspecialchars($captura["totalTemperaturas"]);
-                    $temperaturaMaxima = htmlspecialchars($captura["temperaturaMaxima"]);
-                    $temperaturaMinima = htmlspecialchars($captura["temperaturaMinima"]);
-                    $fechaUltimaTemperatura = htmlspecialchars($captura["fechaUltimaTemperatura"]);
-                    $fechaTemperaturaMaxima = htmlspecialchars($captura["fechaTemperaturaMaxima"]);
-                    $fechaTemperaturaMinima = htmlspecialchars($captura["fechaTemperaturaMinima"]);
-                    $idUltimoAlmacen = htmlspecialchars($captura["IdAlmacen"]);
-                    $tipoUltimoAlmacen = htmlspecialchars($captura["TipoAlmacen"]);
-                    $ZonaCaptura = htmlspecialchars($captura["Zona"]);
-                    $EspecieCapturada = htmlspecialchars($captura["Especie"]);
-                    $FechaCaptura = htmlspecialchars($captura["FechaCaptura"]);
-                    $NombreBarcoCaptura = htmlspecialchars($captura["NombreBarco"]);
+                    
+                    
+                    $totalTemperaturas      = safe_html($captura["totalTemperaturas"] ?? null);
+                    $temperaturaMaxima      = safe_html($captura["temperaturaMaxima"] ?? null);
+                    $temperaturaMinima      = safe_html($captura["temperaturaMinima"] ?? null);
+                    $fechaUltimaTemperatura = safe_html($captura["fechaUltimaTemperatura"] ?? null);
+                    $fechaTemperaturaMaxima = safe_html($captura["fechaTemperaturaMaxima"] ?? null);
+                    $fechaTemperaturaMinima = safe_html($captura["fechaTemperaturaMinima"] ?? null);
+                    $idUltimoAlmacen        = safe_html($captura["IdAlmacen"] ?? null);
+                    $tipoUltimoAlmacen      = safe_html($captura["TipoAlmacen"] ?? null);
+                    $ZonaCaptura            = safe_html($captura["Zona"] ?? null);
+                    $EspecieCapturada       = safe_html($captura["Especie"] ?? null);
+                    $FechaCaptura           = safe_html($captura["FechaCaptura"] ?? null);
+                    $NombreBarcoCaptura     = safe_html($captura["NombreBarco"] ?? null);
+                    
             
                     // ID único para el collapse
                     $collapseId = "temperaturasCollapse_" . $index;
@@ -187,12 +190,6 @@
                 }
             }
             
-            
-            
-            
-            
-                
-            
             // Lógica específica para barcos
             elseif ($nombreVariableSesion == "barcos") {
                 foreach ($_SESSION[$nombreVariableSesion] as $barco) {
@@ -219,6 +216,11 @@
     
         $contenido .= "</section>";
         return $contenido;
+    }
+
+
+    function safe_html($value) {
+        return htmlspecialchars($value ?? '', ENT_QUOTES, 'UTF-8');
     }
     
     

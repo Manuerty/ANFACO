@@ -28,7 +28,7 @@ Class Controlador{
         //volver a la anterior
         if($ps == -1){
             //salir del modo formulario
-            if($this -> miEstado-> EstadosAnteriores[""] == 0 && $this->miEstado->Estado == 1){
+            if( $this->miEstado->Estado == 1){
                 $this->miEstado->Estado = 0;
             } else {
                 $estadoAnterior = array_shift($this->miEstado->EstadosAnteriores);
@@ -154,6 +154,7 @@ Class Controlador{
 
         return array(pinta_contenido($this -> miEstado -> Estado).$txtErr,$msgError,$AccionSinRepintar,$arrayAuxiliarHtml,$accionJs);
     }
+
 }
 
 ?>

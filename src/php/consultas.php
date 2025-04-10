@@ -111,7 +111,7 @@
                 if ($ultimaPosicion){
                     $row = array_merge($row, $ultimaPosicion); 
                 } else {
-                    $row["IdAlmacenUltimaPosicion"] = null;
+                    $row["IdAlmacen"] = null;
                     $row["TipoAlmacen"] = null;  
                 }
 
