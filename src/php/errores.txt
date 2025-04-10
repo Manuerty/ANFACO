@@ -751,4 +751,6 @@ Error [2] en C:\xampp\htdocs\ProyectoAnfaco\src\php\clases\controlador.php:86: A
 [2025-04-09 14:18:31] -> Error [2] en C:\xampp\htdocs\ProyectoAnfaco\src\php\clases\controlador.php:31: Undefined array key "" -> Error [2] en C:\xampp\htdocs\ProyectoAnfaco\src\php\clases\controlador.php:31: Undefined array key ""
 [2025-04-09 14:18:38] -> Error [2] en C:\xampp\htdocs\ProyectoAnfaco\src\php\clases\controlador.php:31: Undefined array key "" -> Error [2] en C:\xampp\htdocs\ProyectoAnfaco\src\php\clases\controlador.php:31: Undefined array key ""
 [2025-04-09 14:19:06] -> Error [2] en C:\xampp\htdocs\ProyectoAnfaco\src\php\clases\controlador.php:31: Undefined array key "" -> Error [2] en C:\xampp\htdocs\ProyectoAnfaco\src\php\clases\controlador.php:31: Undefined array key ""
-[2025-04-09 14:19:09] -> Error [2] en C:\xampp\htdocs\ProyectoAnfaco\src\php\clases\controlador.php:31: Undefined array key "" -> 
+[2025-04-09 14:19:09] -> Error [2] en C:\xampp\htdocs\ProyectoAnfaco\src\php\clases\controlador.php:31: Undefined array key "" -> Error [2] en C:\xampp\htdocs\ProyectoAnfaco\src\php\clases\controlador.php:31: Undefined array key ""
+[2025-04-10 08:38:33] -> Error [2] en C:\xampp\htdocs\ProyectoAnfaco\src\php\clases\controlador.php:31: Undefined array key "" -> Error [2] en C:\xampp\htdocs\ProyectoAnfaco\src\php\clases\controlador.php:31: Undefined array key ""
+[2025-04-10 08:42:35] -> Error [2] en C:\xampp\htdocs\ProyectoAnfaco\src\php\clases\controlador.php:31: Undefined array key "" -> 

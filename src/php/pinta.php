@@ -65,39 +65,32 @@
     
             // Lógica específica para capturas
             if ($nombreVariableSesion == "capturas") {
-                // Generamos los encabezados de la tabla para capturas
-                if ($tituloAlternativo) {
-                    $contenido .= "<thead><tr><th>$tituloAlternativo</th><th>Fecha</th><th>TagPez</th><th>Lector RFID</th><th>Temperaturas</th></tr></thead>";
-                } else {
-                    $contenido .= "<thead><tr><th>ID</th><th>Fecha</th><th>TagPez</th><th>Lector RFID</th><th>Temperaturas</th></tr></thead>";
-                }
-                
-                $contenido .= "<tbody>";
-    
-                // Iterar sobre las capturas (almacenes)
                 foreach ($_SESSION[$nombreVariableSesion] as $captura) {
-                    $contenido .= "<tr>";
-                    $contenido .= "<td>" . htmlspecialchars($captura["Id"]) . "</td>";
-                    $contenido .= "<td>" . htmlspecialchars($captura["Fecha"]) . "</td>";
-                    $contenido .= "<td>" . htmlspecialchars($captura["TagPez"]) . "</td>";
-                    $contenido .= "<td>" . htmlspecialchars($captura["LectorRFID"]) . "</td>";
-    
-                    // Mostrar las temperaturas de manera numerada
+                    $contenido .= "<div class='card mb-3 p-3 border shadow-sm'>";
+            
+                    // Cabecera con título a la izquierda y fecha a la derecha
+                    $contenido .= "<div class='d-flex justify-content-between align-items-start mb-2'>";
+                    $contenido .= "<h5 class='card-title mb-0'>" . ($tituloAlternativo ?? "ID: " . htmlspecialchars($captura["Id"])) . "</h5>";
+                    $contenido .= "<small class='text-muted'>" . htmlspecialchars($captura["Fecha"]) . "</small>";
+                    $contenido .= "</div>";
+            
+                    $contenido .= "<div><strong>TagPez:</strong> " . htmlspecialchars($captura["TagPez"]) . "</div>";
+                    $contenido .= "<div><strong>Lector RFID:</strong> " . htmlspecialchars($captura["LectorRFID"]) . "</div>";
+            
                     if (!empty($captura["Temperaturas"])) {
-                        $contenido .= "<td><ol>"; // Abrimos la lista ordenada (numerada)
-                        
+                        $contenido .= "<div><strong>Temperaturas:</strong><ol class='mb-0'>";
                         foreach ($captura["Temperaturas"] as $temperatura) {
                             $contenido .= "<li>Temperatura: " . htmlspecialchars($temperatura["Temperatura"]) . "°C</li>";
                         }
-    
-                        $contenido .= "</ol></td>"; // Cerramos la lista ordenada
+                        $contenido .= "</ol></div>";
                     } else {
-                        $contenido .= "<td>No hay temperaturas</td>";
+                        $contenido .= "<div><strong>Temperaturas:</strong> No hay temperaturas</div>";
                     }
-    
-                    $contenido .= "</tr>";
+            
+                    $contenido .= "</div>"; // cierre de tarjeta
                 }
             }
+            
             // Lógica específica para barcos
             elseif ($nombreVariableSesion == "barcos") {
                 // Generamos los encabezados de la tabla para barcos
