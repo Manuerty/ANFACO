@@ -91,32 +91,31 @@
     function get_capturas() {
         try {
             $conn = ConexionBD("localhost", "prueba_1", "root", "");
-    
+        
             if (!$conn) return false;
-    
-            $sql = "SELECT Id, Fecha, LectorRFID, TagPez, DatosTemp, IdTipoAlmacen FROM almacen";
+        
+            // Consultar los tags de los peces (sin agrupar por almacén)
+            $sql = "SELECT DISTINCT TagPez FROM almacen";
             $result = $conn->query($sql);
-    
+        
             $capturas = [];
-    
-            require_once "consultas.php"; // Para asegurarte de tener acceso a get_temperaturas_por_almacen y get_temperaturas_max_min
-    
+        
             while ($row = $result->fetch_assoc()) {
-                // 🔁 Añadir las temperaturas relacionadas y las fechas
-                $temperaturas = get_temperaturas_por_almacen($row["Id"]);
+                $tagPez = $row["TagPez"];
+                
+                // Obtener las temperaturas relacionadas por TagPez
+                $temperaturas = get_temperaturas_por_tag_pez($tagPez);
                 
                 // Si se obtienen temperaturas, añadimos la fecha a cada una
                 if ($temperaturas !== false) {
-                    // Aquí agregamos la fecha a cada temperatura
                     foreach ($temperaturas as &$temperatura) {
                         $temperatura["FechaTemperatura"] = $temperatura["Fecha"]; // Guardamos la fecha de la temperatura
                         unset($temperatura["Fecha"]); // Opcional: Eliminar el campo 'Fecha' si no lo necesitas
                     }
                 }
                 
-                // Obtener datos de temperaturas máximas, mínimas y el total
-                $temperaturasMaxMin = get_temperaturas_max_min($row["Id"]);
-                
+                // Obtener datos de temperaturas máximas, mínimas y el total por TagPez
+                $temperaturasMaxMin = get_temperaturas_max_min_por_tag($tagPez);
                 
                 // Si la consulta de max/min retorna datos, agregarlos al array
                 if ($temperaturasMaxMin) {
@@ -128,20 +127,14 @@
                     $row["TemperaturaMaxima"] = null;
                     $row["TemperaturaMinima"] = null;
                 }
-    
+        
                 // Añadir las temperaturas al array principal
                 $row["Temperaturas"] = $temperaturas !== false ? $temperaturas : [];
-
-                
-
-    
                 $capturas[] = $row;
-
-                
             }
             $conn->close();
             return $capturas;
-    
+        
         } catch (Exception $e) {
             return false;
         }
@@ -149,19 +142,24 @@
     
     
     
+    
+    
 
-    function get_temperaturas_por_almacen($idAlmacen) {
+    function get_temperaturas_por_tag_pez($tagPez) {
         try {
-            $conn = ConexionBD("localhost", "prueba_1", "root", ""); 
+            $conn = ConexionBD("localhost", "prueba_1", "root", "");
         
             if (!$conn) return false;
         
-            $sql = "SELECT IdAlmacen_Temperatura, Id, Temperatura, Fecha FROM almacen_temperaturas WHERE Id = ?";
+            // Consultar las temperaturas relacionadas con el TagPez
+            $sql = "SELECT IdAlmacen_Temperatura, Id, Temperatura, Fecha 
+                    FROM almacen_temperaturas 
+                    WHERE Id IN (SELECT Id FROM almacen WHERE TagPez = ?)";
             $stmt = $conn->prepare($sql);
         
             if (!$stmt) return false;
         
-            $stmt->bind_param("i", $idAlmacen);
+            $stmt->bind_param("s", $tagPez);  // Usamos 's' porque TagPez es un string
             $stmt->execute();
         
             $result = $stmt->get_result();
@@ -178,27 +176,29 @@
             return false;
         }
     }
+    
+    
 
-    function get_temperaturas_max_min($idAlmacen) {
+    function get_temperaturas_max_min_por_tag($tagPez) {
         try {
             // Conectar a la base de datos
-            $conn = ConexionBD("localhost", "prueba_1", "root", ""); 
+            $conn = ConexionBD("localhost", "prueba_1", "root", "");
             
-            if (!$conn) return false; // Verifica si la conexión es exitosa
+            if (!$conn) return false;
             
-            // Consulta SQL que utiliza funciones agregadas MAX, MIN y COUNT
+            // Consulta SQL que utiliza funciones agregadas MAX, MIN y COUNT para un TagPez
             $sql = "
                 SELECT 
                     COUNT(*) AS totalTemperaturas, 
                     MAX(Temperatura) AS temperaturaMaxima, 
                     MIN(Temperatura) AS temperaturaMinima 
                 FROM almacen_temperaturas 
-                WHERE Id = ?
+                WHERE Id IN (SELECT Id FROM almacen WHERE TagPez = ?)
             ";
             
             // Preparar la consulta
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("i", $idAlmacen);  // Asegura que el parámetro es un entero
+            $stmt->bind_param("s", $tagPez);  // Usamos 's' porque TagPez es un string
             $stmt->execute();
             $result = $stmt->get_result();
             
@@ -223,6 +223,8 @@
             return false; // Si ocurre algún error, retornar false
         }
     }
+    
+    
     
     
     
