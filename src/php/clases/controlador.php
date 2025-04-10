@@ -108,52 +108,56 @@ Class Controlador{
     
 
 
-    function generarContenido($arrayDatos = array()){
-        $arrayAuxiliarHtml = array();
-        $accionJs = null;
-        $msgError = "" ;
-        $AccionSinRepintar = 0;
-        if($this -> miEstado -> Estado == null){
-            $this -> miEstado -> Estado = 0;
-        }
-
-        $c = $this -> miEstado -> Estado; 
-
-        $nav = "";
-        if($c === 0 && !empty($arrayDatos) && $arrayDatos[0] != -1 ){
-            //Log In//
-            $nav = 0;
-            $InicioS = $this -> IniciarSesion($arrayDatos[0], $arrayDatos[1]);
-            if($InicioS ===false){
-                $msgError = "Error de conexión con el servidor, por favor inténtelo más tarde.";
-            }elseif($InicioS === 0){
-                $msgError = "Usuario o contraseña incorrectos.";
-            }elseif($InicioS === true){
-                $this -> miEstado -> Estado = 1;
-                $nav = 1;
+        function generarContenido($arrayDatos = array()){
+            $arrayAuxiliarHtml = array();
+            $accionJs = null;
+            $msgError = "" ;
+            $AccionSinRepintar = 0;
+        
+            if($this -> miEstado -> Estado == null){
+                $this -> miEstado -> Estado = 0;
             }
-            $this -> navegarPestanas($nav);
-        }elseif($c === 1 && !empty($arrayDatos) && $arrayDatos[0] == 3 || $arrayDatos[0] == 4){
+        
+            $c = $this -> miEstado -> Estado; 
+        
+            $nav = "";
             
-            $nav = null;
-            switch($arrayDatos[0]){
-                case 3:
-                    $nav = 2;
-                    break;
-                case 4:
-                    $nav = 3;
-                    break;
+            // Asegurarse de que $arrayDatos tenga al menos un elemento antes de acceder a $arrayDatos[0]
+            if($c === 0 && !empty($arrayDatos) && isset($arrayDatos[0]) && $arrayDatos[0] != -1){
+                //Log In//
+                $nav = 0;
+                $InicioS = $this -> IniciarSesion($arrayDatos[0], $arrayDatos[1]);
+                if($InicioS ===false){
+                    $msgError = "Error de conexión con el servidor, por favor inténtelo más tarde.";
+                }elseif($InicioS === 0){
+                    $msgError = "Usuario o contraseña incorrectos.";
+                }elseif($InicioS === true){
+                    $this -> miEstado -> Estado = 1;
+                    $nav = 1;
+                }
+                $this -> navegarPestanas($nav);
+            }elseif($c === 1 && !empty($arrayDatos) && isset($arrayDatos[0]) && ($arrayDatos[0] == 3 || $arrayDatos[0] == 4)){
+                
+                $nav = null;
+                switch($arrayDatos[0]){
+                    case 3:
+                        $nav = 2;
+                        break;
+                    case 4:
+                        $nav = 3;
+                        break;
+                }
+                
+                $this -> navegarPestanas($nav);
+            }elseif(isset($arrayDatos[0]) && $arrayDatos[0] == -1){
+                $this -> navegarPestanas(-1);
             }
             
-            $this -> navegarPestanas($nav);
-        }elseif($arrayDatos[0]== -1){
-            $this -> navegarPestanas(-1);
+            $txtErr = "";
+        
+            return array(pinta_contenido($this -> miEstado -> Estado).$txtErr,$msgError,$AccionSinRepintar,$arrayAuxiliarHtml,$accionJs);
         }
-        $txtErr = "";
-
-
-        return array(pinta_contenido($this -> miEstado -> Estado).$txtErr,$msgError,$AccionSinRepintar,$arrayAuxiliarHtml,$accionJs);
-    }
+        
 
 }
 
