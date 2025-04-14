@@ -142,7 +142,7 @@ use Pdo\Sqlite;
             
             // Si se pasó un IdUsuario, filtramos los datos por ese IdUsuario
             if ($idUsuario) {
-                $sql .= " WHERE  idUsuario = ?";
+                $sql .= " WHERE  idUsuario = ? ";
             }
 
            

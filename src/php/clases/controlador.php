@@ -74,7 +74,6 @@ Class Controlador{
                 $capturas = get_all_data();
                 $barcos = get_Barcos();
                 
-                
             }else{
                 $capturas = get_all_data($datosSesion[0]);
                 $barcos = get_Barcos($datosSesion[0]);
