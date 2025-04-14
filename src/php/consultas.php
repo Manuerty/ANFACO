@@ -53,7 +53,7 @@ use Pdo\Sqlite;
                            barcos.Nombre as Barco, barcos.IdBarco, 
                            UltimaFecha.FechaUltimoAlmacen, UltimaFecha.CuentaAlmacen, 
                            MaxTemperatura.temperaturaMaxima, MaxTemperatura.temperaturaMinima, 
-                           AlmacenUltimo.IdTipoAlmacen, tiposalmacen.Nombre, barcos.Codigo 
+                           AlmacenUltimo.IdTipoAlmacen, tiposalmacen.Nombre, barcos.Codigo  
                     FROM bodegas 
                     LEFT JOIN (
                         SELECT TagPez, MAX(fecha) AS FechaUltimoAlmacen, COUNT(TagPez) AS CuentaAlmacen 
@@ -75,7 +75,7 @@ use Pdo\Sqlite;
             }
 
 
-            $sql .= " ORDER BY TagPez ASC";
+            $sql .= " ORDER BY FechaCaptura DESC";
     
             $stmt = $conn->prepare($sql);
             if (!$stmt) {
@@ -114,7 +114,6 @@ use Pdo\Sqlite;
                     'TemperaturaMinima'    => $row['temperaturaMinima'],
                     'IdTipoAlmacen'        => $row['IdTipoAlmacen'],
                     'TipoAlmacen'          => $row['Nombre'],
-                    'CodigoBarco'          => $row['Codigo'],
                 ];
             }
     
@@ -128,6 +127,73 @@ use Pdo\Sqlite;
             return $capturas;
     
         } catch (Exception $e) {
+            return false;
+        }
+    }
+
+    function get_Barcos($idUsuario = null) {
+
+        
+        try{
+            $conn = obtener_conexion();
+            if (!$conn) return false;
+
+            $sql = "SELECT IdBarco, Nombre, Codigo FROM barcos";
+            
+            // Si se pasó un IdUsuario, filtramos los datos por ese IdUsuario
+            if ($idUsuario) {
+                $sql .= " WHERE  idUsuario = ?";
+            }
+
+           
+    
+            $stmt = $conn->prepare($sql);
+
+            
+
+            if (!$stmt) {
+                $conn->close();
+                return false;
+            }
+
+            
+    
+            // Si hay un IdUsuario, lo vinculamos a la consulta
+            if ($idUsuario) {
+                $stmt->bind_param("i", $idUsuario);
+            }
+    
+            if (!$stmt->execute()) {
+                $stmt->close();
+                $conn->close();
+                return false;
+            }
+
+            
+    
+            $result = $stmt->get_result();
+            $barcos = [];
+    
+            while ($row = $result->fetch_assoc()) {
+                $barcos[] = [
+
+                    "IdBarco" => $row['IdBarco'],
+                    "Nombre" => $row['Nombre'],
+                    "CodigoBarco" => $row['Codigo'],
+                ];
+            }
+    
+            $stmt->close();
+            $conn->close();
+
+        
+            
+                
+            return $barcos;
+
+
+        }catch (Exception $e) {
+            
             return false;
         }
     }

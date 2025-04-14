@@ -66,18 +66,18 @@
 
     function DibujaTablaGenerica($Pestana, $tituloAlternativo = null) {
 
-        $arraydatos = $_SESSION['AllData'];
-
-        //var_dump($arraydatos);
+       
 
        
         if ($Pestana == 0){
-            $arraydatos = $_SESSION['AllData'];
+            $arraydatos = $_SESSION['Barcos'];
         }elseif($Pestana == 1){
             $arraydatos = $_SESSION['AllData'];
         }elseif($Pestana == 2){
             $arraydatos = $_SESSION[''];
         }
+
+        //var_dump( $arraydatos );
         
 
         $contenido = "<section>";
@@ -189,18 +189,17 @@
             }
 
             elseif ($Pestana == 2) {
-                foreach ($arraydatos as $index => $captura) {
+                foreach ($arraydatos as $index => $barcos) {
                     $contenido .= "<div class='card mb-3 p-3 border shadow-sm'>";
             
                     // Cabecera con ID del barco
                     $contenido .= "<div class='d-flex justify-content-between align-items-start mb-2'>";
-                    $contenido .= "<h5 class='card-title mb-0'>" . ($tituloAlternativo ?? "ID Barco: " . htmlspecialchars($captura["IdBarco"])) . "</h5>";
+                    $contenido .= "<h5 class='card-title mb-0'>" . ($tituloAlternativo ?? "ID Barco: " . htmlspecialchars($barcos["IdBarco"])) . "</h5>";
                     $contenido .= "</div>";
             
                     // Detalles del barco
-                    $contenido .= "<div><strong>Nombre:</strong> " . htmlspecialchars($captura["Nombre"]) . "</div>";
-                    $contenido .= "<div><strong>Código:</strong> " . htmlspecialchars($captura["Codigo"]) . "</div>";
-                    $contenido .= "<div><strong>ID Usuario:</strong> " . htmlspecialchars($captura["IdUsuario"]) . "</div>";
+                    $contenido .= "<div><strong>Nombre:</strong> " . htmlspecialchars($barcos["Nombre"]) . "</div>";
+                    $contenido .= "<div><strong>Código:</strong> " . htmlspecialchars($barcos["CodigoBarco"]) . "</div>";
             
                     $contenido .= "</div>"; // cierre de tarjeta
                 }

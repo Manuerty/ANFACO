@@ -72,11 +72,18 @@ Class Controlador{
 
             if($_SESSION["es_admin"]){
                 $capturas = get_all_data();
+                $barcos = get_Barcos();
+                
                 
             }else{
                 $capturas = get_all_data($datosSesion[0]);
-                $_SESSION ["AllData"] = $capturas;
+                $barcos = get_Barcos($datosSesion[0]);
             }
+
+            $_SESSION ["AllData"] = $capturas;
+            $_SESSION ["Barcos"] = $barcos;
+
+            
 
 
             return true;
