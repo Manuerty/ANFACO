@@ -84,8 +84,8 @@
                     $NombreBarcoCaptura     = safe_html($captura["NombreBarco"] ?? null);
                     
             
-                    // ID único para el collapse
-                    $collapseId = "temperaturasCollapse_" . $index;
+                    
+                    
             
                     // Contenedor principal de la tarjeta
                     $contenido .= "<div class='card mb-3 p-3 border shadow-sm'>";
@@ -149,43 +149,10 @@
             
                     // Botón para desplegar las temperaturas
                     $contenido .= "<div class='mt-2'>";
-                    $contenido .= "<button class='btn btn-sm btn-outline-secondary' type='button' data-bs-toggle='collapse' data-bs-target='#$collapseId' aria-expanded='false' aria-controls='$collapseId'>";
+                    $contenido .= "<button class='btn btn-sm btn-outline-secondary' type='button' onclick='dibuja_pagina([3])'>";
                     $contenido .= "Mostrar temperaturas 🔽";
                     $contenido .= "</button>";
                     $contenido .= "</div>";
-            
-                    // Contenedor colapsable para mostrar las temperaturas registradas
-                    $contenido .= "<div class='collapse mt-2' id='$collapseId'>";
-                    if (!empty($captura["Temperaturas"])) {
-                        $contenido .= "<ol class='mb-0'>";
-                        foreach ($captura["Temperaturas"] as $temperatura) {
-                            // Verificar si la temperatura es mayor a 4°C
-                            $claseTemperatura = "";
-                            if ($temperatura["Temperatura"] > 4) {
-                                $claseTemperatura = "text-danger"; // Clase CSS para texto en rojo
-                            }
-            
-                            // Mostrar la temperatura y la fecha de la temperatura con la clase si es mayor a 4°C
-                            $contenido .= "<li>";
-                            $contenido .= "<span class='$claseTemperatura'>Temperatura: " . htmlspecialchars($temperatura["Temperatura"]) . "°C</span>";
-            
-                            // Si existe la fecha de la temperatura, mostrarla
-                            if (!empty($temperatura["FechaTemperatura"])) {
-                                // Formateo de la fecha
-                                $fechaTemperatura = DateTime::createFromFormat('Y-m-d H:i:s', $temperatura["FechaTemperatura"]);
-                                if ($fechaTemperatura) {
-                                    $contenido .= " <span class='text-muted'>(registrada el " . $fechaTemperatura->format('d/m/Y') . " a las " . $fechaTemperatura->format('H:i') . ")</span>";
-                                }
-                            }
-                            $contenido .= "</li>";
-                        }
-                        $contenido .= "</ol>";
-                    } else {
-                        // En caso de que no haya temperaturas registradas
-                        $contenido .= "<div class='text-muted'>No hay temperaturas</div>";
-                    }
-                    $contenido .= "</div>"; // fin collapse
-            
                     $contenido .= "</div>"; // cierre tarjeta
                 }
             }

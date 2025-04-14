@@ -85,26 +85,25 @@ Class Controlador{
     
 
     function cerrarSesion(){
-        //Cerrar sesion reinicializando variables
-            $this -> miEstado = new Estado();
-            $this -> miEstado -> Estado = 0;
-            $this -> miEstado -> Documentos = array();
-            $this -> miEstado -> FiltrosDoc = array();
-            $this -> miEstado -> tipo_App = $_SESSION["TipoPortal"];
-            $this -> miEstado -> acciones = array("archivos"=> 0,
-                                            "observaciones" => 0,
-                                            "añadir" => 0);
-            if(isset($_SESSION["header"])){
-                $this -> miEstado -> header = $_SESSION["header"];
-                $_SESSION["header"] = null;
-            }else{
-                $header_Empresa = '../html/header.html';
-                $header = fopen($header_Empresa, "r");
-                $this -> miEstado -> header = fread($header,filesize($header_Empresa));
-                fclose($header);
-            }
-            
-        }
+    //Cerrar sesion reinicializando variables
+        $this -> miEstado = new Estado();
+        $this -> miEstado -> Estado = 0;
+        $this -> miEstado -> Documentos = array();
+        $this -> miEstado -> FiltrosDoc = array();
+        $this -> miEstado -> tipo_App = $_SESSION["TipoPortal"];
+        $this -> miEstado -> acciones = array("archivos"=> 0,
+                                        "observaciones" => 0,
+                                        "añadir" => 0);
+        if(isset($_SESSION["header"])){
+            $this -> miEstado -> header = $_SESSION["header"];
+            $_SESSION["header"] = null;
+        }else{
+            $header_Empresa = '../html/header.html';
+            $header = fopen($header_Empresa, "r");
+            $this -> miEstado -> header = fread($header,filesize($header_Empresa));
+            fclose($header);
+        }  
+    }
     
 
 
@@ -158,7 +157,6 @@ Class Controlador{
             return array(pinta_contenido($this -> miEstado -> Estado).$txtErr,$msgError,$AccionSinRepintar,$arrayAuxiliarHtml,$accionJs);
         }
         
-
 }
 
 ?>
