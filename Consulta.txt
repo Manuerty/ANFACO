@@ -1,0 +1,22 @@
+Select bodegas.IdBodega, bodegas.Zona, bodegas.Especie, bodegas.FechaCaptura, bodegas.TagPez, barcos.Nombre as Barco, barcos.IdBarco, UltimaFecha.FechaUltimoAlmacen , UltimaFecha.CuentaAlmacen, MaxTemperatura.temperaturaMaxima, MaxTemperatura.temperaturaMinima, AlmacenUltimo.IdTipoAlmacen, tiposalmacen.Nombre  from bodegas left JOIN (
+Select TagPez, max(fecha) FechaUltimoAlmacen, count(TagPez) as CuentaAlmacen from almacen
+	group by TagPez) UltimaFecha on Bodegas.TagPez = UltimaFecha.TagPez
+    left Join(
+        Select max(temperatura) temperaturaMaxima, min(temperatura) temperaturaMinima, TagPez from almacen inner Join almacen_temperaturas on almacen.ID = almacen_temperaturas.ID group by TagPez) 	MaxTemperatura on MaxTemperatura.TagPez = Bodegas.TagPez
+        left Join barcos on Barcos.IdBarco = bodegas.IdBarco 
+       left join almacen AlmacenUltimo on AlmacenUltimo.TagPez = bodegas.TagPez AND AlmacenUltimo.Fecha = UltimaFecha.FechaUltimoAlmacen
+       left join tiposalmacen on tiposalmacen.IdTipoAlmacen = AlmacenUltimo.IdTipoAlmacen
+
+
+
+
+Select bodegas.IdBodega, bodegas.Zona, bodegas.Especie, bodegas.FechaCaptura, bodegas.TagPez, barcos.Nombre as Barco, barcos.IdBarco, UltimaFecha.FechaUltimoAlmacen , UltimaFecha.CuentaAlmacen, MaxTemperatura.temperaturaMaxima, MaxTemperatura.temperaturaMinima, AlmacenUltimo.IdTipoAlmacen, tiposalmacen.Nombre  from bodegas left JOIN (
+Select TagPez, max(fecha) FechaUltimoAlmacen, count(TagPez) as CuentaAlmacen from almacen
+	group by TagPez) UltimaFecha on Bodegas.TagPez = UltimaFecha.TagPez
+    left Join(
+        Select max(temperatura) temperaturaMaxima, min(temperatura) temperaturaMinima, TagPez from almacen inner Join almacen_temperaturas on almacen.ID = almacen_temperaturas.ID group by TagPez) 	MaxTemperatura on MaxTemperatura.TagPez = Bodegas.TagPez
+        left Join barcos on Barcos.IdBarco = bodegas.IdBarco 
+       left join almacen AlmacenUltimo on AlmacenUltimo.TagPez = bodegas.TagPez AND AlmacenUltimo.Fecha = UltimaFecha.FechaUltimoAlmacen
+       left join tiposalmacen on tiposalmacen.IdTipoAlmacen = AlmacenUltimo.IdTipoAlmacen
+       WHERE bodegas.IdBarco IN (SELECT IdBarco FROM barcos WHERE IdUsuario = 1)
+       ORDER by TagPez ASC;

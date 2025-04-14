@@ -66,14 +66,19 @@ Class Controlador{
     
         if ($datosSesion != false && $datosSesion != 0) {
             $this->miEstado->IdPersonal = $datosSesion[0];
-            
-            $barcos = get_barcos_usuario($datosSesion[0]);
-            $_SESSION["barcos"] = $barcos !== false ? $barcos : [];
     
-            
-            $capturas = get_capturas();
-            $_SESSION["capturas"] = $capturas !== false ? $capturas : [];
-    
+            // Puedes hacer lógica condicional si necesitas
+            $_SESSION["es_admin"] = ($datosSesion[3] === "Administrador") ? true : false;
+
+            if($_SESSION["es_admin"]){
+                $capturas = get_all_data();
+                
+            }else{
+                $capturas = get_all_data($datosSesion[0]);
+                $_SESSION ["AllData"] = $capturas;
+            }
+
+
             return true;
         } elseif ($datosSesion == 0) {
             return 0;
@@ -81,6 +86,7 @@ Class Controlador{
             return false;
         }
     }
+    
     
     
 
@@ -137,6 +143,7 @@ Class Controlador{
                 $this -> navegarPestanas($nav);
             }elseif($c === 1 && !empty($arrayDatos) && isset($arrayDatos[0]) && ($arrayDatos[0] == 3 || $arrayDatos[0] == 4)){
                 
+                
                 $nav = null;
                 switch($arrayDatos[0]){
                     case 3:
@@ -148,7 +155,18 @@ Class Controlador{
                 }
                 
                 $this -> navegarPestanas($nav);
-            }elseif(isset($arrayDatos[0]) && $arrayDatos[0] == -1){
+            }elseif($c == 3 && !empty($arrayDatos) && isset($arrayDatos[0]) && $arrayDatos[0] == 3){
+
+                
+                $nav = null;
+                switch($arrayDatos[0]){
+                    case 3:
+                        $nav = 4;
+                        break;
+                }
+                $this -> navegarPestanas($nav);
+            }
+            elseif(isset($arrayDatos[0]) && $arrayDatos[0] == -1){
                 $this -> navegarPestanas(-1);
             }
             
