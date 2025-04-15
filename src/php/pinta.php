@@ -100,13 +100,13 @@
                     $contenido .= "</div>";
             
                     // Detalles del barco
-                    $contenido .= "<div><strong>Nombre:</strong> " . htmlspecialchars($barco["NombreBarco"]) . "</div>";
-                    $contenido .= "<div><strong>Código:</strong> " . htmlspecialchars($barco["CodigoBarco"]) . "</div>";
+                    $contenido .= "<div>Nombre: <strong>" . htmlspecialchars($barco["Nombre"]) . "</strong></div>";
+                    $contenido .= "<div>Código: <strong>" . htmlspecialchars($barco["CodigoBarco"]) . "</strong></div>";
             
                     $contenido .= "</div>"; // cierre de tarjeta
                 }
             }
-        
+
             // Lógica específica para capturas
             elseif ($Pestana == 1) {
                 foreach ($arraydatos as $index => $captura) {
@@ -123,7 +123,7 @@
                     $tagPez                  = htmlspecialchars($captura["TagPez"]);
 
                     $claseTemperaturaMaxima = ($temperaturaMaxima > 4) ? "text-danger" : "text-success"; // Cambia el color a verde si es menor o igual a 4
-                    $claseTemperaturaMinima = ($temperaturaMinima > 4) ? "text-danger" : "";
+                    $claseTemperaturaMinima = ($temperaturaMinima > 4) ? "text-danger" : "text-success"; // Cambia el color a verde si es menor o igual a 4
 
                     // Clase para la fecha según temperatura máxima
                     $claseFecha = ($temperaturaMaxima > 4) ? "text-danger" : "text-success";
@@ -131,80 +131,66 @@
                     // Tarjeta principal
                     $contenido .= "<div class='card mb-3 p-3 border shadow-sm'>";
 
-                    // Cabecera principal con dos columnas: izquierda (tag + temp) / derecha (fecha + imagen)
-                    $contenido .= "<div class='d-flex justify-content-between mb-2' style='font-size: 1.1rem;'>";
+                    // Cabecera principal reorganizada en dos columnas
+                    $contenido .= "<div class='d-flex mb-1' style='font-size: 0.825rem;'>";
 
-                    // Izquierda: Tag del pez y temperatura máxima si existe
-                    $contenido .= "<div>";
-                    $contenido .= "<h5 class='card-title mb-1' style='font-size: 1.5rem;'><strong>$tagPez</strong></h5>";  // Aumento de tamaño de fuente para el tag del pez
-                    if ($temperaturaMaxima >= 4) {
-                        $contenido .= "<p class='mb-0'>Temp Max: <span class='$claseTemperaturaMaxima' style='margin-top: 10px; display: inline-block;'><strong>" . $temperaturaMaxima . "°C</strong></span></p>";
-                    }
-                    $contenido .= "</div>";
+                    // Columna izquierda (Tag + details) - 75%
+                    $contenido .= "<div style='flex: 0 0 90%;'>";
+                    $contenido .= "<h5 class='card-title mb-0' style='font-size: 1.125rem;'><strong>$tagPez</strong></h5>"; // Tag del pez
+                    $contenido .= "<details style='cursor: pointer; padding-top: 5px;'>"; // Colapsable justo debajo de TagPez
+                    $contenido .= "<summary style='font-size: 1.2rem; font-weight: bold; padding-left: 0;'></summary>"; // Triángulo del details
 
-                    // Derecha: Fecha + imagen (en lugar del botón)
-                    $contenido .= "<div class='text-end d-flex flex-column align-items-center'>";
-                    $contenido .= "<div class='$claseFecha mb-2' style='font-size: 1.5rem;'><strong>" . date('d/m/Y H:i', strtotime($FechaCaptura)) . "</strong></div>";  // Aumento de tamaño de fuente para la fecha
-                    $contenido .= "<a title='Ver detalles completos' style='display: inline-block; margin-top: 10px;' onclick='dibuja_pagina([3])'>"; // Añadimos el onclick
-                    $contenido .= "<img src='Img/DetallesCaptura.png' alt='Ver detalles' style='width: 54px; height: 36px; cursor: pointer; border: none;'>"; // Cambiar el botón por la imagen
-                    $contenido .= "</a>";
-                    $contenido .= "</div>";
-
-                    $contenido .= "</div>"; // fin cabecera
-
-                    // Aquí está el botón original que debes cambiar
-                    // Botón desplegable (anteriormente un botón, ahora lo reemplazamos por la imagen)
-                    $contenido .= "<div class='d-flex justify-content-start'>";
-                    $contenido .= "<a data-bs-toggle='collapse' data-bs-target='#detallesCaptura$index' aria-expanded='false' aria-controls='detallesCaptura$index' title='Expandir detalles'>";
-                    $contenido .= "<img src='Img/ExpandCollapsable.png' alt='Expandir detalles' style='width: 36px; height: 36px; cursor: pointer; border: none;'>"; // Reemplazamos el botón por la imagen
-                    $contenido .= "</a>";
-                    $contenido .= "</div>";
-
-                    // Contenido colapsable
-                    $contenido .= "<div class='collapse' id='detallesCaptura$index'>";
-                    $contenido .= "<div class='pt-2'>";
-
-                    // Layout en tres columnas bien distribuidas
-                    $contenido .= "<div class='row'>";
+                    // Contenido del colapsable
+                    $contenido .= "<div class='pt-2' style='padding: 10px; font-size: 1.25em;'>"; // Aumentado 25%
+                    $contenido .= "<div class='row g-3'>";
 
                     // Primera columna
-                    $contenido .= "<div class='col-md-4'>";
-                    $contenido .= "<p><span class='text-muted'><strong>Lugar de Captura:</strong></span> <strong>$ZonaCaptura</strong></p>";
-                    $contenido .= "<p><span class='text-muted'><strong>Especie Capturada:</strong></span> <strong>$EspecieCapturada</strong></p>";
-                    $contenido .= "<p><span class='text-muted'><strong>Nombre del Barco:</strong></span> <strong>$NombreBarcoCaptura</strong></p>";
+                    $contenido .= "<div class='col'>";
+                    $contenido .= "<p><span class='text-black'>Captura: </span> <span class='font-weight-bold'><strong>$ZonaCaptura</strong></span></p>";
+                    $contenido .= "<p><span class='text-black'>Especie: </span> <span class='font-weight-bold'><strong>$EspecieCapturada</strong></span></p>";
+                    $contenido .= "<p><span class='text-black'>Barco: </span> <span class='font-weight-bold'><strong>$NombreBarcoCaptura</strong></span></p>";
                     $contenido .= "</div>";
 
                     // Segunda columna
-                    $contenido .= "<div class='col-md-4'>";
-                    $contenido .= "<p><span class='text-muted'><strong>Almacenes por los que ha pasado:</strong></span> <strong>$TotalAlmacenes</strong></p>";
-                    $contenido .= "<p><span class='text-muted'><strong>ID Último Almacén:</strong></span> <strong>$idUltimoAlmacen</strong></p>";
-                    $contenido .= "<p><span class='text-muted'><strong>Tipo de Almacén:</strong></span> <strong>$tipoUltimoAlmacen</strong></p>";
+                    $contenido .= "<div class='col'>";
+                    $contenido .= "<p><span class='text-black'>Almacenes visitados: </span> <span class='font-weight-bold'><strong>$TotalAlmacenes</strong></span></p>";
+                    $contenido .= "<p><span class='text-black'>Almacén: </span> <span class='font-weight-bold'><strong>$tipoUltimoAlmacen $idUltimoAlmacen</strong></span></p>";
                     $contenido .= "</div>";
 
                     // Tercera columna
-                    $contenido .= "<div class='col-md-4'>";
+                    $contenido .= "<div class='col'>";
                     if (!empty($fechaUltimaTemperatura)) {
-                        $contenido .= "<p><span class='text-muted'><strong>Última Temperatura Registrada:</strong></span> <strong>" . date('d/m/Y H:i', strtotime($fechaUltimaTemperatura)) . "</strong></p>";
+                        $contenido .= "<p><span class='text-black'>Última Fecha: </span> <span class='font-weight-bold'><strong>" . date('d/m/Y H:i', strtotime($fechaUltimaTemperatura)) . "</strong></span></p>";
                     }
-                    $contenido .= "<p><span class='text-muted'><strong>Temperatura Mínima:</strong></span> <span class='$claseTemperaturaMinima'><strong>" . $temperaturaMinima . "°C</strong></span></p>";
-
-                    // Mostrar temperatura máxima en el colapsable si es menor o igual a 4
-                    if ($temperaturaMaxima <= 4) {
-                        $contenido .= "<p><span class='text-muted'><strong>Temperatura Máxima:</strong></span> <span class='$claseTemperaturaMaxima'><strong>" . $temperaturaMaxima . "°C</strong></span></p>";
-                    }
+                    $contenido .= "<p><span class='text-black'>Temp: </span> <span class='$claseTemperaturaMinima'><span class='font-weight-bold'><strong>" . $temperaturaMinima . "°C</span></span><span> / </span> <span class='$claseTemperaturaMaxima'><span class='font-weight-bold'>" . $temperaturaMaxima . "°C</strong></span></span></p>";
                     $contenido .= "</div>"; // fin tercera columna
 
                     $contenido .= "</div>"; // fin row
-                    $contenido .= "</div></div>"; // fin collapse y contenido colapsable    
+                    $contenido .= "</div>"; // fin contenido colapsable
+                    $contenido .= "</details>"; // fin details
+                    $contenido .= "</div>"; // fin columna izquierda
 
+                    // Columna derecha (Fecha + botón detalles) - 25%
+                    $contenido .= "<div class='d-flex flex-column align-items-end' style='flex: 0 0 10%;'>";
+
+                    // Fecha (alineada a la derecha)
+                    $contenido .= "<div class='$claseFecha mb-1' style='font-size: 1.125rem; text-align: right;'><strong>" . date('d/m/Y H:i', strtotime($FechaCaptura)) . "</strong></div>";
+
+                    // Botón centrado con respecto a la fecha (horizontalmente)
+                    $contenido .= "<div style='width: fit-content; margin: 0 auto;'>";
+                    $contenido .= "<a title='Ver detalles completos' onclick='dibuja_pagina([3])'>";
+                    $contenido .= "<img src='Img/DetallesCaptura.png' alt='Ver detalles' style='width: 40px; height: 27px; cursor: pointer; border: none; display: block;'>";
+                    $contenido .= "</a>";
+                    $contenido .= "</div>";
+
+                    $contenido .= "</div>"; // fin columna derecha
+
+
+                    $contenido .= "</div>"; // fin cabecera
                     $contenido .= "</div>"; // fin tarjeta
+
                 }
             }
-
-
-
-
-
             
 
             elseif ($Pestana == 2) {
