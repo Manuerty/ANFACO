@@ -7,6 +7,11 @@ class Estado{
     public $IdIdentidad;
     public $datosPersonal = array();
 
+    public $IdUsuario;
+
+    public $IdUsuarioLogin;
+
+
     //variables documentos
     public $tipo_documento;
     public $filtrado_estado;

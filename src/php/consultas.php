@@ -41,7 +41,49 @@ use Pdo\Sqlite;
         }
     }
 
+    function get_users(){
+        try{
 
+            $conn = obtener_conexion();
+            if (!$conn) return false;
+
+            $sql = 'SELECT IdUsuario, Usuario, Contrasena
+                    FROM usuarios
+                    WHERE Rol = "Usuarios"';
+
+            $stmt = $conn->prepare($sql);
+
+
+            if (!$stmt->execute()) {
+                $stmt->close();
+                return false;
+            }
+
+
+            $result = $stmt->get_result();
+
+            $usuarios = [];
+
+            while ($row = $result->fetch_assoc()) {
+                $usuarios[] = [
+
+                    'IdUsuario'=> $row['IdUsuario'],
+                    'NombreUsuario'=> $row['Usuario'],
+                    'Contrasena'=> $row['Contrasena']
+                ];
+            }
+
+            $stmt->close();
+            $conn->close();
+
+            // Guardar en variable de sesión como un array plano, sin agrupar por TagPez
+                
+            return $usuarios;
+
+        }catch (Exception $e) {
+            return false;
+        }
+    }
 
     function get_all_data($idUsuario = null) {
         try {
@@ -74,7 +116,6 @@ use Pdo\Sqlite;
                 $sql .= " WHERE bodegas.IdBarco IN (SELECT IdBarco FROM barcos WHERE IdUsuario = ?)";
             }
 
-
             $sql .= " ORDER BY FechaCaptura DESC";
     
             $stmt = $conn->prepare($sql);
@@ -86,9 +127,7 @@ use Pdo\Sqlite;
             // Si hay un IdUsuario, lo vinculamos a la consulta
             if ($idUsuario) {
                 $stmt->bind_param("i", $idUsuario);
-            }
-
-            
+            }      
     
             if (!$stmt->execute()) {
                 $stmt->close();
@@ -120,8 +159,6 @@ use Pdo\Sqlite;
             $stmt->close();
             $conn->close();
 
-            
-    
             // Guardar en variable de sesión como un array plano, sin agrupar por TagPez
                 
             return $capturas;
@@ -145,18 +182,12 @@ use Pdo\Sqlite;
                 $sql .= " WHERE  idUsuario = ? ";
             }
 
-           
-    
             $stmt = $conn->prepare($sql);
-
-            
 
             if (!$stmt) {
                 $conn->close();
                 return false;
             }
-
-            
     
             // Si hay un IdUsuario, lo vinculamos a la consulta
             if ($idUsuario) {
@@ -168,8 +199,6 @@ use Pdo\Sqlite;
                 $conn->close();
                 return false;
             }
-
-            
     
             $result = $stmt->get_result();
             $barcos = [];
@@ -186,25 +215,11 @@ use Pdo\Sqlite;
             $stmt->close();
             $conn->close();
 
-        
-            
-                
             return $barcos;
-
 
         }catch (Exception $e) {
             
             return false;
         }
     }
-    
-    
-    
-
-
-
-
-
-    
-    
 ?>
