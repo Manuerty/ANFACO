@@ -83,75 +83,13 @@
         if (isset($arraydatos) && !empty($arraydatos)) {
 
             $contenido .= "<table class='table table-striped table-bordered-bottom'>";
-            //echo $_SESSION[$nombreVariableSesion];
-            // Lógica específica para capturas
-            if ($Pestana == 1) {
-                foreach ($arraydatos as $index => $captura) {
-                    $TotalAlmacenes          = safe_html($captura["CuentaAlmacen"] ?? null);
-                    $temperaturaMaxima       = safe_html($captura["TemperaturaMaxima"] ?? null);
-                    $temperaturaMinima       = safe_html($captura["TemperaturaMinima"] ?? null);
-                    $fechaUltimaTemperatura  = safe_html($captura["FechaUltimoAlmacen"] ?? null);
-                    $idUltimoAlmacen         = safe_html($captura["IdTipoAlmacen"] ?? null);
-                    $tipoUltimoAlmacen       = safe_html($captura["TipoAlmacen"] ?? null);
-                    $ZonaCaptura             = safe_html($captura["Zona"] ?? null);
-                    $EspecieCapturada        = safe_html($captura["Especie"] ?? null);
-                    $FechaCaptura            = safe_html($captura["FechaCaptura"] ?? null);
-                    $NombreBarcoCaptura      = safe_html($captura["NombreBarco"] ?? null);
-                    $tagPez                  = htmlspecialchars($captura["TagPez"]);
             
-                    $claseTemperaturaMaxima = ($temperaturaMaxima > 4) ? "text-danger" : "";
-                    $claseTemperaturaMinima = ($temperaturaMinima > 4) ? "text-danger" : "";
             
-                    // Clase para la fecha según temperatura máxima
-                    $claseFecha = ($temperaturaMaxima > 4) ? "text-danger" : "text-success";
             
-                    // Tarjeta principal
-                    $contenido .= "<div class='card mb-3 p-3 border shadow-sm'>";
-            
-                    // Cabecera: Tag + Fecha a la derecha
-                    $contenido .= "<div class='d-flex justify-content-between align-items-start mb-2'>";
-                    $contenido .= "<h5 class='card-title mb-0'><strong>$tagPez</strong></h5>";
-                    $contenido .= "<div class='small $claseFecha'>" . date('d/m/Y H:i', strtotime($FechaCaptura)) . "</div>";
-                    $contenido .= "</div>";
-            
-                    // Temperatura máxima visible solo si es >= 4
-                    if ($temperaturaMaxima >= 4) {
-                        $contenido .= "<div class='mb-2'><p>Temp Max: <span class='$claseTemperaturaMaxima'> <strong>" . $temperaturaMaxima ."°C</span></strong> </p></div>";
-                    }
-            
-                    // Botón para desplegar detalles
-                    $contenido .= "<button class='btn btn-sm btn-outline-secondary mb-2' type='button' data-bs-toggle='collapse' data-bs-target='#detallesCaptura$index' aria-expanded='false'>";
-                    $contenido .= "Ver más detalles 🔽</button>";
-            
-                    // Contenido colapsable
-                    $contenido .= "<div class='collapse' id='detallesCaptura$index'>";
-                    $contenido .= "<div class='pt-2'>";
-            
-                    // Layout en tres columnas
-                    $contenido .= "<div class='row'>";
-                    $contenido .= "<div class='col-md-4'><strong>Lugar de Captura:</strong> $ZonaCaptura</div>";
-                    $contenido .= "<div class='col-md-4'><strong>Especie Capturada:</strong> $EspecieCapturada</div>";
-                    $contenido .= "<div class='col-md-4'><strong>Nombre del Barco:</strong> $NombreBarcoCaptura</div>";
-                    $contenido .= "<div class='col-md-4'><strong>Almacenes por los que ha pasado:</strong> $TotalAlmacenes</div>";
-            
-                    if (!empty($fechaUltimaTemperatura)) {
-                        $contenido .= "<div class='col-md-4'><strong>Última Temperatura Registrada:</strong> " . date('d/m/Y H:i', strtotime($fechaUltimaTemperatura)) . "</div>";
-                    }
-            
-                    $contenido .= "<div class='col-md-4'><strong>ID Último Almacén:</strong> $idUltimoAlmacen</div>";
-                    $contenido .= "<div class='col-md-4'><strong>Tipo de Almacén:</strong> $tipoUltimoAlmacen</div>";
-                    $contenido .= "<div class='col-md-4'><strong>Temperatura Mínima:</strong> <span class='$claseTemperaturaMinima'>" . $temperaturaMinima . "°C</span></div>";
-                    $contenido .= "</div>"; // fin row
-            
-                    $contenido .= "</div></div>"; // fin collapse y contenido
-            
-                    $contenido .= "</div>"; // fin tarjeta
-                }
-            }
             
 
             // Lógica específica para barcos
-            elseif ($Pestana == 0) {
+            if ($Pestana == 0) {
                 
                 foreach ($arraydatos as $index => $barco) {
                     $contenido .= "<div class='card mb-3 p-3 border shadow-sm'>";
@@ -168,6 +106,106 @@
                     $contenido .= "</div>"; // cierre de tarjeta
                 }
             }
+        
+            // Lógica específica para capturas
+            elseif ($Pestana == 1) {
+                foreach ($arraydatos as $index => $captura) {
+                    $TotalAlmacenes          = safe_html($captura["CuentaAlmacen"] ?? null);
+                    $temperaturaMaxima       = safe_html($captura["TemperaturaMaxima"] ?? null);
+                    $temperaturaMinima       = safe_html($captura["TemperaturaMinima"] ?? null);
+                    $fechaUltimaTemperatura  = safe_html($captura["FechaUltimoAlmacen"] ?? null);
+                    $idUltimoAlmacen         = safe_html($captura["IdTipoAlmacen"] ?? null);
+                    $tipoUltimoAlmacen       = safe_html($captura["TipoAlmacen"] ?? null);
+                    $ZonaCaptura             = safe_html($captura["Zona"] ?? null);
+                    $EspecieCapturada        = safe_html($captura["Especie"] ?? null);
+                    $FechaCaptura            = safe_html($captura["FechaCaptura"] ?? null);
+                    $NombreBarcoCaptura      = safe_html($captura["NombreBarco"] ?? null);
+                    $tagPez                  = htmlspecialchars($captura["TagPez"]);
+
+                    $claseTemperaturaMaxima = ($temperaturaMaxima > 4) ? "text-danger" : "text-success"; // Cambia el color a verde si es menor o igual a 4
+                    $claseTemperaturaMinima = ($temperaturaMinima > 4) ? "text-danger" : "";
+
+                    // Clase para la fecha según temperatura máxima
+                    $claseFecha = ($temperaturaMaxima > 4) ? "text-danger" : "text-success";
+
+                    // Tarjeta principal
+                    $contenido .= "<div class='card mb-3 p-3 border shadow-sm'>";
+
+                    // Cabecera principal con dos columnas: izquierda (tag + temp) / derecha (fecha + imagen)
+                    $contenido .= "<div class='d-flex justify-content-between mb-2' style='font-size: 1.1rem;'>";
+
+                    // Izquierda: Tag del pez y temperatura máxima si existe
+                    $contenido .= "<div>";
+                    $contenido .= "<h5 class='card-title mb-1' style='font-size: 1.5rem;'><strong>$tagPez</strong></h5>";  // Aumento de tamaño de fuente para el tag del pez
+                    if ($temperaturaMaxima >= 4) {
+                        $contenido .= "<p class='mb-0'>Temp Max: <span class='$claseTemperaturaMaxima' style='margin-top: 10px; display: inline-block;'><strong>" . $temperaturaMaxima . "°C</strong></span></p>";
+                    }
+                    $contenido .= "</div>";
+
+                    // Derecha: Fecha + imagen (en lugar del botón)
+                    $contenido .= "<div class='text-end d-flex flex-column align-items-center'>";
+                    $contenido .= "<div class='$claseFecha mb-2' style='font-size: 1.5rem;'><strong>" . date('d/m/Y H:i', strtotime($FechaCaptura)) . "</strong></div>";  // Aumento de tamaño de fuente para la fecha
+                    $contenido .= "<a title='Ver detalles completos' style='display: inline-block; margin-top: 10px;' onclick='dibuja_pagina([3])'>"; // Añadimos el onclick
+                    $contenido .= "<img src='Img/DetallesCaptura.png' alt='Ver detalles' style='width: 54px; height: 36px; cursor: pointer; border: none;'>"; // Cambiar el botón por la imagen
+                    $contenido .= "</a>";
+                    $contenido .= "</div>";
+
+                    $contenido .= "</div>"; // fin cabecera
+
+                    // Aquí está el botón original que debes cambiar
+                    // Botón desplegable (anteriormente un botón, ahora lo reemplazamos por la imagen)
+                    $contenido .= "<div class='d-flex justify-content-start'>";
+                    $contenido .= "<a data-bs-toggle='collapse' data-bs-target='#detallesCaptura$index' aria-expanded='false' aria-controls='detallesCaptura$index' title='Expandir detalles'>";
+                    $contenido .= "<img src='Img/ExpandCollapsable.png' alt='Expandir detalles' style='width: 36px; height: 36px; cursor: pointer; border: none;'>"; // Reemplazamos el botón por la imagen
+                    $contenido .= "</a>";
+                    $contenido .= "</div>";
+
+                    // Contenido colapsable
+                    $contenido .= "<div class='collapse' id='detallesCaptura$index'>";
+                    $contenido .= "<div class='pt-2'>";
+
+                    // Layout en tres columnas bien distribuidas
+                    $contenido .= "<div class='row'>";
+
+                    // Primera columna
+                    $contenido .= "<div class='col-md-4'>";
+                    $contenido .= "<p><span class='text-muted'><strong>Lugar de Captura:</strong></span> <strong>$ZonaCaptura</strong></p>";
+                    $contenido .= "<p><span class='text-muted'><strong>Especie Capturada:</strong></span> <strong>$EspecieCapturada</strong></p>";
+                    $contenido .= "<p><span class='text-muted'><strong>Nombre del Barco:</strong></span> <strong>$NombreBarcoCaptura</strong></p>";
+                    $contenido .= "</div>";
+
+                    // Segunda columna
+                    $contenido .= "<div class='col-md-4'>";
+                    $contenido .= "<p><span class='text-muted'><strong>Almacenes por los que ha pasado:</strong></span> <strong>$TotalAlmacenes</strong></p>";
+                    $contenido .= "<p><span class='text-muted'><strong>ID Último Almacén:</strong></span> <strong>$idUltimoAlmacen</strong></p>";
+                    $contenido .= "<p><span class='text-muted'><strong>Tipo de Almacén:</strong></span> <strong>$tipoUltimoAlmacen</strong></p>";
+                    $contenido .= "</div>";
+
+                    // Tercera columna
+                    $contenido .= "<div class='col-md-4'>";
+                    if (!empty($fechaUltimaTemperatura)) {
+                        $contenido .= "<p><span class='text-muted'><strong>Última Temperatura Registrada:</strong></span> <strong>" . date('d/m/Y H:i', strtotime($fechaUltimaTemperatura)) . "</strong></p>";
+                    }
+                    $contenido .= "<p><span class='text-muted'><strong>Temperatura Mínima:</strong></span> <span class='$claseTemperaturaMinima'><strong>" . $temperaturaMinima . "°C</strong></span></p>";
+
+                    // Mostrar temperatura máxima en el colapsable si es menor o igual a 4
+                    if ($temperaturaMaxima <= 4) {
+                        $contenido .= "<p><span class='text-muted'><strong>Temperatura Máxima:</strong></span> <span class='$claseTemperaturaMaxima'><strong>" . $temperaturaMaxima . "°C</strong></span></p>";
+                    }
+                    $contenido .= "</div>"; // fin tercera columna
+
+                    $contenido .= "</div>"; // fin row
+                    $contenido .= "</div></div>"; // fin collapse y contenido colapsable    
+
+                    $contenido .= "</div>"; // fin tarjeta
+                }
+            }
+
+
+
+
+
+            
 
             elseif ($Pestana == 2) {
                 foreach ($arraydatos as $index => $barcos) {
