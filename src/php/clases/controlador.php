@@ -36,9 +36,6 @@ Class Controlador{
            // Verificar estado y reinicializar según el caso
             if ($this->miEstado->Estado == 0) {
                 $this->cerrarSesion();
-                $_SESSION["Usuarios"] = [];
-                $_SESSION["Capturas"] = [];
-                $_SESSION["Barcos"] = [];
             } elseif ($this ->miEstado->Estado == 0.5) {
                 $this -> miEstado -> IdLastUser = $this -> miEstado -> IdUsuarioSeleccionado;
                 $this -> miEstado -> IdUsuarioSeleccionado = null;
@@ -120,6 +117,9 @@ Class Controlador{
         $this -> miEstado -> acciones = array("archivos"=> 0,
                                         "observaciones" => 0,
                                         "añadir" => 0);
+        $_SESSION["Usuarios"] = [];
+        $_SESSION["Capturas"] = [];
+        $_SESSION["Barcos"] = [];
         if(isset($_SESSION["header"])){
             $this -> miEstado -> header = $_SESSION["header"];
             $_SESSION["header"] = null;
@@ -221,12 +221,19 @@ Class Controlador{
             }
             $this -> navegarPestanas($nav);
         }
-
+        //logica de cerrar sesion//
+        elseif (isset($arrayDatos[0]) && $arrayDatos[0] == -1 && $arrayDatos[1] == -1){
+            $nav = 0;
+            $this -> cerrarSesion();
+            $this -> navegarPestanas($nav);
+        }
         //Logica Boton Volver//
         elseif(isset($arrayDatos[0]) && $arrayDatos[0] == -1){
             $this -> navegarPestanas(-1);
         }
         
+
+         
         $txtErr = "";
 
         
