@@ -28,11 +28,14 @@ Class Controlador{
         //volver a la anterior
         if($ps == -1){
             //salir del modo formulario
-            if( $this->miEstado->Estado == 1 or $this->miEstado->Estado == 0.5){
-                $this->miEstado->Estado = 0;
-            } else {
-                $estadoAnterior = array_shift($this->miEstado->EstadosAnteriores);
-                $this->miEstado->Estado = $estadoAnterior;
+            
+            $estadoAnterior = array_shift($this->miEstado->EstadosAnteriores);
+            $this->miEstado->Estado = $estadoAnterior;
+
+
+            //reinicializar variables
+            if($this -> miEstado -> Estado == 0){
+                $this -> cerrarSesion();
             }
             
             //reinicializar variables
@@ -44,6 +47,7 @@ Class Controlador{
             error_log('IdPropietario: ' . $this->miEstado->IdPropietario);
             
         } else {
+            
             array_unshift($this->miEstado->EstadosAnteriores , $this->miEstado->Estado);
             $this->miEstado->Estado = $ps;
         }
@@ -94,10 +98,6 @@ Class Controlador{
         }
     }
 
-    
-    
-    
-    
 
     function cerrarSesion(){
     //Cerrar sesion reinicializando variables
@@ -105,7 +105,6 @@ Class Controlador{
         $this -> miEstado -> Estado = 0;
         $this -> miEstado -> Documentos = array();
         $this -> miEstado -> FiltrosDoc = array();
-        $this -> miEstado -> tipo_App = $_SESSION["TipoPortal"];
         $this -> miEstado -> acciones = array("archivos"=> 0,
                                         "observaciones" => 0,
                                         "añadir" => 0);
@@ -122,7 +121,7 @@ Class Controlador{
 
     function set_and_print($id_user){
 
-        $this -> miEstado -> Estado = 1;
+        
 
         $this -> miEstado -> IdUsuario = $id_user;
 
@@ -132,7 +131,7 @@ Class Controlador{
         echo "hola";
 
         
-        $this -> miEstado -> Estado = 1;
+        
         $nav = 1;
         $this -> navegarPestanas($nav);
 
@@ -145,22 +144,15 @@ Class Controlador{
         $accionJs = null;
         $msgError = "" ;
         $AccionSinRepintar = 0;
-
-        
-    
-        if($this -> miEstado -> Estado == null){
-            $this -> miEstado -> Estado = 0;
-        }
     
         $c = $this -> miEstado -> Estado; 
-
-        
     
         $nav = "";
         // Asegurarse de que $arrayDatos tenga al menos un elemento antes de acceder a $arrayDatos[0]
-        if($c === 0 or $c === 0.5 && !empty($arrayDatos) && isset($arrayDatos[0]) && $arrayDatos[0] != -1){
+        if($c === 0  && !empty($arrayDatos) && isset($arrayDatos[0]) && $arrayDatos[0] != -1){
             //Log In//
             $nav = 0;
+            
             $InicioS = $this -> IniciarSesion($arrayDatos[0], $arrayDatos[1]);
             if($InicioS ===false){
                 $msgError = "Error de conexión con el servidor, por favor inténtelo más tarde.";
@@ -168,10 +160,10 @@ Class Controlador{
                 $msgError = "Usuario o contraseña incorrectos.";
             }elseif($InicioS === true){
                 if($_SESSION["es_admin"]){
-                    $this -> miEstado -> Estado = 0.5;
+                    
                     $nav = 0.5;
                 }else{
-                    $this -> miEstado -> Estado = 1;
+                    
                     $nav = 1;
                 }
             }   
@@ -182,10 +174,14 @@ Class Controlador{
             $nav = null;
             switch($arrayDatos[0]){
                 case 1:
+                    
                     $nav = 1;
                     break;
             }
+
+            $this -> navegarPestanas($nav);
         }
+
         elseif($c === 1 && !empty($arrayDatos) && isset($arrayDatos[0]) && ($arrayDatos[0] == 3 || $arrayDatos[0] == 4)){
             
             
@@ -216,6 +212,12 @@ Class Controlador{
         }
         
         $txtErr = "";
+
+        
+        $txtErr = "idUsuarioLogIn : ".$this -> miEstado -> IdUsuarioLogin.
+        "<br> idUsuarioElegido: ".$this -> miEstado -> IdPersonal."<br> Estado: ".$this -> miEstado -> Estado.
+        "<br> EstadosAnteriores: ".implode(",",$this -> miEstado -> EstadosAnteriores).
+        "<br> ArrayDatos: ".implode($arrayDatos);   
     
         return array(pinta_contenido($this -> miEstado -> Estado).$txtErr,$msgError,$AccionSinRepintar,$arrayAuxiliarHtml,$accionJs);
     }

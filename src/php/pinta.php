@@ -106,10 +106,7 @@
                     
                     $contenido .= "<div class='d-flex justify-content-between align-items-start mb-2'>";
                     $contenido .= "<h5 class='card-title mb-0'>" . ($tituloAlternativo ?? "Nombre: " . htmlspecialchars(string: $usuario["NombreUsuario"])) . "</h5>";
-                    $contenido .= "<button type='submit' class='btn btn-primary btn-sm' oclick = 'dibuja_pagina([1, 1,$idUsuario ])' >Entrar</button>";
-                    
-
-
+                    $contenido .= "<button type='submit' class='btn btn-primary btn-sm' onclick='dibuja_pagina([1])' >Entrar</button>";
 
                     $contenido .= "</div>"; // cierre d-flex
                     
