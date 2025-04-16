@@ -85,7 +85,7 @@ use Pdo\Sqlite;
         }
     }
 
-    function get_all_data($idUsuario = null) {
+    function get_capturas($idUsuario = null) {
         try {
             $conn = obtener_conexion();
             if (!$conn) return false;

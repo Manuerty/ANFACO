@@ -77,7 +77,7 @@
         } elseif($Pestana == 1){
             $arraydatos = $_SESSION['Barcos'];
         } elseif($Pestana == 2){
-            $arraydatos = $_SESSION['AllData'];
+            $arraydatos = $_SESSION['Capturas'];
         }
 
         $contenido = "";
@@ -106,7 +106,7 @@
                     
                     $contenido .= "<div class='d-flex justify-content-between align-items-start mb-2'>";
                     $contenido .= "<h5 class='card-title mb-0'>" . ($tituloAlternativo ?? "Nombre: " . htmlspecialchars(string: $usuario["NombreUsuario"])) . "</h5>";
-                    $contenido .= "<button type='submit' class='btn btn-primary btn-sm' onclick='dibuja_pagina([1])' >Entrar</button>";
+                    $contenido .= "<button type='submit' class='btn btn-primary btn-sm' onclick='dibuja_pagina([1, $idUsuario])' >Entrar</button>";
 
                     $contenido .= "</div>"; // cierre d-flex
                     
