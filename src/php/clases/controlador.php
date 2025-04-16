@@ -37,6 +37,8 @@ Class Controlador{
             if ($this->miEstado->Estado == 0) {
                 $this->cerrarSesion();
                 $_SESSION["Usuarios"] = [];
+                $_SESSION["Capturas"] = [];
+                $_SESSION["Barcos"] = [];
             } elseif ($this ->miEstado->Estado == 0.5) {
                 $this -> miEstado -> IdLastUser = $this -> miEstado -> IdUsuarioSeleccionado;
                 $this -> miEstado -> IdUsuarioSeleccionado = null;
@@ -127,6 +129,7 @@ Class Controlador{
             $this -> miEstado -> header = fread($header,filesize($header_Empresa));
             fclose($header);
         }  
+        
     }
 
     function setNewUser($IdUser){
