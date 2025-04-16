@@ -63,8 +63,10 @@
             $filetext = str_replace("%LineasE%", DibujaTablaGenerica(1),$filetext);
         }
         elseif($_SESSION["Controlador"] -> miEstado -> Estado == 3){
-            
             $filetext = str_replace("%LineasE%", DibujaTablaGenerica(2),$filetext);
+        }
+        elseif($_SESSION["Controlador"] -> miEstado -> Estado == 4){
+            $filetext = str_replace("%LineasE%", DibujaTablaGenerica(3),$filetext);
         }
         return $filetext;
     }
@@ -78,7 +80,11 @@
             $arraydatos = $_SESSION['Barcos'];
         } elseif($Pestana == 2){
             $arraydatos = $_SESSION['Capturas'];
+        } elseif($Pestana == 3){
+            $arraydatos = $_SESSION['Temperaturas'];
         }
+
+        //var_dump($arraydatos);
 
         $contenido = "";
     
@@ -202,17 +208,19 @@
                     $contenido .= "</div>"; // fin tarjeta
                 }
             }
+
+            //Lógica específica para detalles de captura
     
             elseif ($Pestana == 3) {
-                foreach ($arraydatos as $index => $barcos) {
+                foreach ($arraydatos as $index => $Temperaturas) {
                     $backgroundColor = ($index % 2 == 0) ? 'background-color: whitesmoke;' : 'background-color: white;';
                     $contenido .= "<div class='card p-3 border shadow-sm' style='$backgroundColor margin-bottom: 0;'>";
 
                     $contenido .= "<div class='d-flex justify-content-between align-items-start mb-2'>";
-                    $contenido .= "<h5 class='card-title mb-0'><strong>" . htmlspecialchars($barcos["Nombre"]) . "</strong></h5>";
+                    $contenido .= "<h5 class='card-title mb-0'><strong>" . htmlspecialchars($Temperaturas["FechaTemperatura"]) . "</strong></h5>";
                     $contenido .= "</div>";
 
-                    $contenido .= "<div><span>Código: </span><strong>" . htmlspecialchars($barcos["CodigoBarco"]) . "</strong></div>";
+                    $contenido .= "<div><span>Código: </span><strong>" . htmlspecialchars($Temperaturas["ValorTemperatura"]) . "</strong></div>";
 
                     $contenido .= "</div>";
 

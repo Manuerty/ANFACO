@@ -222,4 +222,57 @@ use Pdo\Sqlite;
             return false;
         }
     }
+
+    function get_Temperaturas($tagPez = null) {
+        try {
+            $conn = obtener_conexion();
+            if (!$conn) return false;
+    
+            $sql = "SELECT aTmp.Fecha, aTmp.Temperatura
+                    FROM almacen_temperaturas aTmp
+                    JOIN almacen a ON aTmp.Id = a.Id";
+    
+            // Si se pasó un tagPez, agregamos el filtro
+            if ($tagPez) {
+                $sql .= " WHERE a.TagPez = ?";
+            }
+    
+            $stmt = $conn->prepare($sql);
+    
+            if (!$stmt) {
+                $conn->close();
+                return false;
+            }
+    
+            // Si hay un tagPez, lo vinculamos a la consulta
+            if ($tagPez) {
+                $stmt->bind_param("s", $tagPez); // "s" porque TagPez es tipo string
+            }
+    
+            if (!$stmt->execute()) {
+                $stmt->close();
+                $conn->close();
+                return false;
+            }
+    
+            $result = $stmt->get_result();
+            $temperaturas = [];
+    
+            while ($row = $result->fetch_assoc()) {
+                $temperaturas[] = [
+                    "FechaTemperatura" => $row["Fecha"],
+                    "ValorTemperatura" => $row["Temperatura"]
+                ];
+            }
+    
+            $stmt->close();
+            $conn->close();
+    
+            return $temperaturas;
+    
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+    
 ?>

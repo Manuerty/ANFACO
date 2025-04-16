@@ -84,19 +84,25 @@ Class Controlador{
             $usuarios = [];
             $capturas = [];
             $barcos = [];
+            $temperaturas = [];
 
             // Obtener datos según el tipo de usuario
             if ($_SESSION["es_admin"]) {
                 $usuarios = get_users();
+                $temperaturas = get_Temperaturas();
+                
             } else {
                 $capturas = get_capturas($datosSesion[0]);
                 $barcos = get_Barcos($datosSesion[0]);
+                $temperaturas = get_Temperaturas();
             }
 
             // Asignar a sesión, usando operador ternario o directamente el valor
             $_SESSION["Capturas"] = $capturas ?: [];
             $_SESSION["Barcos"] = $barcos ?: [];
             $_SESSION["Usuarios"] = $usuarios ?: [];
+            $_SESSION["Temperaturas"] = $temperaturas ?: [];
+
 
             return true;
 
@@ -146,6 +152,7 @@ Class Controlador{
 
     function generarContenido($arrayDatos = array()){
 
+        
         $arrayAuxiliarHtml = array();
         $accionJs = null;
         $msgError = "" ;
@@ -211,9 +218,10 @@ Class Controlador{
         }
         //Logica Detalle de captura//
         elseif($c == 3 && !empty($arrayDatos) && isset($arrayDatos[0]) && $arrayDatos[0] == 3){
+ 
 
-            
             $nav = null;
+
             switch($arrayDatos[0]){
                 case 3:
                     $nav = 4;
@@ -245,7 +253,9 @@ Class Controlador{
         "<br> ArrayDatos: ".implode($arrayDatos).
         "<br> Capturas: ".count($_SESSION["Capturas"]).
         "<br> Barcos: ".count($_SESSION["Barcos"]).
-        "<br> Users: ".count($_SESSION["Usuarios"]);   
+        "<br> Users: ".count($_SESSION["Usuarios"]).
+        "<br> Temperaturas: ".count($_SESSION["Temperaturas"]).
+        "<br> ArrayDatos: ".implode($arrayDatos);   
     
         return array(pinta_contenido($this -> miEstado -> Estado).$txtErr,$msgError,$AccionSinRepintar,$arrayAuxiliarHtml,$accionJs);
     }
