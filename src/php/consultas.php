@@ -236,6 +236,8 @@ use Pdo\Sqlite;
             if ($tagPez) {
                 $sql .= " WHERE a.TagPez = ?";
             }
+
+            $sql .= " ORDER BY aTmp.Fecha DESC";
     
             $stmt = $conn->prepare($sql);
     

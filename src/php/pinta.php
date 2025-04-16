@@ -215,18 +215,29 @@
             elseif ($Pestana == 3) {
                 foreach ($arraydatos as $index => $Temperaturas) {
                     $backgroundColor = ($index % 2 == 0) ? 'background-color: whitesmoke;' : 'background-color: white;';
+                    
+                    $fecha = safe_html($Temperaturas["FechaTemperatura"] ?? null);
+                    $valorTemp = floatval($Temperaturas["ValorTemperatura"] ?? 0);
+            
+                    $claseTemperatura = ($valorTemp > 4) ? "text-danger" : "text-success";
+            
                     $contenido .= "<div class='card p-3 border shadow-sm' style='$backgroundColor margin-bottom: 0;'>";
-
-                    $contenido .= "<div class='d-flex justify-content-between align-items-start mb-2'>";
-                    $contenido .= "<h5 class='card-title mb-0'><strong>" . htmlspecialchars($Temperaturas["FechaTemperatura"]) . "</strong></h5>";
-                    $contenido .= "</div>";
-
-                    $contenido .= "<div><span>Código: </span><strong>" . htmlspecialchars($Temperaturas["ValorTemperatura"]) . "</strong></div>";
-
-                    $contenido .= "</div>";
-
+            
+                    // Cambio aquí: justify-content-start + gap-4
+                    $contenido .= "<div class='d-flex justify-content-start align-items-center gap-4' style='font-size: 1.1rem;'>";
+            
+                    $contenido .= "<div><strong>" . date('d/m/Y H:i', strtotime($fecha)) . "</strong></div>";
+            
+                    $contenido .= "<div><span class='text-black'>Temperatura: </span><span class='$claseTemperatura'><strong>" . $valorTemp . "°C</strong></span></div>";
+            
+                    $contenido .= "</div>"; // fin fila
+            
+                    $contenido .= "</div>"; // fin tarjeta
                 }
             }
+            
+            
+            
     
             $contenido .= "</tbody></table>";
         } else {
