@@ -121,13 +121,13 @@
                 foreach ($arraydatos as $index => $barco) {
                     $backgroundColor = ($index % 2 == 0) ? 'background-color: whitesmoke;' : 'background-color: white;';
                     $contenido .= "<div class='card p-3 border shadow-sm' style='$backgroundColor margin-bottom: 0;'>";
-    
+
                     $contenido .= "<div class='d-flex justify-content-between align-items-start mb-2'>";
-                    $contenido .= "<h5 class='card-title mb-0'>" . ($tituloAlternativo ?? "ID Barco: " . htmlspecialchars($barco["IdBarco"])) . "</h5>";
+                    $contenido .= "<h5 class='card-title mb-0'><strong>" . htmlspecialchars($barco["Nombre"]) . "</strong></h5>";
                     $contenido .= "</div>";
-    
-                    $contenido .= "<div>Nombre: <strong>" . htmlspecialchars($barco["Nombre"]) . "</strong></div>";
-                    $contenido .= "<div>Código: <strong>" . htmlspecialchars($barco["CodigoBarco"]) . "</strong></div>";
+
+                    $contenido .= "<div><span>Código: </span><strong>" . htmlspecialchars($barco["CodigoBarco"]) . "</strong></div>";
+
                     $contenido .= "</div>";
                 }
             }
@@ -207,14 +207,15 @@
                 foreach ($arraydatos as $index => $barcos) {
                     $backgroundColor = ($index % 2 == 0) ? 'background-color: whitesmoke;' : 'background-color: white;';
                     $contenido .= "<div class='card p-3 border shadow-sm' style='$backgroundColor margin-bottom: 0;'>";
-    
+
                     $contenido .= "<div class='d-flex justify-content-between align-items-start mb-2'>";
-                    $contenido .= "<h5 class='card-title mb-0'>" . ($tituloAlternativo ?? "ID Barco: " . htmlspecialchars($barcos["IdBarco"])) . "</h5>";
+                    $contenido .= "<h5 class='card-title mb-0'><strong>" . htmlspecialchars($barcos["Nombre"]) . "</strong></h5>";
                     $contenido .= "</div>";
-    
-                    $contenido .= "<div><strong>Nombre:</strong> " . htmlspecialchars($barcos["Nombre"]) . "</div>";
-                    $contenido .= "<div><strong>Código:</strong> " . htmlspecialchars($barcos["CodigoBarco"]) . "</div>";
+
+                    $contenido .= "<div><span>Código: </span><strong>" . htmlspecialchars($barcos["CodigoBarco"]) . "</strong></div>";
+
                     $contenido .= "</div>";
+
                 }
             }
     

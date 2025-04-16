@@ -33,20 +33,21 @@ Class Controlador{
             $this->miEstado->Estado = $estadoAnterior;
 
 
-            //reinicializar variables
-            if($this -> miEstado -> Estado == 0){
-                $this -> cerrarSesion();
-                $_SESSION["Usuarios"] = array();
-                
-            } elseif( $_SESSION["es_admin"] && $this -> miEstado -> Estado == 0.5){
-                $this -> miEstado -> IdUsuario = null;
-                $_SESSION["Capturas"] = array();
-                $_SESSION["Barcos"] = array();
+           // Verificar estado y reinicializar según el caso
+            if ($this->miEstado->Estado == 0) {
+                $this->cerrarSesion();
+                $_SESSION["Usuarios"] = [];
+            } elseif ($_SESSION["es_admin"] && $this->miEstado->Estado == 0.5) {
+                $this->miEstado->IdUsuario = null;
+                $_SESSION["Capturas"] = [];
+                $_SESSION["Barcos"] = [];
             }
-            
-            //reinicializar variables
+
+            // Reinicialización común
             $this->miEstado->nombreDocumentoPadre = null;
-            $this->miEstado->IdPropietario = null; 
+            $this->miEstado->IdPropietario = null;
+
+ 
             
             // Imprimir en el log del servidor
             error_log('nombreDocumentoPadre: ' . $this->miEstado->nombreDocumentoPadre);
@@ -127,7 +128,7 @@ Class Controlador{
         }  
     }
 
-    function set_and_print($id_user){
+    function setNewUser($id_user){
         $_SESSION["Capturas"] = get_capturas($id_user);
         $_SESSION["Barcos"] = get_Barcos($id_user);
     }
@@ -143,6 +144,7 @@ Class Controlador{
     
         $nav = "";
         // Asegurarse de que $arrayDatos tenga al menos un elemento antes de acceder a $arrayDatos[0]
+        //Logica Login//
         if($c === 0  && !empty($arrayDatos) && isset($arrayDatos[0]) && $arrayDatos[0] != -1){
             //Log In//
             $nav = 0;
@@ -163,10 +165,12 @@ Class Controlador{
             }   
             $this -> navegarPestanas($nav);
         }
+
+        //Logica Seleccion de usuario//
         elseif($c === 0.5 && !empty($arrayDatos) && isset($arrayDatos[0]) && ($arrayDatos[0] == 1)){
 
             $this ->miEstado -> IdUsuario = $arrayDatos[1];
-            $this -> set_and_print($this -> miEstado -> IdUsuario);
+            $this -> setNewUser($this -> miEstado -> IdUsuario);
             $nav = null;
             switch($arrayDatos[0]){
                 case 1:
@@ -177,7 +181,8 @@ Class Controlador{
             $this -> navegarPestanas($nav);
         }
 
-        elseif($c === 1 && !empty($arrayDatos) && isset($arrayDatos[0]) && ($arrayDatos[0] == 3 || $arrayDatos[0] == 4)){
+        //Logica Dashboard//
+        elseif($c === 1  && !empty($arrayDatos) && isset($arrayDatos[0]) && ($arrayDatos[0] == 3 || $arrayDatos[0] == 4)){
             
             
             $nav = null;
@@ -191,7 +196,9 @@ Class Controlador{
             }
             
             $this -> navegarPestanas($nav);
-        }elseif($c == 3 && !empty($arrayDatos) && isset($arrayDatos[0]) && $arrayDatos[0] == 3){
+        }
+        //Logica Detalle de captura//
+        elseif($c == 3 && !empty($arrayDatos) && isset($arrayDatos[0]) && $arrayDatos[0] == 3){
 
             
             $nav = null;
@@ -202,6 +209,8 @@ Class Controlador{
             }
             $this -> navegarPestanas($nav);
         }
+
+        //Logica Boton Volver//
         elseif(isset($arrayDatos[0]) && $arrayDatos[0] == -1){
             $this -> navegarPestanas(-1);
         }
