@@ -37,11 +37,12 @@ Class Controlador{
             if ($this->miEstado->Estado == 0) {
                 $this->cerrarSesion();
                 $_SESSION["Usuarios"] = [];
-            } elseif ($_SESSION["es_admin"] && $this->miEstado->Estado == 0.5) {
-                $this->miEstado->IdUsuario = null;
-                $_SESSION["Capturas"] = [];
-                $_SESSION["Barcos"] = [];
+            } elseif ($this ->miEstado->Estado == 0.5) {
+                $this -> miEstado -> IdLastUser = $this -> miEstado -> IdUsuarioSeleccionado;
+                $this -> miEstado -> IdUsuarioSeleccionado = null;
             }
+            
+            
 
             // Reinicialización común
             $this->miEstado->nombreDocumentoPadre = null;
@@ -128,9 +129,16 @@ Class Controlador{
         }  
     }
 
-    function setNewUser($id_user){
-        $_SESSION["Capturas"] = get_capturas($id_user);
-        $_SESSION["Barcos"] = get_Barcos($id_user);
+    function setNewUser($IdUser){
+
+        if ($IdUser == $this -> miEstado -> IdLastUser) {
+            return;
+        }
+        else{
+            $this -> miEstado -> IdUsuarioSeleccionado = $IdUser;
+            $_SESSION["Capturas"] = get_capturas($IdUser);
+            $_SESSION["Barcos"] = get_Barcos($IdUser);
+        }
     }
 
     function generarContenido($arrayDatos = array()){
@@ -168,9 +176,10 @@ Class Controlador{
 
         //Logica Seleccion de usuario//
         elseif($c === 0.5 && !empty($arrayDatos) && isset($arrayDatos[0]) && ($arrayDatos[0] == 1)){
-
-            $this ->miEstado -> IdUsuario = $arrayDatos[1];
-            $this -> setNewUser($this -> miEstado -> IdUsuario);
+            
+            
+            $this -> setNewUser($arrayDatos[1]);
+            $this ->miEstado -> IdUsuarioSeleccionado = $arrayDatos[1];
             $nav = null;
             switch($arrayDatos[0]){
                 case 1:
@@ -219,7 +228,9 @@ Class Controlador{
 
         
         $txtErr = "idUsuarioLogIn : ".$this -> miEstado -> IdUsuarioLogin.
-        "<br> idUsuarioElegido: ".$this -> miEstado -> IdUsuario."<br> Estado: ".$this -> miEstado -> Estado.
+        "<br> idUsuarioElegido: ".$this -> miEstado -> IdUsuarioSeleccionado.
+        "<br> IdLastUser: ".$this -> miEstado -> IdLastUser.
+        "<br> Estado: ".$this -> miEstado -> Estado.
         "<br> EstadosAnteriores: ".implode(",",$this -> miEstado -> EstadosAnteriores).
         "<br> ArrayDatos: ".implode($arrayDatos).
         "<br> Capturas: ".count($_SESSION["Capturas"]).

@@ -7,9 +7,14 @@ class Estado{
     public $IdIdentidad;
     public $datosPersonal = array();
 
-    public $IdUsuario;
-
     public $IdUsuarioLogin;
+    public $IdUsuarioSeleccionado;
+
+    public $IdLastUser;
+
+ 
+
+    
 
 
     //variables documentos
