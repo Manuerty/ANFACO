@@ -93,6 +93,7 @@ Class Controlador{
             $capturas = [];
             $barcos = [];
             $temperaturas = [];
+            $almacenes = [];
 
             // Obtener datos según el tipo de usuario
             if ($_SESSION["es_admin"]) {
@@ -110,6 +111,7 @@ Class Controlador{
             $_SESSION["Barcos"] = $barcos ?: [];
             $_SESSION["Usuarios"] = $usuarios ?: [];
             $_SESSION["Temperaturas"] = $temperaturas ?: [];
+            $_SESSION["Almacenes"] =  $almacenes ?:[];
 
 
             return true;
@@ -135,6 +137,7 @@ Class Controlador{
         $_SESSION["Capturas"] = [];
         $_SESSION["Barcos"] = [];
         $_SESSION["Temperaturas"] = [];
+        $_SESSION["Almacenes"] = [];
         if(isset($_SESSION["header"])){
             $this -> miEstado -> header = $_SESSION["header"];
             $_SESSION["header"] = null;
@@ -168,6 +171,7 @@ Class Controlador{
         else{
             $this -> miEstado -> TagPez = $tagPez;
             $_SESSION["Temperaturas"] = get_Temperaturas($tagPez);
+            $_SESSION["Almacenes"] = get_Almacenes($tagPez);
         }
     
     }
@@ -280,6 +284,7 @@ Class Controlador{
         "<br> Barcos: ".count($_SESSION["Barcos"]).
         "<br> Users: ".count($_SESSION["Usuarios"]).
         "<br> Temperaturas: ".count($_SESSION["Temperaturas"]).
+        "<br> Almacenes: ".count($_SESSION["Almacenes"]).
         "<br> ArrayDatos: ".implode($arrayDatos);   
     
         return array(pinta_contenido($this -> miEstado -> Estado).$txtErr,$msgError,$AccionSinRepintar,$arrayAuxiliarHtml,$accionJs);

@@ -82,6 +82,7 @@
             $arraydatos = $_SESSION['Capturas'];
         } elseif($Pestana == 3){
             $arraydatos = $_SESSION['Temperaturas'];
+            $arraydatosAdiccional = $_SESSION['Almacenes'];
         }
 
         //var_dump($arraydatos);
@@ -229,6 +230,29 @@
                     $contenido .= "<div><strong>" . date('d/m/Y H:i', strtotime($fecha)) . "</strong></div>";
             
                     $contenido .= "<div><span class='text-black'>Temperatura: </span><span class='$claseTemperatura'><strong>" . $valorTemp . "°C</strong></span></div>";
+            
+                    $contenido .= "</div>"; // fin fila
+            
+                    $contenido .= "</div>"; // fin tarjeta
+                }
+                foreach ($arraydatosAdiccional as $index => $Almacenes) {
+                    $backgroundColor = ($index % 2 == 0) ? 'background-color: whitesmoke;' : 'background-color: white;';
+                    
+                   $IdTipoAlmacen = $Almacenes['IdTipo'] ??'';
+                   $NombreAlmacen = $Almacenes['Nombre'] ??'';
+                   $ReferenciaAlmacen = $IdTipoAlmacen . " " . $NombreAlmacen;
+                   $FechaAlmacen = $Almacenes['FechaAlmacen'] ??'';
+                   $Lector = $Almacenes['Lector'] ??'';
+            
+                    $contenido .= "<div class='card p-3 border shadow-sm' style='$backgroundColor margin-bottom: 0;'>";
+            
+                    // Cambio aquí: justify-content-start + gap-4
+                    $contenido .= "<div class='d-flex justify-content-start align-items-center gap-4' style='font-size: 1.1rem;'>";
+            
+                    $contenido .= "<div><strong>Almacen: " . $ReferenciaAlmacen . "</strong></div>";
+            
+                    $contenido .= "<div><span class='text-black'>Fecha: </span><span><strong>" . $FechaAlmacen . "</strong></span></div>";
+                    $contenido .= "<div><span class='text-black'>Lector: </span><span><strong>" . $Lector .  "</strong></span></div>";
             
                     $contenido .= "</div>"; // fin fila
             

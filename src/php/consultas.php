@@ -223,21 +223,17 @@ use Pdo\Sqlite;
         }
     }
 
-    function get_Temperaturas($tagPez = null) {
+    function get_Temperaturas($tagPez) {
         try {
+
             $conn = obtener_conexion();
             if (!$conn) return false;
     
             $sql = "SELECT aTmp.Fecha, aTmp.Temperatura
                     FROM almacen_temperaturas aTmp
-                    JOIN almacen a ON aTmp.Id = a.Id";
-    
-            // Si se pasó un tagPez, agregamos el filtro
-            if ($tagPez) {
-                $sql .= " WHERE a.TagPez = ?";
-            }
-
-            $sql .= " ORDER BY aTmp.Fecha DESC";
+                    JOIN almacen a ON aTmp.Id = a.Id
+                    WHERE a.TagPez = ?
+                    ORDER BY aTmp.Fecha DESC";
     
             $stmt = $conn->prepare($sql);
     
@@ -275,6 +271,58 @@ use Pdo\Sqlite;
         } catch (Exception $e) {
             return false;
         }
+    }
+
+    function get_Almacenes($tagPez){
+        try {
+            $conn = obtener_conexion();
+            if (!$conn) return false;
+    
+            $sql = "SELECT  Fecha, LectorRFID, tiposalmacen.Nombre, tiposalmacen.IdTipoAlmacen  
+                        FROM almacen 
+                        LEFT JOIN tiposalmacen ON tiposalmacen.IdTipoAlmacen = almacen.IdTipoAlmacen
+                        WHERE almacen.TagPez = ?
+                        ORDER BY almacen.Fecha DESC";
+
+    
+            $stmt = $conn->prepare($sql);
+    
+            if (!$stmt) {
+                $conn->close();
+                return false;
+            }
+    
+            
+            $stmt->bind_param("s", $tagPez);
+            
+    
+            if (!$stmt->execute()) {
+                $stmt->close();
+                $conn->close();
+                return false;
+            }
+    
+            $result = $stmt->get_result();
+            $almacenes = [];
+    
+            while ($row = $result->fetch_assoc()) {
+                $almacenes[] = [
+                    "FechaAlmacen" => $row["Fecha"],
+                    "Lector" => $row["LectorRFID"],
+                    "NombreTipo"=> $row["Nombre"],
+                    "IdTipo"=> $row["IdTipoAlmacen"],
+                ];
+            }
+    
+            $stmt->close();
+            $conn->close();
+    
+            return $almacenes;
+    
+        } catch (Exception $e) {
+            return false;
+        }
+
     }
     
 ?>
