@@ -36,6 +36,8 @@ Class Controlador{
             //reinicializar variables
             if($this -> miEstado -> Estado == 0){
                 $this -> cerrarSesion();
+                $_SESSION["Usuarios"] = array();
+                
             } elseif( $_SESSION["es_admin"] && $this -> miEstado -> Estado == 0.5){
                 $this -> miEstado -> IdUsuario = null;
                 $_SESSION["Capturas"] = array();
@@ -65,7 +67,6 @@ Class Controlador{
         error_log('IdsTiposFiltro: ' . implode(',', $this->miEstado->IdsTiposFiltro));
         
     }
-    
 
     function IniciarSesion($usuario, $contrasena) {
         $datosSesion = comprueba_usuario($usuario, $contrasena);
@@ -130,8 +131,6 @@ Class Controlador{
         $_SESSION["Capturas"] = get_capturas($id_user);
         $_SESSION["Barcos"] = get_Barcos($id_user);
     }
-    
-
 
     function generarContenido($arrayDatos = array()){
 
