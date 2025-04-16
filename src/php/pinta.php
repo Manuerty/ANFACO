@@ -154,6 +154,7 @@
                     $FechaCaptura = safe_html($captura["FechaCaptura"] ?? null);
                     $NombreBarcoCaptura = safe_html($captura["NombreBarco"] ?? null);
                     $tagPez = htmlspecialchars($captura["TagPez"]);
+                    $refPez = $captura["TagPez"];
     
                     $claseTemperaturaMaxima = ($temperaturaMaxima > 4) ? "text-danger" : "text-success";
                     $claseTemperaturaMinima = ($temperaturaMinima > 4) ? "text-danger" : "text-success";
@@ -198,7 +199,7 @@
                     $contenido .= "<div class='$claseFecha mb-1' style='font-size: 1.125rem; text-align: right;'><strong>" . date('d/m/Y H:i', strtotime($FechaCaptura)) . "</strong></div>";
     
                     $contenido .= "<div style='width: fit-content; margin: 0 auto;'>";
-                    $contenido .= "<a title='Ver detalles completos' onclick='dibuja_pagina([3])'>";
+                    $contenido .= "<a title='Ver detalles completos' onclick='dibuja_pagina([3,".'"'.$refPez.'"'." ])'>";
                     $contenido .= "<img src='Img/DetallesCaptura.png' alt='Ver detalles' style='width: 40px; height: 27px; cursor: pointer; border: none; display: block;'>";
                     $contenido .= "</a>";
                     $contenido .= "</div>";

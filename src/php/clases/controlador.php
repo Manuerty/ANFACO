@@ -1,5 +1,7 @@
 <?php
 
+use Dom\Element;
+
 require_once 'estado.php';
 require_once 'pinta.php'; 
 require_once "consultas.php";
@@ -34,14 +36,20 @@ Class Controlador{
 
 
            // Verificar estado y reinicializar según el caso
+           //Reiniciar todas las variables si vas al log in
             if ($this->miEstado->Estado == 0) {
                 $this->cerrarSesion();
-            } elseif ($this ->miEstado->Estado == 0.5) {
+            }
+            //reiniciar variables de usuario
+            elseif ($this ->miEstado->Estado == 0.5) {
                 $this -> miEstado -> IdLastUser = $this -> miEstado -> IdUsuarioSeleccionado;
                 $this -> miEstado -> IdUsuarioSeleccionado = null;
             }
-            
-            
+            //reiniciar variables de captura
+            elseif( $this ->miEstado->Estado == 3) {
+                $this -> miEstado -> LastTagPez = $this -> miEstado -> TagPez;
+                $this -> miEstado -> TagPez = null;
+            }
 
             // Reinicialización común
             $this->miEstado->nombreDocumentoPadre = null;
@@ -89,12 +97,12 @@ Class Controlador{
             // Obtener datos según el tipo de usuario
             if ($_SESSION["es_admin"]) {
                 $usuarios = get_users();
-                $temperaturas = get_Temperaturas();
+                
                 
             } else {
                 $capturas = get_capturas($datosSesion[0]);
                 $barcos = get_Barcos($datosSesion[0]);
-                $temperaturas = get_Temperaturas();
+                
             }
 
             // Asignar a sesión, usando operador ternario o directamente el valor
@@ -126,6 +134,7 @@ Class Controlador{
         $_SESSION["Usuarios"] = [];
         $_SESSION["Capturas"] = [];
         $_SESSION["Barcos"] = [];
+        $_SESSION["Temperaturas"] = [];
         if(isset($_SESSION["header"])){
             $this -> miEstado -> header = $_SESSION["header"];
             $_SESSION["header"] = null;
@@ -148,6 +157,19 @@ Class Controlador{
             $_SESSION["Capturas"] = get_capturas($IdUser);
             $_SESSION["Barcos"] = get_Barcos($IdUser);
         }
+    }
+
+
+    function setNewCaptura($tagPez){
+
+        if($tagPez == $this -> miEstado -> LastTagPez){
+            return;
+        }
+        else{
+            $this -> miEstado -> TagPez = $tagPez;
+            $_SESSION["Temperaturas"] = get_Temperaturas($tagPez);
+        }
+    
     }
 
     function generarContenido($arrayDatos = array()){
@@ -219,9 +241,11 @@ Class Controlador{
         //Logica Detalle de captura//
         elseif($c == 3 && !empty($arrayDatos) && isset($arrayDatos[0]) && $arrayDatos[0] == 3){
  
-
             $nav = null;
 
+            $this -> setNewCaptura($arrayDatos[1]);
+            $this ->miEstado -> TagPez = $arrayDatos[1];
+            
             switch($arrayDatos[0]){
                 case 3:
                     $nav = 4;
@@ -248,9 +272,10 @@ Class Controlador{
         $txtErr = "idUsuarioLogIn : ".$this -> miEstado -> IdUsuarioLogin.
         "<br> idUsuarioElegido: ".$this -> miEstado -> IdUsuarioSeleccionado.
         "<br> IdLastUser: ".$this -> miEstado -> IdLastUser.
+        "<br> TagPez: ".$this -> miEstado -> TagPez.
+        "<br> LastTagPez: ".$this -> miEstado -> LastTagPez.
         "<br> Estado: ".$this -> miEstado -> Estado.
         "<br> EstadosAnteriores: ".implode(",",$this -> miEstado -> EstadosAnteriores).
-        "<br> ArrayDatos: ".implode($arrayDatos).
         "<br> Capturas: ".count($_SESSION["Capturas"]).
         "<br> Barcos: ".count($_SESSION["Barcos"]).
         "<br> Users: ".count($_SESSION["Usuarios"]).

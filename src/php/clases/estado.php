@@ -9,8 +9,10 @@ class Estado{
 
     public $IdUsuarioLogin;
     public $IdUsuarioSeleccionado;
-
     public $IdLastUser;
+
+    public $TagPez;
+    public $LastTagPez;
 
  
 
