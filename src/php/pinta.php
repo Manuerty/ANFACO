@@ -204,14 +204,14 @@
                     $contenido .= "</div>"; // fin columna izquierda
     
                     $contenido .= "<div class='d-flex flex-column align-items-end' style='flex: 0 0 10%;'>";
-                    $contenido .= "<div class='$claseFecha mb-1' style='font-size: 1.125rem; text-align: right;'><strong>" . date('d/m/Y H:i', strtotime($FechaCaptura)) . "</strong></div>";
-    
+                    $contenido .= "<div class='$claseFecha' style='font-size: 1.125rem; text-align: right; white-space: nowrap; margin-bottom: 0.3rem;'><strong>" . date('d/m/Y H:i', strtotime($FechaCaptura)) . "</strong></div>";
+
                     $contenido .= "<div style='width: fit-content; margin: 0 auto;'>";
                     $contenido .= "<a title='Ver detalles completos' onclick='dibuja_pagina([3,".'"'.$refPez.'"'." ])'>";
                     $contenido .= "<img src='Img/DetallesCaptura.png' alt='Ver detalles' style='width: 40px; height: 27px; cursor: pointer; border: none; display: block;'>";
                     $contenido .= "</a>";
                     $contenido .= "</div>";
-    
+
                     $contenido .= "</div>"; // fin columna derecha
                     $contenido .= "</div>"; // fin cabecera
                     $contenido .= "</div>"; // fin tarjeta
@@ -227,6 +227,14 @@
                 $EspecieCapturada = safe_html($capturaDetalle["Especie"] ?? '');
                 $FechaCaptura = safe_html($capturaDetalle["FechaCaptura"] ?? '');
                 $NombreBarcoCaptura = safe_html($capturaDetalle["NombreBarco"] ?? '');
+                $temperaturaMaximaCaptura = safe_html($capturaDetalle["TemperaturaMaxima"] ?? '');
+                $temperaturaMinimaCaptura = safe_html($capturaDetalle["TemperaturaMinima"] ?? '');
+                $idUltimoAlmacenCaptura = safe_html($capturaDetalle["IdTipoAlmacen"] ?? '');
+                $tipoUltimoAlmacenCaptura = safe_html($capturaDetalle["TipoAlmacen"] ?? '');
+
+                $claseTemperaturaMaxima = ($temperaturaMaximaCaptura > 4) ? "text-danger" : "text-success";
+                $claseTemperaturaMinima = ($temperaturaMinimaCaptura > 4) ? "text-danger" : "text-success";
+
             
                 $contenido .= "<div class='container-fluid'>";
                 $contenido .= "<div class='row'>";
@@ -242,6 +250,8 @@
                 if (!empty($FechaCaptura)) {
                     $contenido .= "<p>Fecha de Captura: <strong>" . date('d/m/Y H:i', strtotime($FechaCaptura)) . "</strong></p>";
                 }
+                $contenido .= "<p><span class='text-black'>Temp: </span> <span class='$claseTemperaturaMinima'><span class='font-weight-bold'><strong>" . $temperaturaMinimaCaptura . "°C</span></span><span> / </span> <span class='$claseTemperaturaMaxima'><span class='font-weight-bold'>" . $temperaturaMaximaCaptura . "°C</strong></span></span></p>";
+                $contenido .= "<p><span class='text-black'>Almacén: </span> <span class='font-weight-bold'><strong>$tipoUltimoAlmacenCaptura $idUltimoAlmacenCaptura</strong></span></p>";
                 $contenido .= "</div>";
                 $contenido .= "</div>"; // fin col izquierda
             
