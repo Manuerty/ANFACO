@@ -164,17 +164,46 @@ Class Controlador{
 
 
     function setNewCaptura($tagPez){
-
         if($tagPez == $this -> miEstado -> LastTagPez){
             return;
-        }
-        else{
+        } else {
             $this -> miEstado -> TagPez = $tagPez;
+
+            // Obtener los datos adicionales de la captura
             $_SESSION["Temperaturas"] = get_Temperaturas($tagPez);
             $_SESSION["Almacenes"] = get_Almacenes($tagPez);
+    
+            // Llamar a details_Captura para llenar la variable de sesión con los detalles de la captura
+            $this->details_Captura($tagPez);
+    
+            // Ahora $_SESSION["CapturaDetalle"] debería tener los datos si la captura fue encontrada
+            
+        }
+    }
+    
+
+    function details_Captura($tagPez){
+        // Verificar si las capturas están disponibles en la sesión
+        if (isset($_SESSION["Capturas"]) && !empty($_SESSION["Capturas"])) {
+            
+            // Buscar la captura que coincide con el tagPez directamente usando array_filter
+            $captura = array_filter($_SESSION["Capturas"], function($item) use ($tagPez) {
+                return $item['TagPez'] == $tagPez;
+            });
+    
+            // Si encontramos la captura, almacenamos el primer resultado en la sesión
+            if (!empty($captura)) {
+                $_SESSION["CapturaDetalle"] = array_values($captura)[0]; // Tomamos el primer elemento de la array filtrado
+                return true; // Se encontró la captura
+            }
         }
     
+        // Si no se encuentra la captura o no hay capturas en la sesión
+        $_SESSION["CapturaDetalle"] = null;
+        return false; // No se encontró la captura
     }
+    
+
 
     function generarContenido($arrayDatos = array()){
 

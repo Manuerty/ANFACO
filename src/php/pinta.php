@@ -83,6 +83,7 @@
         } elseif($Pestana == 3){
             $arraydatos = $_SESSION['Temperaturas'];
             $arraydatosAdiccional = $_SESSION['Almacenes'];
+            $capturaDetalle = $_SESSION['CapturaDetalle'];
         }
 
         //var_dump($arraydatos);
@@ -213,8 +214,7 @@
 
             elseif ($Pestana == 3) {
 
-                // Datos de la captura (reusamos uno del array actual como ejemplo)
-                $capturaDetalle = $arraydatos[0] ?? [];
+                
             
                 $tagPez = htmlspecialchars($capturaDetalle["TagPez"] ?? '');
                 $ZonaCaptura = safe_html($capturaDetalle["Zona"] ?? '');
@@ -229,12 +229,12 @@
                 $contenido .= "<div class='col-md-4'>";
                 $contenido .= "<div class='card p-3 border shadow-sm mb-3'>";
                 $contenido .= "<h5 class='card-title'><strong>Detalles de la Captura</strong></h5>";
-                $contenido .= "<p><strong>Tag:</strong> $tagPez</p>";
-                $contenido .= "<p><strong>Zona:</strong> $ZonaCaptura</p>";
-                $contenido .= "<p><strong>Especie:</strong> $EspecieCapturada</p>";
-                $contenido .= "<p><strong>Barco:</strong> $NombreBarcoCaptura</p>";
+                $contenido .= "<p>Tag:<strong> $tagPez</strong></p>";
+                $contenido .= "<p>Zona:<strong> $ZonaCaptura</strong></p>";
+                $contenido .= "<p>Especie:<strong> $EspecieCapturada</strong></p>";
+                $contenido .= "<p>Barco:<strong> $NombreBarcoCaptura</strong></p>";
                 if (!empty($FechaCaptura)) {
-                    $contenido .= "<p><strong>Fecha de Captura:</strong> " . date('d/m/Y H:i', strtotime($FechaCaptura)) . "</p>";
+                    $contenido .= "<p>Fecha de Captura: <strong>" . date('d/m/Y H:i', strtotime($FechaCaptura)) . "</strong></p>";
                 }
                 $contenido .= "</div>";
                 $contenido .= "</div>"; // fin col izquierda
