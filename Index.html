@@ -117,7 +117,6 @@ async function dibuja_pagina(arrayDatos = []) {
                             // Usar Accion s que viene de php para elegir la accion que realizar
                             /***************************************/                   
                             if(respuesta[4] == 4 ){
-                               
                                 //dibujaGrafica(respuesta[3]);
                             }
                             
@@ -164,88 +163,106 @@ async function dibuja_pagina(arrayDatos = []) {
     }
 }
 
-    //dibujar grafica
-    function dibujaGrafica(dataset) {
-        console.log("Datos recibidos para la gráfica:", dataset);
+function dibujaGrafica(dataset) {
+    console.log("Datos recibidos para la gráfica:", dataset);
 
-        const datos = dataset.graficaTemperatura.map(item => ({
-            x: new Date(item.x).toISOString(),  // Convertimos la fecha 'x' al formato ISO
-            y: item.y,
-            almacen: item.almacen
-        }));
+    if (luxon) {
+        console.log("Luxon está disponible");
+    } else {
+        console.error("Luxon no está disponible");
+    }
 
-        console.log("Datos procesados para la gráfica:", datos);
+    // Procesar los datos, convirtiendo el timestamp con luxon
+    const datos = dataset.graficaTemperatura.map(item => {
+        return {
+            x: luxon.DateTime.fromMillis(item.x).toJSDate(),  // Convierte el timestamp a un objeto Date con luxon
+            y: item.y,  // Temperatura
+            almacen: item.almacen  // Almacén asociado
+        };
+    });
 
-        if (!Array.isArray(datos) || datos.length === 0) {
-            console.error("Los datos para la gráfica no son válidos.");
-            return;
-        }
+    console.log("Datos procesados para la gráfica:", datos);
 
-        const ctx = document.getElementById('graficaTemperatura')?.getContext('2d');
-        if (!ctx) {
-            console.error("No se encontró el canvas con id 'graficaTemperatura'");
-            return;
-        }
+    // Validar si los datos son correctos
+    if (!Array.isArray(datos) || datos.length === 0) {
+        console.error("Los datos para la gráfica no son válidos.");
+        return;
+    }
 
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                datasets: [{
+    // Buscar el canvas para dibujar la gráfica
+    const ctx = document.getElementById('graficaTemperatura')?.getContext('2d');
+    if (!ctx) {
+        console.error("No se encontró el canvas con id 'graficaTemperatura'");
+        return;
+    }
+
+    // Crear la gráfica
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            datasets: [{
                 label: 'Temperatura (°C)',
                 data: datos,
                 borderColor: '#3b82f6',
                 backgroundColor: 'rgba(59,130,246,0.2)',
-                tension: 0,
+                tension: 0,  // Líneas rectas
                 fill: false,
-                pointRadius: 3
-                }]
-            },
-            options: {
-                maintainAspectRatio: false,
-                responsive: true,
-                plugins: {
+                pointRadius: 3  // Tamaño de los puntos
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            responsive: true,
+            plugins: {
                 tooltip: {
                     callbacks: {
-                    label: function(context) {
-                        const temp = context.raw?.y;
-                        const almacen = context.raw?.almacen || '';
-                        return [
-                        'Temperatura: ' + temp + ' °C',
-                        almacen
-                        ];
-                    }
+                        label: function(context) {
+                            // Extraer los valores para mostrar en el tooltip
+                            const temp = context.raw?.y; // Temperatura
+                            const almacen = context.raw?.almacen || '';  // Almacén
+                            const fecha = luxon.DateTime.fromJSDate(context.raw.x).toFormat('MMM dd, yyyy HH:mm');// Fecha formateada con luxon
+                            return [
+                                'Temperatura: ' + temp + ' °C',
+                                
+                                'Almacén: ' + almacen,
+                                
+                                'Fecha: ' + fecha
+                            ];
+                        }
                     }
                 }
-                },
-                scales: {
+            },
+            scales: {
                 x: {
-                    type: 'time',
+                    type: 'time',  // Usamos un tipo de escala 'time'
                     time: {
-                    unit: 'day',  // Cambia la unidad a 'day' ya que los datos son de días
-                    tooltipFormat: 'yyyy-MM-dd',  // Formato simplificado para el tooltip
-                    displayFormats: {
-                        day: 'MMM dd, yyyy',  // Formato de visualización para los días
-                    },
+                        unit: 'day',  // Para tener un formato de día
+                        tooltipFormat: 'yyyy-MM-dd',  // Formato del tooltip
+                        displayFormats: {
+                            day: 'MMM dd, yyyy',  // Formato visual de la fecha
+                        },
                     },
                     title: {
-                    display: true,
-                    text: 'Fecha',
+                        display: true,
+                        text: 'Fecha',
                     },
                     ticks: {
-                    autoSkip: true,
-                    maxTicksLimit: 6,
+                        autoSkip: true,
+                        maxTicksLimit: 6,  // Limitar a 6 marcas en el eje x
                     }
                 },
                 y: {
                     title: {
-                    display: true,
-                    text: 'Temperatura (°C)',
+                        display: true,
+                        text: 'Temperatura (°C)',
                     },
-                }
+                    min: 0  // Aseguramos que el eje Y comience en 0 para evitar que los puntos sean negativos
                 }
             }
-        });
-    }
+        }
+    });
+}
+
 
 
 
