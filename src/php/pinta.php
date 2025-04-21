@@ -211,54 +211,72 @@
                 }
             }
 
-            //Lógica específica para detalles de captura
-    
             elseif ($Pestana == 3) {
-                foreach ($arraydatos as $index => $Temperaturas) {
-                    $backgroundColor = ($index % 2 == 0) ? 'background-color: whitesmoke;' : 'background-color: white;';
-                    
-                    $fecha = safe_html($Temperaturas["FechaTemperatura"] ?? null);
-                    $valorTemp = floatval($Temperaturas["ValorTemperatura"] ?? 0);
+
+                // Datos de la captura (reusamos uno del array actual como ejemplo)
+                $capturaDetalle = $arraydatos[0] ?? [];
             
-                    $claseTemperatura = ($valorTemp > 4) ? "text-danger" : "text-success";
+                $tagPez = htmlspecialchars($capturaDetalle["TagPez"] ?? '');
+                $ZonaCaptura = safe_html($capturaDetalle["Zona"] ?? '');
+                $EspecieCapturada = safe_html($capturaDetalle["Especie"] ?? '');
+                $FechaCaptura = safe_html($capturaDetalle["FechaCaptura"] ?? '');
+                $NombreBarcoCaptura = safe_html($capturaDetalle["NombreBarco"] ?? '');
             
-                    $contenido .= "<div class='card p-3 border shadow-sm' style='$backgroundColor margin-bottom: 0;'>";
+                $contenido .= "<div class='container-fluid'>";
+                $contenido .= "<div class='row'>";
             
-                    // Cambio aquí: justify-content-start + gap-4
-                    $contenido .= "<div class='d-flex justify-content-start align-items-center gap-4' style='font-size: 1.1rem;'>";
-            
-                    $contenido .= "<div><strong>" . date('d/m/Y H:i', strtotime($fecha)) . "</strong></div>";
-            
-                    $contenido .= "<div><span class='text-black'>Temperatura: </span><span class='$claseTemperatura'><strong>" . $valorTemp . "°C</strong></span></div>";
-            
-                    $contenido .= "</div>"; // fin fila
-            
-                    $contenido .= "</div>"; // fin tarjeta
+                // Columna izquierda (datos generales de la captura)
+                $contenido .= "<div class='col-md-4'>";
+                $contenido .= "<div class='card p-3 border shadow-sm mb-3'>";
+                $contenido .= "<h5 class='card-title'><strong>Detalles de la Captura</strong></h5>";
+                $contenido .= "<p><strong>Tag:</strong> $tagPez</p>";
+                $contenido .= "<p><strong>Zona:</strong> $ZonaCaptura</p>";
+                $contenido .= "<p><strong>Especie:</strong> $EspecieCapturada</p>";
+                $contenido .= "<p><strong>Barco:</strong> $NombreBarcoCaptura</p>";
+                if (!empty($FechaCaptura)) {
+                    $contenido .= "<p><strong>Fecha de Captura:</strong> " . date('d/m/Y H:i', strtotime($FechaCaptura)) . "</p>";
                 }
+                $contenido .= "</div>";
+                $contenido .= "</div>"; // fin col izquierda
+            
+                // Columna derecha (gráfica y lista de almacenes)
+                $contenido .= "<div class='col-md-8'>";
+                
+                // Parte superior: gráfico de temperatura
+                $contenido .= "<div class='card p-3 border shadow-sm mb-3'>";
+                $contenido .= "<h5 class='card-title'>Gráfico de Temperatura</h5>";
+                $contenido .= "<div id='graficoTemperaturas' style='height: 300px; background-color: #f9f9f9; text-align: center; display: flex; align-items: center; justify-content: center;'>[Aquí irá la gráfica]</div>";
+                $contenido .= "</div>";
+            
+                // Parte inferior: listado de almacenes
+                $contenido .= "<div class='card p-3 border shadow-sm'>";
+                $contenido .= "<h5 class='card-title'>Almacenes Visitados</h5>";
+                
                 foreach ($arraydatosAdiccional as $index => $Almacenes) {
                     $backgroundColor = ($index % 2 == 0) ? 'background-color: whitesmoke;' : 'background-color: white;';
                     
-                   $IdTipoAlmacen = $Almacenes['IdTipo'] ??'';
-                   $NombreAlmacen = $Almacenes['Nombre'] ??'';
-                   $ReferenciaAlmacen = $IdTipoAlmacen . " " . $NombreAlmacen;
-                   $FechaAlmacen = $Almacenes['FechaAlmacen'] ??'';
-                   $Lector = $Almacenes['Lector'] ??'';
+                    $IdTipoAlmacen = $Almacenes['IdTipo'] ?? '';
+                    $NombreAlmacen = $Almacenes['Nombre'] ?? '';
+                    $ReferenciaAlmacen = $IdTipoAlmacen . " " . $NombreAlmacen;
+                    $FechaAlmacen = $Almacenes['FechaAlmacen'] ?? '';
+                    $Lector = $Almacenes['Lector'] ?? '';
             
-                    $contenido .= "<div class='card p-3 border shadow-sm' style='$backgroundColor margin-bottom: 0;'>";
-            
-                    // Cambio aquí: justify-content-start + gap-4
-                    $contenido .= "<div class='d-flex justify-content-start align-items-center gap-4' style='font-size: 1.1rem;'>";
-            
-                    $contenido .= "<div><strong>Almacen: " . $ReferenciaAlmacen . "</strong></div>";
-            
-                    $contenido .= "<div><span class='text-black'>Fecha: </span><span><strong>" . $FechaAlmacen . "</strong></span></div>";
-                    $contenido .= "<div><span class='text-black'>Lector: </span><span><strong>" . $Lector .  "</strong></span></div>";
-            
-                    $contenido .= "</div>"; // fin fila
-            
-                    $contenido .= "</div>"; // fin tarjeta
+                    $contenido .= "<div class='card p-2 border shadow-sm mb-2' style='$backgroundColor'>";
+                    $contenido .= "<div class='d-flex justify-content-start align-items-center gap-4' style='font-size: 1rem;'>";
+                    $contenido .= "<div>Almacén: <strong> $ReferenciaAlmacen</strong></div>";
+                    $contenido .= "<div>Fecha: <strong> $FechaAlmacen</strong></div>";
+                    $contenido .= "<div>Lector: <strong> $Lector</strong></div>";
+                    $contenido .= "</div>";
+                    $contenido .= "</div>";
                 }
+            
+                $contenido .= "</div>"; // fin tarjeta almacenes
+                $contenido .= "</div>"; // fin col derecha
+            
+                $contenido .= "</div>"; // fin row
+                $contenido .= "</div>"; // fin container-fluid
             }
+            
             
             
             
