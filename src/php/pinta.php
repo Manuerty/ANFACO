@@ -74,6 +74,8 @@
 
     function DibujaTablaGenerica($Pestana, $tituloAlternativo = null) {
 
+        
+
         if ($Pestana == 0){
             $arraydatos = $_SESSION['Usuarios'];
         } elseif($Pestana == 1){
@@ -81,7 +83,11 @@
         } elseif($Pestana == 2){
             $arraydatos = $_SESSION['Capturas'];
         } elseif($Pestana == 3){
-            $arraydatos = $_SESSION['Temperaturas'];
+            if (empty($_SESSION['Temperaturas'])) {
+                $arraydatos = [0];  // Inicializa con un array que tiene un 0 en la primera posición
+            } else {
+                $arraydatos = $_SESSION['Temperaturas'];
+            }
             $arraydatosAdiccional = $_SESSION['Almacenes'];
             $capturaDetalle = $_SESSION['CapturaDetalle'];
         }
@@ -276,11 +282,7 @@
                 $contenido .= "</div>"; // fin row
                 $contenido .= "</div>"; // fin container-fluid
             }
-            
-            
-            
-            
-    
+
             $contenido .= "</tbody></table>";
         } else {
             $contenido .= "<p>$tituloAlternativo</p>";
