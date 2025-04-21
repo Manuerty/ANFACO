@@ -229,7 +229,7 @@ use Pdo\Sqlite;
             $conn = obtener_conexion();
             if (!$conn) return false;
     
-            $sql = "SELECT aTmp.Fecha, aTmp.Temperatura
+            $sql = "SELECT aTmp.Fecha, aTmp.Temperatura, atmp.Id
                     FROM almacen_temperaturas aTmp
                     JOIN almacen a ON aTmp.Id = a.Id
                     WHERE a.TagPez = ?
@@ -259,7 +259,8 @@ use Pdo\Sqlite;
             while ($row = $result->fetch_assoc()) {
                 $temperaturas[] = [
                     "FechaTemperatura" => $row["Fecha"],
-                    "ValorTemperatura" => $row["Temperatura"]
+                    "ValorTemperatura" => $row["Temperatura"],
+                    "IdLector" => $row["Id"]
                 ];
             }
     
@@ -278,7 +279,7 @@ use Pdo\Sqlite;
             $conn = obtener_conexion();
             if (!$conn) return false;
     
-            $sql = "SELECT  Fecha, LectorRFID, tiposalmacen.Nombre, tiposalmacen.IdTipoAlmacen  
+            $sql = "SELECT  Fecha, LectorRFID, tiposalmacen.Nombre, tiposalmacen.IdTipoAlmacen, Id  
                         FROM almacen 
                         LEFT JOIN tiposalmacen ON tiposalmacen.IdTipoAlmacen = almacen.IdTipoAlmacen
                         WHERE almacen.TagPez = ?
@@ -311,6 +312,7 @@ use Pdo\Sqlite;
                     "Lector" => $row["LectorRFID"],
                     "NombreTipo"=> $row["Nombre"],
                     "IdTipo"=> $row["IdTipoAlmacen"],
+                    "IdAlmacen"=> $row["Id"]
                 ];
             }
     

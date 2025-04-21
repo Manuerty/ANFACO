@@ -202,7 +202,26 @@ Class Controlador{
         $_SESSION["CapturaDetalle"] = null;
         return false; // No se encontró la captura
     }
-    
+
+    function generarDatosGrafica($temperaturasVS, $almacenesVS) {
+        $temperaturas = $temperaturasVS;
+        $almacenes = $almacenesVS;
+        
+        $dataset = [];
+        foreach ($temperaturas as $temp) {
+            foreach ($almacenes as $almacen) {
+                if ($temp['IdLector'] == $almacen['IdAlmacen']) {
+                    $dataset[] = [
+                        "x" => strtotime($temp["FechaTemperatura"]) * 1000,
+                        "y" => $temp["ValorTemperatura"],
+                        "almacen" => "Almacén: " . $almacen["NombreTipo"] . " " . $almacen["IdTipo"]
+                    ];
+                    break;
+                }
+            }
+        }
+        $_SESSION["dataset"] = $dataset;
+    }  
 
 
     function generarContenido($arrayDatos = array()){
@@ -273,10 +292,13 @@ Class Controlador{
         }
         //Logica Detalle de captura//
         elseif($c == 3 && !empty($arrayDatos) && isset($arrayDatos[0]) && $arrayDatos[0] == 3){
+
+
  
             $nav = null;
 
             $this -> setNewCaptura($arrayDatos[1]);
+            $this -> generarDatosGrafica($_SESSION["Temperaturas"], $_SESSION["Almacenes"]);
             $this ->miEstado -> TagPez = $arrayDatos[1];
             
             switch($arrayDatos[0]){
@@ -284,6 +306,8 @@ Class Controlador{
                     $nav = 4;
                     break;
             }
+            $arrayAuxiliarHtml = array("graficaTemperatura" => $_SESSION["dataset"]);
+            $accionJs = 4;
             $this -> navegarPestanas($nav);
         }
         //logica de cerrar sesion//
@@ -315,8 +339,12 @@ Class Controlador{
         "<br> Temperaturas: ".count($_SESSION["Temperaturas"]).
         "<br> Almacenes: ".count($_SESSION["Almacenes"]).
         "<br> ArrayDatos: ".implode($arrayDatos);   
+
+        
     
         return array(pinta_contenido($this -> miEstado -> Estado).$txtErr,$msgError,$AccionSinRepintar,$arrayAuxiliarHtml,$accionJs);
+
+        
     }
         
 }

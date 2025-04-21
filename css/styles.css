@@ -53,3 +53,12 @@ button:hover {
     font-size: 14px;
     text-align: center;
 }
+#contenedor-grafica {
+    width: 600px;
+    height: 300px;
+}
+
+canvas {
+    width: 100% !important;
+    height: 100% !important;
+}

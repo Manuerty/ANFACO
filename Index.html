@@ -22,6 +22,11 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>      
     <!-- Iconos de boostrap -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.4/font/bootstrap-icons.css">
+
+    <!-- Libreria de grafica -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luxon@3/build/global/luxon.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1"></script>
     
 
     <!-- <link rel="stylesheet" href="css/header.css">
@@ -71,6 +76,11 @@ var map2;
 var datosAuxiliares = [];
 var cadenaAuxiliar = "";
 var dibujaPaginaBloqueado = false;
+
+var datos;
+
+var ctx;
+
 //arrayDatos(ElContenidoHtml[0],ElMensajedeError[1],Accion[2],ArrayAuxiliar[3],$accionJs)
 async function dibuja_pagina(arrayDatos = []) {
     if (dibujaPaginaBloqueado) {
@@ -106,28 +116,8 @@ async function dibuja_pagina(arrayDatos = []) {
                             /***************************************/
                             // Usar Accion s que viene de php para elegir la accion que realizar
                             /***************************************/
-                            if(respuesta[3] != null){
-                                switch (respuesta[4]) {
-                                    case 3:
-                                        cargarModalFormularioDinamico("modalFormularioDinamicoAdjuntar");
-                                        break;
-                                    case 2:
-                                        generarGrafico_Barras(respuesta[3][0]);
-                                        break;
-                                    case 1:
-                                        for (let evento of respuesta[3]) {
-                                            let e = {
-                                                title: evento[0],
-                                                start: evento[1],
-                                                end: evento[2],
-                                                backgroundColor: evento[3],
-                                                id: evento[4]
-                                            };
-                                            eventos.push(e);
-                                        }
-                                        dibuja_calendario(respuesta[3]);
-                                        break;
-                                }
+                            if(respuesta[4] == 4 ){
+                                dibujaGrafica(respuesta[3]);
                             }
                             
                             CargarMapaFichaje();
@@ -172,6 +162,80 @@ async function dibuja_pagina(arrayDatos = []) {
         dibujaPaginaBloqueado = false;
     }
 }
+
+    //dibujar grafica
+    function dibujaGrafica(dataset){
+
+        console.log(dataset);
+        
+        datos = json_encode(dataset)
+
+        ctx = document.getElementById('graficaTemperatura').getContext('2d');
+
+
+        new Chart(ctx, {
+        type: 'line',
+        data: {
+            datasets: [{
+                label: 'Temperatura (°C)',
+                data: datos,
+                borderColor: '#3b82f6',
+                backgroundColor: 'rgba(59,130,246,0.2)',
+                tension: 0, // Líneas rectas
+                fill: false,
+                pointRadius: 3
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            responsive: true,
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const temp = context.raw.y;
+                            const fecha = context.raw.x;
+                            const almacen = context.raw.almacen;
+                            return [
+                                'Temperatura: ' + temp + ' °C',
+                                almacen // Mostrar la ubicación del almacén
+                            ];
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    type: 'time',
+                    time: {
+                        unit: 'hour', // Cambiar a 'hour' para tener divisiones horarias
+                        stepSize: 1, // 6 horas
+                        tooltipFormat: "yyyy-MM-dd HH:mm",
+                        displayFormats: {
+                            hour: 'MMM dd HH:mm'
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Fecha y hora'
+                    },
+                    ticks: {
+                        autoSkip: true,
+                        maxTicksLimit: 6, // Mostrar solo 4 marcas por día
+                        min: datos.length ? datos[0].x : new Date().getTime() - 86400000, // Asegura que se muestre un día completo
+                        max: datos.length ? datos[datos.length - 1].x : new Date().getTime() // Ajuste dinámico para mostrar todo el día
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Temperatura (°C)'
+                    }
+                }
+            }
+        }
+    });
+    }
 
     //aplicar filtros portal del cliente (Modificar)
     function aplicafiltros(f){
