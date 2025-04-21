@@ -250,7 +250,7 @@
                 $contenido .= "<p>Especie:<strong> $EspecieCapturada</strong></p>";
                 $contenido .= "<p>Zona:<strong> $ZonaCaptura</strong></p>";
                 
-                $contenido .= "<p><span class='text-black'>Temp: </span> <span class='$claseTemperaturaMinima'><span class='font-weight-bold'><strong>" . $temperaturaMinimaCaptura . "°C</strong></span></span><span> / </span> <span class='$claseTemperaturaMaxima'><span class='font-weight-bold'>" . $temperaturaMaximaCaptura . "°C</strong></span></span></p>";
+                $contenido .= "<p><span class='text-black'>Temp: </span> <span class='$claseTemperaturaMinima'><span class='font-weight-bold'><strong>" . $temperaturaMinimaCaptura . "°C</span></span><span> / </span> <span class='$claseTemperaturaMaxima'><span class='font-weight-bold'>" . $temperaturaMaximaCaptura . "°C</strong></span></span></p>";
                 $contenido .= "<p><span class='text-black'>Almacén Actual: </span> <span class='font-weight-bold'><strong>$tipoUltimoAlmacenCaptura $idUltimoAlmacenCaptura</strong></span></p>";
                 $contenido .= "</div>";
                 $contenido .= "</div>"; // fin col izquierda
