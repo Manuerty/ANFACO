@@ -237,7 +237,7 @@
                 $claseTemperaturaMinima = ($temperaturaMinimaCaptura > 4) ? "text-danger" : "text-success";
 
                 
-                $contenido = "<div class='container-fluid' style='display: flex; height: 74vh;'>"; // Cambié para usar Flexbox
+                $contenido = "<div class='container-fluid' style='display: flex; height: 76vh;'>"; // Cambié para usar Flexbox
                 $contenido .= "<div class='row' style='width: 100%; flex-grow: 1;'>";
 
                 // Columna izquierda (datos generales de la captura)
@@ -245,14 +245,13 @@
                 $contenido .= "<div class='card p-3 border shadow-sm mb-3' style='flex-shrink: 0; height:100%'>"; // Tarjeta con tamaño fijo
                 $contenido .= "<h5 class='card-title'><strong>Detalles de la Captura</strong></h5>";
                 $contenido .= "<p>Tag:<strong> $tagPez</strong></p>";
-                $contenido .= "<p>Zona:<strong> $ZonaCaptura</strong></p>";
-                $contenido .= "<p>Especie:<strong> $EspecieCapturada</strong></p>";
+                $contenido .= "<p>Fecha de Captura: <strong>" . date('d/m/Y H:i', strtotime($FechaCaptura)) . "</strong></p>";
                 $contenido .= "<p>Barco:<strong> $NombreBarcoCaptura</strong></p>";
-                if (!empty($FechaCaptura)) {
-                    $contenido .= "<p>Fecha de Captura: <strong>" . date('d/m/Y H:i', strtotime($FechaCaptura)) . "</strong></p>";
-                }
+                $contenido .= "<p>Especie:<strong> $EspecieCapturada</strong></p>";
+                $contenido .= "<p>Zona:<strong> $ZonaCaptura</strong></p>";
+                
                 $contenido .= "<p><span class='text-black'>Temp: </span> <span class='$claseTemperaturaMinima'><span class='font-weight-bold'><strong>" . $temperaturaMinimaCaptura . "°C</strong></span></span><span> / </span> <span class='$claseTemperaturaMaxima'><span class='font-weight-bold'>" . $temperaturaMaximaCaptura . "°C</strong></span></span></p>";
-                $contenido .= "<p><span class='text-black'>Almacén: </span> <span class='font-weight-bold'><strong>$tipoUltimoAlmacenCaptura $idUltimoAlmacenCaptura</strong></span></p>";
+                $contenido .= "<p><span class='text-black'>Almacén Actual: </span> <span class='font-weight-bold'><strong>$tipoUltimoAlmacenCaptura $idUltimoAlmacenCaptura</strong></span></p>";
                 $contenido .= "</div>";
                 $contenido .= "</div>"; // fin col izquierda
 
@@ -271,6 +270,7 @@
                 // Parte inferior: listado de almacenes
                 $contenido .= "<div class='card p-3 border shadow-sm' style='flex-grow: 1; overflow-y: auto;'>"; // Lista de almacenes ocupa el resto de la columna
                 $contenido .= "<h5 class='card-title'>Almacenes Visitados</h5>";
+                $contenido .= "<div  style='flex-grow: 1; overflow-y: auto;'>";
 
                 foreach ($arraydatosAdiccional as $index => $Almacenes) {
                     $backgroundColor = ($index % 2 == 0) ? 'background-color: whitesmoke;' : 'background-color: white;';
@@ -289,7 +289,7 @@
                     $contenido .= "</div>";
                     $contenido .= "</div>";
                 }
-
+                $contenido .= "</div>"; // fin tarjeta almacenes
                 $contenido .= "</div>"; // fin tarjeta almacenes
                 $contenido .= "</div>"; // fin col derecha
 
