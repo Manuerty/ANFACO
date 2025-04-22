@@ -115,18 +115,37 @@
 
 
         
-
+        //Ventana de usuarios//
         if ($Pestana == 0){
-            $arraydatos = $_SESSION['Controlador'] -> miEstado -> usuarios;
-        } elseif($Pestana == 1){
-            $arraydatos = $_SESSION['Controlador'] -> miEstado -> barcos;
-        } elseif($Pestana == 2){
+            //Si no hay usuarios filtrados, se muestran todos los usuarios//
+            if ( $_SESSION["Controlador"] -> miEstado -> usuariosFiltrados == null) {
+                $arraydatos = $_SESSION["Controlador"] -> miEstado -> usuarios;
+            }
+            else {
+                $arraydatos = $_SESSION["Controlador"] -> miEstado -> usuariosFiltrados;
+            }
+        }
+        //Ventana de Barcos//
+        elseif($Pestana == 1){
+            //Si no hay barcos filtrados, se muestran todos los barcos//
+            if ( $_SESSION["Controlador"] -> miEstado -> barcosFiltrados == null) {
+                $arraydatos = $_SESSION["Controlador"] -> miEstado -> barcos;
+            }
+            else {
+                $arraydatos = $_SESSION["Controlador"] -> miEstado -> barcosFiltrados;
+            }
+        }
+        //Ventana de Capturas// 
+        elseif($Pestana == 2){
+            //Si no hay capturas filtradas, se muestran todas las capturas//
             if ( $_SESSION["Controlador"] -> miEstado -> capturasFiltradas == null) {
                 $arraydatos = $_SESSION["Controlador"] -> miEstado -> capturas;
             } else {
                 $arraydatos = $_SESSION["Controlador"] -> miEstado -> capturasFiltradas;
             }
-        } elseif($Pestana == 3){
+        }
+        //Ventana de Detalles de Captura//
+        elseif($Pestana == 3){
             if (empty($_SESSION['Controlador'] -> miEstado -> temperaturas)) {
                 $arraydatos = [0];  // Inicializa con un array que tiene un 0 en la primera posición
             } else {

@@ -159,7 +159,7 @@ Class Controlador{
         else{
             $this -> miEstado -> IdUsuarioSeleccionado = $IdUser;
             $this -> miEstado -> capturas = get_capturas($IdUser);
-            $this -> miEstado -> barcosFiltrados = get_Barcos($IdUser);
+            $this -> miEstado -> barcos = get_Barcos($IdUser);
         }
     }
 
@@ -224,13 +224,29 @@ Class Controlador{
         $this -> miEstado -> dataset = $dataset;
     }  
 
-    function filtrarNombre($filtro){
+    function filtrarNombre($filtro, $pestana){
 
         $filtro = strtolower($filtro);
 
-        $arrayFiltrado = array_filter($this -> miEstado -> capturas, function($item) use($filtro){
-            return trim(strtolower($item["Especie"])) === trim(strtolower($filtro));
-        });
+        if ($pestana == 0.5){
+            $usuarios = is_array($this->miEstado->usuarios) ? $this->miEstado->usuarios : [];
+            $arrayFiltrado = array_filter($usuarios, function($item) use($filtro){
+                return trim(strtolower($item["NombreUsuario"])) === trim(strtolower($filtro));
+            });
+        }
+        elseif ($pestana == 2){
+            $barcos = is_array($this->miEstado->barcos) ? $this->miEstado->barcos : [];
+            $arrayFiltrado = array_filter($barcos, function($item) use($filtro){
+                return trim(strtolower($item["Nombre"])) === trim(strtolower($filtro));
+            });
+        }
+        elseif ($pestana == 3){
+            $capturas = is_array($this->miEstado->capturas) ? $this->miEstado->capturas : [];
+            $arrayFiltrado = array_filter($capturas, function($item) use($filtro){
+                return trim(strtolower($item["Especie"])) === trim(strtolower($filtro));
+            });
+        }
+
 
         return $arrayFiltrado;
     }
@@ -333,9 +349,26 @@ Class Controlador{
             $this -> navegarPestanas(-1);
         }
 
+
+        //Logica de Filtros//
+
+        elseif($c == 0.5  && !empty($arrayDatos) && $arrayDatos[0] == 0 && $arrayDatos[1] == 4 ){
+
+            $arrayFiltrado = $this -> filtrarNombre($arrayDatos[2], $c);
+            $this -> miEstado -> usuariosFiltrados = $arrayFiltrado;
+        }
+
+        elseif($c == 2  && !empty($arrayDatos) && $arrayDatos[0] == 0 && $arrayDatos[1] == 4 ){
+
+            $arrayFlitrado = $this -> filtrarNombre($arrayDatos[2], $c);
+
+            $this -> miEstado -> barcosFiltrados = $arrayFlitrado;
+    
+        }
+
         elseif($c == 3  && !empty($arrayDatos) && $arrayDatos[0] == 0 && $arrayDatos[1] == 4 ){
 
-            $arrayFlitrado = $this -> filtrarNombre($arrayDatos[2]);
+            $arrayFlitrado = $this -> filtrarNombre($arrayDatos[2], $c);
 
             $this -> miEstado -> capturasFiltradas = $arrayFlitrado;
     
