@@ -228,18 +228,24 @@ Class Controlador{
 
         $filtro = strtolower($filtro);
 
+
+        //filtro de usuarios
         if ($pestana == 0.5){
             $usuarios = is_array($this->miEstado->usuarios) ? $this->miEstado->usuarios : [];
             $arrayFiltrado = array_filter($usuarios, function($item) use($filtro){
                 return trim(strtolower($item["NombreUsuario"])) === trim(strtolower($filtro));
             });
         }
+        
+        //filtro de barcos
         elseif ($pestana == 2){
             $barcos = is_array($this->miEstado->barcos) ? $this->miEstado->barcos : [];
             $arrayFiltrado = array_filter($barcos, function($item) use($filtro){
                 return trim(strtolower($item["Nombre"])) === trim(strtolower($filtro)  );
             });
         }
+
+        //filtro de capturas
         elseif ($pestana == 3){
             $capturas = is_array($this->miEstado->capturas) ? $this->miEstado->capturas : [];
             $arrayFiltrado = array_filter($capturas, function($item) use($filtro){
@@ -250,6 +256,8 @@ Class Controlador{
                  or trim(strtolower($item["TagPez"])) === trim(strtolower($filtro));
             });
         }
+
+        //filtro de detalles de captura
         elseif ($pestana == 4){
 
             $almacenes = is_array($this->miEstado->almacenes) ? $this->miEstado->almacenes : [];
