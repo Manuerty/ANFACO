@@ -246,6 +246,15 @@ Class Controlador{
                 return trim(strtolower($item["Especie"])) === trim(strtolower($filtro));
             });
         }
+        elseif ($pestana == 4){
+
+            $almacenes = is_array($this->miEstado->almacenes) ? $this->miEstado->almacenes : [];
+            $arrayFiltrado = array_filter($almacenes, function($item) use($filtro){
+                return trim(strtolower($item["NombreTipo"])) === trim(strtolower($filtro));
+            });
+
+            
+        }
 
 
         return $arrayFiltrado;
@@ -371,6 +380,14 @@ Class Controlador{
             $arrayFlitrado = $this -> filtrarNombre($arrayDatos[2], $c);
 
             $this -> miEstado -> capturasFiltradas = $arrayFlitrado;
+    
+        }
+
+        elseif($c == 4  && !empty($arrayDatos) && $arrayDatos[0] == 0 && $arrayDatos[1] == 4 ){
+
+            $arrayFlitrado = $this -> filtrarNombre($arrayDatos[2], $c);
+
+            $this -> miEstado -> almacenesFiltrados = $arrayFlitrado;
     
         }
 

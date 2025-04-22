@@ -33,6 +33,8 @@ class Estado{
 
     public $almacenes;
 
+    public $almacenesFiltrados;
+
     public $esAdmin;
 
     public $dataset;

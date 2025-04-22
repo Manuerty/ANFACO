@@ -151,7 +151,11 @@
             } else {
                 $arraydatos = $_SESSION['Controlador'] -> miEstado -> temperaturas;
             }
-            $arraydatosAdiccional = $_SESSION['Controlador'] -> miEstado -> almacenes;
+            if ( $_SESSION["Controlador"] -> miEstado -> almacenesFiltrados == null) {
+                $arraydatosAdiccional = $_SESSION["Controlador"] -> miEstado -> almacenes;
+            } else {
+                $arraydatosAdiccional = $_SESSION["Controlador"] -> miEstado -> almacenesFiltrados;
+            }
             $capturaDetalle = $_SESSION['Controlador'] -> miEstado -> capturaDetalle;
         }
         
