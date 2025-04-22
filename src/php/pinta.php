@@ -55,6 +55,13 @@
             $filetext = "";
         }
 
+        if(in_array($_SESSION["Controlador"] -> miEstado -> Estado, [0.5, 3])){
+            if ($_SESSION["Controlador"] -> miEstado -> Estado == 0.5){
+                $filetext = str_replace('<span id="filtros_dinamicos">',cargaFiltros(),$filetext);
+                $filetext = str_replace('%FuncionFiltrar%','aplicafiltros()',$filetext);
+            }
+        }
+
         
         if($_SESSION["Controlador"] -> miEstado -> Estado == 0.5){
             $filetext = str_replace("%LineasE%", DibujaTablaGenerica(0),$filetext);
@@ -69,6 +76,38 @@
             $filetext = str_replace("%LineasE%", DibujaTablaGenerica(3),$filetext);
         }
         return $filetext;
+    }
+
+    function cargaFiltros(){
+        $arrayFiltros = array();
+        $tipoDocf = 0;
+        switch($_SESSION["Controlador"] -> miEstado -> Estado){
+            case 0:
+                $tipoDocf = 0;
+                break;
+            case 1:
+                $tipoDocf = 1;
+                break;
+            case 2:
+                $tipoDocf = 2;
+                break;
+            case 3:
+                $tipoDocf = 3;
+                break;
+        }
+
+        $arrayFiltros = array_filter($_SESSION["Controlador"] -> miEstado -> FiltrosDoc, function($docF) use($tipoDocf){
+            return $docF["tipo"] == $tipoDocf;
+        });
+
+        $arrayFiltros = array_values($arrayFiltros);
+        $txt_filtros = "<span id='filtros_dinamicos'>";
+        if(count($arrayFiltros)>0){
+            foreach($arrayFiltros as $valor){ 
+                $txt_filtros .= '<button onclick="aplicafiltros('."'".$valor["Estado"]."'".')" style="color:black;" class="dropdown-item" id="'.$valor["Estado"].'" >'.$valor["Filtro"].'</button>';
+            }
+        }
+        return $txt_filtros;
     }
 
 
