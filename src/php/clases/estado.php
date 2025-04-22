@@ -14,6 +14,31 @@ class Estado{
     public $TagPez;
     public $LastTagPez;
 
+    public $capturas;
+
+    public $capturasFiltradas;
+
+    public $barcos;
+
+    public $barcosFiltrados;
+
+    public $usuarios;
+
+    public $usuariosFiltrados;
+
+
+    public $capturaDetalle;
+
+    public $temperaturas;
+
+    public $almacenes;
+
+    public $esAdmin;
+
+    public $dataset;
+
+
+
  
 
     

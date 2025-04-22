@@ -41,7 +41,7 @@ use Pdo\Sqlite;
         }
     }
 
-    function get_users(){
+    function get_usuarios(){
         try{
 
             $conn = obtener_conexion();

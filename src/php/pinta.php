@@ -113,23 +113,29 @@
 
     function DibujaTablaGenerica($Pestana, $tituloAlternativo = null) {
 
+
         
 
         if ($Pestana == 0){
-            $arraydatos = $_SESSION['Usuarios'];
+            $arraydatos = $_SESSION['Controlador'] -> miEstado -> usuarios;
         } elseif($Pestana == 1){
-            $arraydatos = $_SESSION['Barcos'];
+            $arraydatos = $_SESSION['Controlador'] -> miEstado -> barcos;
         } elseif($Pestana == 2){
-            $arraydatos = $_SESSION['Capturas'];
+            if ( $_SESSION["Controlador"] -> miEstado -> capturasFiltradas == null) {
+                $arraydatos = $_SESSION["Controlador"] -> miEstado -> capturas;
+            } else {
+                $arraydatos = $_SESSION["Controlador"] -> miEstado -> capturasFiltradas;
+            }
         } elseif($Pestana == 3){
-            if (empty($_SESSION['Temperaturas'])) {
+            if (empty($_SESSION['Controlador'] -> miEstado -> temperaturas)) {
                 $arraydatos = [0];  // Inicializa con un array que tiene un 0 en la primera posición
             } else {
-                $arraydatos = $_SESSION['Temperaturas'];
+                $arraydatos = $_SESSION['Controlador'] -> miEstado -> temperaturas;
             }
-            $arraydatosAdiccional = $_SESSION['Almacenes'];
-            $capturaDetalle = $_SESSION['CapturaDetalle'];
+            $arraydatosAdiccional = $_SESSION['Controlador'] -> miEstado -> almacenes;
+            $capturaDetalle = $_SESSION['Controlador'] -> miEstado -> capturaDetalle;
         }
+        
 
 
 

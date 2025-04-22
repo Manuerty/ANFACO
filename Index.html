@@ -103,8 +103,10 @@ async function dibuja_pagina(arrayDatos = []) {
                 url: 'src/php/index.php',
                 type: 'POST',
                 success: function(response) {
+                    console.log("Respuesta del servidor:", response);
                     try {
                         let respuesta = JSON.parse(response);
+                        console.log("Respuesta procesada:", respuesta);
                         /***************************************/
                         // Si el elemento 2 es 0 pinta la pestaña y luego realiza las acciones correspondientes
                         /***************************************/

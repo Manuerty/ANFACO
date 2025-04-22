@@ -86,7 +86,8 @@ Class Controlador{
             $this->miEstado->IdUsuarioLogin = $datosSesion[0];
     
             // Determinar si es administrador
-            $_SESSION["es_admin"] = ($datosSesion[3] === "Administrador");
+            $this -> miEstado -> esAdmin = ($datosSesion[3] === "Administrador");
+
 
             // Inicializar variables
             $usuarios = [];
@@ -96,8 +97,8 @@ Class Controlador{
             $almacenes = [];
 
             // Obtener datos según el tipo de usuario
-            if ($_SESSION["es_admin"]) {
-                $usuarios = get_users();
+            if ($this -> miEstado -> esAdmin) {
+                $usuarios = get_usuarios();
                 
                 
             } else {
@@ -107,11 +108,11 @@ Class Controlador{
             }
 
             // Asignar a sesión, usando operador ternario o directamente el valor
-            $_SESSION["Capturas"] = $capturas ?: [];
-            $_SESSION["Barcos"] = $barcos ?: [];
-            $_SESSION["Usuarios"] = $usuarios ?: [];
-            $_SESSION["Temperaturas"] = $temperaturas ?: [];
-            $_SESSION["Almacenes"] =  $almacenes ?:[];
+            $this -> miEstado -> capturas = $capturas ?: [];
+            $this -> miEstado -> barcosFiltrados = $barcos ?: [];
+            $this -> miEstado -> usuarios = $usuarios ?: [];
+            $this -> miEstado -> temperaturas = $temperaturas ?: [];
+            $this -> miEstado -> almacenes =  $almacenes ?:[];
 
 
             return true;
@@ -133,11 +134,11 @@ Class Controlador{
         $this -> miEstado -> acciones = array("archivos"=> 0,
                                         "observaciones" => 0,
                                         "añadir" => 0);
-        $_SESSION["Usuarios"] = [];
-        $_SESSION["Capturas"] = [];
-        $_SESSION["Barcos"] = [];
-        $_SESSION["Temperaturas"] = [];
-        $_SESSION["Almacenes"] = [];
+        $this -> miEstado -> usuarios = [];
+        $this -> miEstado -> capturas = [];
+        $this -> miEstado -> barcosFiltrados = [];
+        $this -> miEstado -> temperaturas = [];
+        $this -> miEstado -> almacenes = [];
         if(isset($_SESSION["header"])){
             $this -> miEstado -> header = $_SESSION["header"];
             $_SESSION["header"] = null;
@@ -157,8 +158,8 @@ Class Controlador{
         }
         else{
             $this -> miEstado -> IdUsuarioSeleccionado = $IdUser;
-            $_SESSION["Capturas"] = get_capturas($IdUser);
-            $_SESSION["Barcos"] = get_Barcos($IdUser);
+            $this -> miEstado -> capturas = get_capturas($IdUser);
+            $this -> miEstado -> barcosFiltrados = get_Barcos($IdUser);
         }
     }
 
@@ -170,13 +171,13 @@ Class Controlador{
             $this -> miEstado -> TagPez = $tagPez;
 
             // Obtener los datos adicionales de la captura
-            $_SESSION["Temperaturas"] = get_Temperaturas($tagPez);
-            $_SESSION["Almacenes"] = get_Almacenes($tagPez);
+            $this -> miEstado -> temperaturas = get_Temperaturas($tagPez);
+            $this -> miEstado -> almacenes = get_Almacenes($tagPez);
     
             // Llamar a details_Captura para llenar la variable de sesión con los detalles de la captura
             $this->details_Captura($tagPez);
     
-            // Ahora $_SESSION["CapturaDetalle"] debería tener los datos si la captura fue encontrada
+            // Ahora $this -> miEstado -> capturaDetalle debería tener los datos si la captura fue encontrada
             
         }
     }
@@ -184,22 +185,22 @@ Class Controlador{
 
     function details_Captura($tagPez){
         // Verificar si las capturas están disponibles en la sesión
-        if (isset($_SESSION["Capturas"]) && !empty($_SESSION["Capturas"])) {
+        if (isset($this -> miEstado -> capturas) && !empty($this -> miEstado -> capturas)) {
             
             // Buscar la captura que coincide con el tagPez directamente usando array_filter
-            $captura = array_filter($_SESSION["Capturas"], function($item) use ($tagPez) {
+            $captura = array_filter($this -> miEstado -> capturas, function($item) use ($tagPez) {
                 return $item['TagPez'] == $tagPez;
             });
     
             // Si encontramos la captura, almacenamos el primer resultado en la sesión
             if (!empty($captura)) {
-                $_SESSION["CapturaDetalle"] = array_values($captura)[0]; // Tomamos el primer elemento de la array filtrado
+                $this -> miEstado -> capturaDetalle = array_values($captura)[0]; // Tomamos el primer elemento de la array filtrado
                 return true; // Se encontró la captura
             }
         }
     
         // Si no se encuentra la captura o no hay capturas en la sesión
-        $_SESSION["CapturaDetalle"] = null;
+        $this -> miEstado -> capturaDetalle = null;
         return false; // No se encontró la captura
     }
 
@@ -220,8 +221,19 @@ Class Controlador{
                 }
             }
         }
-        $_SESSION["dataset"] = $dataset;
+        $this -> miEstado -> dataset = $dataset;
     }  
+
+    function filtrarNombre($filtro){
+
+        $filtro = strtolower($filtro);
+
+        $arrayFiltrado = array_filter($this -> miEstado -> capturas, function($item) use($filtro){
+            return trim(strtolower($item["Especie"])) === trim(strtolower($filtro));
+        });
+
+        return $arrayFiltrado;
+    }
 
 
     function generarContenido($arrayDatos = array()){
@@ -247,7 +259,7 @@ Class Controlador{
             }elseif($InicioS === 0){
                 $msgError = "Usuario o contraseña incorrectos.";
             }elseif($InicioS === true){
-                if($_SESSION["es_admin"]){
+                if($this -> miEstado -> esAdmin){
                     
                     $nav = 0.5;
                 }else{
@@ -290,15 +302,13 @@ Class Controlador{
             
             $this -> navegarPestanas($nav);
         }
-        //Logica Detalle de captura//
+        //Logica acceder a Detalles de Captura//
         elseif($c == 3 && !empty($arrayDatos) && isset($arrayDatos[0]) && $arrayDatos[0] == 3){
-
-
  
             $nav = null;
 
             $this -> setNewCaptura($arrayDatos[1]);
-            $this -> generarDatosGrafica($_SESSION["Temperaturas"], $_SESSION["Almacenes"]);
+            $this -> generarDatosGrafica($this -> miEstado -> temperaturas, $this -> miEstado -> almacenes);
             $this ->miEstado -> TagPez = $arrayDatos[1];
             
             switch($arrayDatos[0]){
@@ -306,22 +316,34 @@ Class Controlador{
                     $nav = 4;
                     break;
             }
-            $arrayAuxiliarHtml = array("graficaTemperatura" => $_SESSION["dataset"]);
+            $arrayAuxiliarHtml = array("graficaTemperatura" => $this -> miEstado -> dataset);
             $accionJs = 4;
             $this -> navegarPestanas($nav);
         }
+
         //logica de cerrar sesion//
         elseif (isset($arrayDatos[0]) && $arrayDatos[0] == -1 && $arrayDatos[1] == -1){
             $nav = 0;
             $this -> cerrarSesion();
             $this -> navegarPestanas($nav);
         }
+
         //Logica Boton Volver//
         elseif(isset($arrayDatos[0]) && $arrayDatos[0] == -1){
             $this -> navegarPestanas(-1);
         }
-        
 
+        elseif($c == 3  && !empty($arrayDatos) && $arrayDatos[0] == 0 && $arrayDatos[1] == 4 ){
+
+            $arrayFlitrado = $this -> filtrarNombre($arrayDatos[2]);
+
+            $this -> miEstado -> capturasFiltradas = $arrayFlitrado;
+    
+        }
+
+        
+        
+        
          
         $txtErr = "";
 
@@ -333,11 +355,7 @@ Class Controlador{
         "<br> LastTagPez: ".$this -> miEstado -> LastTagPez.
         "<br> Estado: ".$this -> miEstado -> Estado.
         "<br> EstadosAnteriores: ".implode(",",$this -> miEstado -> EstadosAnteriores).
-        "<br> Capturas: ".count($_SESSION["Capturas"]).
-        "<br> Barcos: ".count($_SESSION["Barcos"]).
-        "<br> Users: ".count($_SESSION["Usuarios"]).
-        "<br> Temperaturas: ".count($_SESSION["Temperaturas"]).
-        "<br> Almacenes: ".count($_SESSION["Almacenes"]).
+        
         "<br> ArrayDatos: ".implode($arrayDatos);   
 
         
