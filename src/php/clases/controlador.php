@@ -237,13 +237,17 @@ Class Controlador{
         elseif ($pestana == 2){
             $barcos = is_array($this->miEstado->barcos) ? $this->miEstado->barcos : [];
             $arrayFiltrado = array_filter($barcos, function($item) use($filtro){
-                return trim(strtolower($item["Nombre"])) === trim(strtolower($filtro));
+                return trim(strtolower($item["Nombre"])) === trim(strtolower($filtro)  );
             });
         }
         elseif ($pestana == 3){
             $capturas = is_array($this->miEstado->capturas) ? $this->miEstado->capturas : [];
             $arrayFiltrado = array_filter($capturas, function($item) use($filtro){
-                return trim(strtolower($item["Especie"])) === trim(strtolower($filtro));
+                return trim(strtolower($item["Especie"])) === trim(strtolower($filtro))
+                 or trim(strtolower($item["TipoAlmacen"])) === trim(strtolower($filtro))
+                 or trim(strtolower($item["Zona"])) === trim(strtolower($filtro))
+                 or trim(strtolower($item["NombreBarco"])) === trim(strtolower($filtro))
+                 or trim(strtolower($item["TagPez"])) === trim(strtolower($filtro));
             });
         }
         elseif ($pestana == 4){
