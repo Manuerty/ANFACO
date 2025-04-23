@@ -272,15 +272,56 @@ Class Controlador{
     }
 
 
-    function filtrarDesplegable($arrayFiltros){
+    // Función para limpiar el texto del timezone en la fecha
+function limpiarFechaJS($fecha) {
+    return preg_replace('/\s*\(.*?\)\s*$/', '', $fecha);
+}
 
+function filtrarDesplegable($data, $arrayFiltros) {
+    // Limpiamos las fechas recibidas desde JS
+    $fechaInicioLimpia = $this->limpiarFechaJS($arrayFiltros[0]);
+    $fechaFinLimpia = $this->limpiarFechaJS($arrayFiltros[1]);
 
+    // Creamos los objetos DateTime con las fechas limpias
+    $diaInicio = new DateTime($fechaInicioLimpia);
+    $diaFin = new DateTime($fechaFinLimpia);
 
+    $temperaturaMin = !empty($arrayFiltros[2]) ? $arrayFiltros[2] : null;
+    $temperaturaMax = !empty($arrayFiltros[3]) ? $arrayFiltros[3] : null;
 
-        
+    $resultado = array_filter($data, function($item) use ($diaInicio, $diaFin, $temperaturaMin, $temperaturaMax, $fechaInicioLimpia, $fechaFinLimpia) {
 
-        return  $arrayFiltros;
-    }
+        // Validar rango de fechas
+        if (!empty($fechaInicioLimpia) && !empty($fechaFinLimpia) && !empty($item['FechaCaptura'])) {
+            $fechaCaptura = new DateTime(substr($item['FechaCaptura'], 0, 10));
+            if ($fechaCaptura < $diaInicio || $fechaCaptura > $diaFin) {
+                return false;
+            }
+        }
+    
+        // Si falta alguna temperatura en el item, no lo incluimos
+        if (is_null($item['TemperaturaMinima']) || is_null($item['TemperaturaMaxima'])) {
+            return false;
+        }
+    
+        // Validar temperatura mínima
+        if (!is_null($temperaturaMin) && $item['TemperaturaMinima'] < $temperaturaMin) {
+            return false;
+        }
+    
+        // Validar temperatura máxima
+        if (!is_null($temperaturaMax) && $item['TemperaturaMaxima'] > $temperaturaMax) {
+            return false;
+        }
+    
+        return true;
+    });
+
+  
+    return array_values($resultado); // Para reindexar el array si se desea
+}
+    
+    
 
 
     function generarContenido($arrayDatos = array()) {
@@ -379,9 +420,11 @@ Class Controlador{
         elseif (!empty($arrayDatos) && $arrayDatos[0] == 0 && $arrayDatos[1] == 1 && isset($arrayDatos[2])) {
 
 
-            $arrayFiltrado = $this-> filtrarDesplegable($arrayDatos[2]);
+            $arrayFiltrado = $this-> filtrarDesplegable($this -> miEstado -> capturas, $arrayDatos[2]);
+
+            //var_dump($arrayFiltrado);
             
-            //$this->miEstado->capturasFiltradas = $arrayFiltrado;
+            $this->miEstado->capturasFiltradas = $arrayFiltrado;
                  
                 
         }
