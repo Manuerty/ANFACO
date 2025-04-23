@@ -20,3 +20,8 @@ Select TagPez, max(fecha) FechaUltimoAlmacen, count(TagPez) as CuentaAlmacen fro
        left join tiposalmacen on tiposalmacen.IdTipoAlmacen = AlmacenUltimo.IdTipoAlmacen
        WHERE bodegas.IdBarco IN (SELECT IdBarco FROM barcos WHERE IdUsuario = 1)
        ORDER by TagPez ASC;
+
+
+
+SELECT DISTINCT tiposalmacen.Nombre FROM `almacen`
+	INNER JOIN tiposalmacen on tiposalmacen.IdTipoAlmacen = almacen.IdTipoAlmacen WHERE 1;

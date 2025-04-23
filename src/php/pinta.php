@@ -112,8 +112,6 @@
 
 
     function DibujaTablaGenerica($Pestana, $tituloAlternativo = null) {
-
-
         
         //Ventana de usuarios//
         if ($Pestana == 0){

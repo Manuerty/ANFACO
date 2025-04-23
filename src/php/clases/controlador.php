@@ -268,7 +268,6 @@ Class Controlador{
             
         }
 
-
         return $arrayFiltrado;
     }
 
