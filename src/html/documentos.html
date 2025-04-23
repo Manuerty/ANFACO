@@ -13,22 +13,21 @@
       <h3>Filtros</h3>
       <br>
       
-      <h5 onclick="toggleContentPorId('fechaPanelDeslizable')" class="aparienciaBoton">Fecha </h5>
+      <!-- <h5 onclick="toggleContentPorId('fechaPanelDeslizable')" class="aparienciaBoton">Fecha </h5> -->
+      <h5 class="aparienciaBoton">Fecha </h5>
       <!-- <img src="Img/IconosAcciones/MayorQueNegrita.png" id="fechaPanelDeslizableIMG" width="11px" > -->
       <div id="fechaPanelDeslizable" class="seccion-panelDeslizable">
         <input type="date" id="F.IniDeslizable" class="form-control mb-3" placeholder="Fecha Inicio">
         <input type="date" id="F.FinDeslizable" class="form-control mb-3" placeholder="Fecha Fin">
       </div>
-      <h5 onclick="toggleContentPorId('EstadoPanelDeslizable')" class="aparienciaBoton">Estado </h5>
+      <!-- <h5 onclick="toggleContentPorId('EstadoPanelDeslizable')" class="aparienciaBoton">Temperatura </h5> -->
+      <h5  class="aparienciaBoton">Temperatura </h5>
       <div id="EstadoPanelDeslizable" class="seccion-panelDeslizable">
-        <select class="form-select border-secondary" aria-label="Estado" id="">
-          <option value="" selected>Sin asignar</option>
-          <option value="" >Completado</option>
-          <option value="" >Sin confirmar</option>
-        </select>
+        <input type="number" id="TempMin" class="form-control mb-3" placeholder="Temperatura Minima">
+        <input type="number" id="TempMax" class="form-control mb-3" placeholder="Temperatura Maxima">
       </div>
       <br>
-      <button class="btn btn-primary" onclick="desplegarPanelFiltros()">Aplicar</button>
+      <button class="btn btn-primary" onclick="desplegarPanelFiltros(1)">Aplicar</button>
       <button class="btn btn-secondary" onclick="desplegarPanelFiltros()">Cancelar</button>
       
   </div>

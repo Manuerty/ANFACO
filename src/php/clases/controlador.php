@@ -272,6 +272,17 @@ Class Controlador{
     }
 
 
+    function filtrarDesplegable($arrayFiltros){
+
+
+
+
+        
+
+        return  $arrayFiltros;
+    }
+
+
     function generarContenido($arrayDatos = array()) {
         $arrayAuxiliarHtml = [];
         $accionJs = null;
@@ -337,7 +348,8 @@ Class Controlador{
     
     
         // Filtros
-        elseif (!empty($arrayDatos) && $arrayDatos[0] == 0 && $arrayDatos[1] == 4 && isset($arrayDatos[2])) {
+        //Header
+        elseif (!empty($arrayDatos) && $arrayDatos[0] == 0 && $arrayDatos[1] == 0 && isset($arrayDatos[2])) {
             $arrayFiltrado = $this->filtrarNombre($arrayDatos[2], $c);
     
             switch ($c) {
@@ -363,6 +375,16 @@ Class Controlador{
                     break;
             }
         }
+        //Desplegable
+        elseif (!empty($arrayDatos) && $arrayDatos[0] == 0 && $arrayDatos[1] == 1 && isset($arrayDatos[2])) {
+
+
+            $arrayFiltrado = $this-> filtrarDesplegable($arrayDatos[2]);
+            
+            //$this->miEstado->capturasFiltradas = $arrayFiltrado;
+                 
+                
+        }
     
         // Depuración
         $txtErr = sprintf(
@@ -385,6 +407,8 @@ Class Controlador{
             $accionJs
         ];
     }
+
+
     
         
 }

@@ -287,63 +287,83 @@ function dibujaGrafica(dataset) {
 
     // aplicar filtros actualizado
     function aplicaFiltradoHeader(ValorBusqueda = null){
+
         var textoBuscado = '';
+
         if(ValorBusqueda == null){
             textoBuscado = $("#TxtBoxInputBuscarHeader").val();
         }
-        /* var selectedIds = [];
-              // Obtén los IDs de los checkboxes seleccionados
-            var checkboxes = $('#panelDeslizable :input[type="checkbox"]').toArray();
-            checkboxes.forEach(function (checkbox) {
-                if (checkbox.checked) {
-                    selectedIds.push(Number(checkbox.value));
-                }
-            });
-            
-        
-        if(selectedIds != []){
-            
-            dibuja_pagina([0,4,textoBuscado,selectedIds]);
-        }else{
-            dibuja_pagina([0,4,textoBuscado,[]]);
-        }; */
 
-        dibuja_pagina([0, 4, textoBuscado, []]);
+
+        dibuja_pagina([0, 0, textoBuscado, []]);
     }
 
-    function desplegarPanelFiltros() {
-    const panel = document.getElementById("panelDeslizable");
-    const currentTransform = window.getComputedStyle(panel).transform;
-    
-    if (currentTransform === "none" || currentTransform === "matrix(1, 0, 0, 1, 0, 0)") {
-        // Si el transform es "none" o "matrix(1, 0, 0, 1, 0, 0)", el panel está en su posición inicial (visible)
-        panel.style.transform = "translateX(100%)"; // Ocultar el panel moviéndolo hacia la derecha
-    } else {
-        // Si el transform es diferente, el panel está oculto (fuera de la vista)
-        panel.style.transform = "translateX(0)"; // Mostrar el panel moviéndolo hacia la izquierda
-    }
-}
-    //aplicar los filtros del calendario
-    function aplicaFiltrosCalendario(){
+    function desplegarPanelFiltros(aplicarFiltros = null) {
+        const panel = document.getElementById("panelDeslizable");
+        const currentTransform = window.getComputedStyle(panel).transform;
         
+        if (currentTransform === "none" || currentTransform === "matrix(1, 0, 0, 1, 0, 0)") {
+            // Si el transform es "none" o "matrix(1, 0, 0, 1, 0, 0)", el panel está en su posición inicial (visible)
+            panel.style.transform = "translateX(100%)"; // Ocultar el panel moviéndolo hacia la derecha
+        } else {
+            // Si el transform es diferente, el panel está oculto (fuera de la vista)
+            panel.style.transform = "translateX(0)"; // Mostrar el panel moviéndolo hacia la izquierda
+        }
+
+        if(aplicarFiltros == 1 ){
+
+            aplicaFiltrosCalendario();
+
+        }
+        
+    }
+
+    // Aplicar los filtros del calendario
+    function aplicaFiltrosCalendario() {
         var selectedIds = [];
-              // Obtén los IDs de los checkboxes seleccionados
-            var checkboxes = $('#panelDeslizable :input[type="checkbox"]').toArray();
-            checkboxes.forEach(function (checkbox) {
-                if (checkbox.checked) {
-                    selectedIds.push(Number(checkbox.value));
-                }
-            });
-            
-            // Filtra los eventos por los IDs seleccionados
-            
-            var filteredEvents = eventos.filter(function (evento) {
-                return selectedIds.includes(evento.id);
-            });
-            // // Actualiza el calendario con los eventos filtrados
-            calendar.removeAllEvents();
-            calendar.addEventSource(filteredEvents);
-            desplegarPanelFiltros()
+        var checkboxes = $('#panelDeslizable :input[type="checkbox"]').toArray();
+        checkboxes.forEach(function (checkbox) {
+            if (checkbox.checked) {
+                selectedIds.push(Number(checkbox.value));
+            }
+        });
+
+        // Obtener valores de fecha
+        var fechaInicio = document.getElementById("F.IniDeslizable").value;
+        var fechaFin = document.getElementById("F.FinDeslizable").value;
+
+
+        // Convertir fechas a objetos Date si están presentes
+        var fechaInicioObj = fechaInicio ? new Date(fechaInicio) : null;
+        var fechaFinObj = fechaFin ? new Date(fechaFin) : null;
+
+        // Ajustar hora de inicio a las 00:00:00
+        if (fechaInicioObj) {
+            fechaInicioObj.setHours(0, 0, 0, 0);
+        }
+
+        // Ajustar hora de fin a las 23:59:59.999
+        if (fechaFinObj) {
+            fechaFinObj.setHours(23, 59, 59, 999);
+        }
+
+        // Obtener valores de temperatura
+        var tempMin = document.getElementById("TempMin").value;
+        var tempMax = document.getElementById("TempMax").value;
+
+        // Convertir a número si hay valor, si no dejar como null
+        tempMin = tempMin !== "" ? parseFloat(tempMin) : null;
+        tempMax = tempMax !== "" ? parseFloat(tempMax) : null;
+
+
+        console.log("aplicar filtros calendario", selectedIds, fechaInicioObj, fechaFinObj, tempMin, tempMax);
+
+        arrayFiltros = [fechaInicioObj, fechaFinObj, tempMin, tempMax];
+
+        desplegarPanelFiltros();
+
+        dibuja_pagina([0, 1, arrayFiltros, []]);
+
     }
 
    //cambiar para que filtre el php
