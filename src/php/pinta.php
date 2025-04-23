@@ -320,9 +320,9 @@
                 $contenido .= "<div class='col-md-8' style='display: flex; flex-direction: column; height: 100%;'>";
 
                 // Parte superior: gráfico de temperatura
-                $contenido .= "<div class='card p-3 border shadow-sm mb-3' style='flex-shrink: 0;' id='contenedor-grafica'>";
+                $contenido .= "<div class='card p-3 border shadow-sm mb-3' style='flex-shrink: 0; max-width: 950px;' id='contenedor-grafica'>";
                 $contenido .= "<h5 class='card-title'>Gráfico de Temperatura</h5>";
-                $contenido .= "<canvas id='graficaTemperatura' style='width: 100%; height: 300px;'></canvas>";
+                $contenido .= "<canvas id='graficaTemperatura' width='950' height='300' style='display: block; max-height: 300px;'></canvas>";
                 $contenido .= "</div>";
 
                 // Script para cargar automáticamente la gráfica

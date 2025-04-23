@@ -23,11 +23,6 @@
     <!-- Iconos de boostrap -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.4/font/bootstrap-icons.css">
 
-    <!-- Libreria de grafica -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/luxon@3/build/global/luxon.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1"></script>
-
     
     <!-- <link rel="stylesheet" href="css/header.css">
     <link rel="stylesheet" href="css/tabla.css"> -->
@@ -58,6 +53,8 @@
 
     <!-- librerias de los graficos/chars -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luxon@3/build/global/luxon.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1"></script>
 
 
     <!-- link de css -->
@@ -103,10 +100,8 @@ async function dibuja_pagina(arrayDatos = []) {
                 url: 'src/php/index.php',
                 type: 'POST',
                 success: function(response) {
-                    console.log("Respuesta del servidor:", response);
                     try {
                         let respuesta = JSON.parse(response);
-                        console.log("Respuesta procesada:", respuesta);
                         /***************************************/
                         // Si el elemento 2 es 0 pinta la pestaña y luego realiza las acciones correspondientes
                         /***************************************/
@@ -119,7 +114,7 @@ async function dibuja_pagina(arrayDatos = []) {
                             // Usar Accion s que viene de php para elegir la accion que realizar
                             /***************************************/                   
                             if(respuesta[4] == 4 ){
-                                //dibujaGrafica(respuesta[3]);
+                                dibujaGrafica(respuesta[3]);
                             }
                             
                             CargarMapaFichaje();
@@ -305,6 +300,7 @@ function dibujaGrafica(dataset) {
         }else{
             dibuja_pagina([0,4,textoBuscado,[]]);
         }; */
+
         dibuja_pagina([0, 4, textoBuscado, []]);
     }
 
