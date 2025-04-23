@@ -161,7 +161,7 @@ async function dibuja_pagina(arrayDatos = []) {
 }
 
 function dibujaGrafica(dataset) {
-    console.log("Datos recibidos para la gráfica:", dataset);
+
 
     if (luxon) {
         console.log("Luxon está disponible");
@@ -177,8 +177,6 @@ function dibujaGrafica(dataset) {
             almacen: item.almacen  // Almacén asociado
         };
     });
-
-    console.log("Datos procesados para la gráfica:", datos);
 
     // Validar si los datos son correctos
     if (!Array.isArray(datos) || datos.length === 0) {
@@ -216,14 +214,12 @@ function dibujaGrafica(dataset) {
                         label: function(context) {
                             // Extraer los valores para mostrar en el tooltip
                             const temp = context.raw?.y; // Temperatura
-                            const almacen = context.raw?.almacen || '';  // Almacén
                             const fecha = luxon.DateTime.fromJSDate(context.raw.x).toFormat('MMM dd, yyyy HH:mm');// Fecha formateada con luxon
+                            const almacen = context.raw?.almacen || '';  // Almacén
                             return [
+                                'Fecha: ' + fecha,
                                 'Temperatura: ' + temp + ' °C',
-                                
-                                'Almacén: ' + almacen,
-                                
-                                'Fecha: ' + fecha
+                                'Almacén: ' + almacen
                             ];
                         }
                     }
