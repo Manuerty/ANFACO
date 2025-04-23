@@ -137,7 +137,17 @@
         elseif($Pestana == 2){
             //Si no hay capturas filtradas, se muestran todas las capturas//
             if ( $_SESSION["Controlador"] -> miEstado -> capturasFiltradas == null) {
-                $arraydatos = $_SESSION["Controlador"] -> miEstado -> capturas;
+                if ( $_SESSION["Controlador"] -> miEstado -> capturasFiltradas == 1) {
+
+                    $arraydatos =  null;
+
+
+
+                } else{
+                    $arraydatos = $_SESSION["Controlador"] -> miEstado -> capturas;
+                }
+                    
+                
             } else {
                 $arraydatos = $_SESSION["Controlador"] -> miEstado -> capturasFiltradas;
             }

@@ -286,39 +286,46 @@ function filtrarDesplegable($data, $arrayFiltros) {
     $diaInicio = new DateTime($fechaInicioLimpia);
     $diaFin = new DateTime($fechaFinLimpia);
 
-    $temperaturaMin = !empty($arrayFiltros[2]) ? $arrayFiltros[2] : null;
-    $temperaturaMax = !empty($arrayFiltros[3]) ? $arrayFiltros[3] : null;
+    // Asegurar valores válidos, incluso si son 0
+    $temperaturaMin = (isset($arrayFiltros[2]) && $arrayFiltros[2] !== '') ? (float)$arrayFiltros[2] : null;
+    $temperaturaMax = (isset($arrayFiltros[3]) && $arrayFiltros[3] !== '') ? (float)$arrayFiltros[3] : null;
 
     $resultado = array_filter($data, function($item) use ($diaInicio, $diaFin, $temperaturaMin, $temperaturaMax, $fechaInicioLimpia, $fechaFinLimpia) {
 
-        // Validar rango de fechas
+        // Validar rango de fechas si se proporciona
         if (!empty($fechaInicioLimpia) && !empty($fechaFinLimpia) && !empty($item['FechaCaptura'])) {
             $fechaCaptura = new DateTime(substr($item['FechaCaptura'], 0, 10));
             if ($fechaCaptura < $diaInicio || $fechaCaptura > $diaFin) {
                 return false;
             }
         }
-    
+
         // Si falta alguna temperatura en el item, no lo incluimos
-        if (is_null($item['TemperaturaMinima']) || is_null($item['TemperaturaMaxima'])) {
+        if (!isset($item['TemperaturaMinima']) || !isset($item['TemperaturaMaxima'])) {
             return false;
         }
-    
+
         // Validar temperatura mínima
         if (!is_null($temperaturaMin) && $item['TemperaturaMinima'] < $temperaturaMin) {
             return false;
         }
-    
+
         // Validar temperatura máxima
         if (!is_null($temperaturaMax) && $item['TemperaturaMaxima'] > $temperaturaMax) {
             return false;
         }
-    
+
         return true;
     });
 
-  
-    return array_values($resultado); // Para reindexar el array si se desea
+
+    if ($resultado == null){
+        $resultado = [];
+        $resultado[1] = 1;
+    }
+
+
+    return array_values($resultado); // Reindexamos
 }
     
     
@@ -422,11 +429,9 @@ function filtrarDesplegable($data, $arrayFiltros) {
 
             $arrayFiltrado = $this-> filtrarDesplegable($this -> miEstado -> capturas, $arrayDatos[2]);
 
-            //var_dump($arrayFiltrado);
             
             $this->miEstado->capturasFiltradas = $arrayFiltrado;
                  
-                
         }
     
         // Depuración
