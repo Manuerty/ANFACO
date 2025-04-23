@@ -102,6 +102,7 @@ async function dibuja_pagina(arrayDatos = []) {
                 success: function(response) {
                     try {
                         let respuesta = JSON.parse(response);
+                        console.log(respuesta);
                         /***************************************/
                         // Si el elemento 2 es 0 pinta la pestaña y luego realiza las acciones correspondientes
                         /***************************************/
@@ -113,10 +114,28 @@ async function dibuja_pagina(arrayDatos = []) {
                             /***************************************/
                             // Usar Accion s que viene de php para elegir la accion que realizar
                             /***************************************/                   
-                            if(respuesta[4] == 4 ){
-                                dibujaGrafica(respuesta[3]);
+                            if (respuesta[4] == 4) {
+                                // Esperar a que el DOM se actualice
+                                setTimeout(() => {
+                                    const canvasExiste = document.getElementById('graficaTemperatura');
+                                    
+                                    // Verificamos si el canvas existe y si los datos están disponibles
+                                    if (canvasExiste && respuesta[3]) {
+                                        // Verificamos si la gráfica ya fue pintada
+                                        if (!canvasExiste.hasAttribute('data-pintada') || canvasExiste.getAttribute('data-pintada') !== 'true') {
+                                            // Si no ha sido pintada, dibujamos la gráfica
+                                            dibujaGrafica(respuesta[3]);
+
+                                            // Marcamos el canvas como "pintado"
+                                            canvasExiste.setAttribute('data-pintada', 'true');
+                                        } else {
+                                            console.log("La gráfica ya ha sido pintada previamente.");
+                                        }
+                                    } else {
+                                        console.warn("No se encontró el canvas o los datos están vacíos");
+                                    }
+                                }, 100); // Esperar un poco para asegurar que el DOM esté actualizado
                             }
-                            
                             CargarMapaFichaje();
                             /***************************************/
                             // Mostrar mensaje por pantalla
@@ -161,14 +180,6 @@ async function dibuja_pagina(arrayDatos = []) {
 }
 
 function dibujaGrafica(dataset) {
-
-
-    if (luxon) {
-        console.log("Luxon está disponible");
-    } else {
-        console.error("Luxon no está disponible");
-    }
-
     // Procesar los datos, convirtiendo el timestamp con luxon
     const datos = dataset.graficaTemperatura.map(item => {
         return {

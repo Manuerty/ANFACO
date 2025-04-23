@@ -272,159 +272,120 @@ Class Controlador{
     }
 
 
-    function generarContenido($arrayDatos = array()){
+    function generarContenido($arrayDatos = array()) {
+        $arrayAuxiliarHtml = [];
+        $accionJs = null;
+        $msgError = "";
+        $AccionSinRepintar = 0;
+        $c = $this->miEstado->Estado;
+        $nav = null;
 
         
-        $arrayAuxiliarHtml = array();
-        $accionJs = null;
-        $msgError = "" ;
-        $AccionSinRepintar = 0;
     
-        $c = $this -> miEstado -> Estado; 
+        
+
+        // Cerrar sesión
+        if (isset($arrayDatos[0], $arrayDatos[1]) && $arrayDatos[0] == -1 && $arrayDatos[1] == -1) {
+            $this->cerrarSesion();
+            $this->navegarPestanas(0);
+        }
     
-        $nav = "";
-        // Asegurarse de que $arrayDatos tenga al menos un elemento antes de acceder a $arrayDatos[0]
-        //Logica Login//
-        if($c === 0  && !empty($arrayDatos) && isset($arrayDatos[0]) && $arrayDatos[0] != -1){
-            //Log In//
-            $nav = 0;
-            
-            $InicioS = $this -> IniciarSesion($arrayDatos[0], $arrayDatos[1]);
-            if($InicioS ===false){
+        // Botón volver
+        elseif (isset($arrayDatos[0]) && $arrayDatos[0] == -1) {
+            $this->navegarPestanas(-1);
+        }
+
+        // Login
+        elseif ($c === 0 && !empty($arrayDatos) && isset($arrayDatos[0]) && $arrayDatos[0] != -1) {
+            $InicioS = $this->IniciarSesion($arrayDatos[0], $arrayDatos[1]);
+    
+            if ($InicioS === false) {
                 $msgError = "Error de conexión con el servidor, por favor inténtelo más tarde.";
-            }elseif($InicioS === 0){
+            } elseif ($InicioS === 0) {
                 $msgError = "Usuario o contraseña incorrectos.";
-            }elseif($InicioS === true){
-                if($this -> miEstado -> esAdmin){
-                    
-                    $nav = 0.5;
-                }else{
-                    
-                    $nav = 1;
-                }
-            }   
-            $this -> navegarPestanas($nav);
-        }
-
-        //Logica Seleccion de usuario//
-        elseif($c === 0.5 && !empty($arrayDatos) && isset($arrayDatos[0]) && ($arrayDatos[0] == 1)){
-            
-            
-            $this -> setNewUser($arrayDatos[1]);
-            $this ->miEstado -> IdUsuarioSeleccionado = $arrayDatos[1];
-            $nav = null;
-            switch($arrayDatos[0]){
-                case 1:
-                    $nav = 1;
-                    break;
+            } elseif ($InicioS === true) {
+                $nav = $this->miEstado->esAdmin ? 0.5 : 1;
             }
-
-            $this -> navegarPestanas($nav);
+    
+            $this->navegarPestanas($nav);
         }
-
-        //Logica Dashboard//
-        elseif($c === 1  && !empty($arrayDatos) && isset($arrayDatos[0]) && ($arrayDatos[0] == 3 || $arrayDatos[0] == 4)){
-            
-            
-            $nav = null;
-            switch($arrayDatos[0]){
+    
+        // Selección de usuario
+        elseif ($c === 0.5 && isset($arrayDatos[0]) && $arrayDatos[0] == 1) {
+            $this->setNewUser($arrayDatos[1]);
+            $this->miEstado->IdUsuarioSeleccionado = $arrayDatos[1];
+            $this->navegarPestanas(1);
+        }
+    
+        // Navegación dashboard
+        elseif ($c === 1 && isset($arrayDatos[0])) {
+            $navMap = [3 => 2, 4 => 3];
+            if (array_key_exists($arrayDatos[0], $navMap)) {
+                $this->navegarPestanas($navMap[$arrayDatos[0]]);
+            }
+        }
+    
+        // Detalles de captura
+        elseif ($c === 3 && isset($arrayDatos[0]) && $arrayDatos[0] == 3) {
+            $this->setNewCaptura($arrayDatos[1]);
+            $this->miEstado->TagPez = $arrayDatos[1];
+            $this->generarDatosGrafica($this->miEstado->temperaturas, $this->miEstado->almacenes);
+            $arrayAuxiliarHtml = ["graficaTemperatura" => $this->miEstado->dataset];
+            $accionJs = 4;
+            $this->navegarPestanas(4);
+        }
+    
+    
+        // Filtros
+        elseif (!empty($arrayDatos) && $arrayDatos[0] == 0 && $arrayDatos[1] == 4 && isset($arrayDatos[2])) {
+            $arrayFiltrado = $this->filtrarNombre($arrayDatos[2], $c);
+    
+            switch ($c) {
+                case 0.5:
+                    $this->miEstado->usuariosFiltrados = $arrayFiltrado;
+                    break;
+                case 2:
+                    $this->miEstado->barcosFiltrados = $arrayFiltrado;
+                    break;
                 case 3:
-                    $nav = 2;
+                    $this->miEstado->capturasFiltradas = $arrayFiltrado;
                     break;
                 case 4:
-                    $nav = 3;
+                    $this->miEstado->almacenesFiltrados = $arrayFiltrado;
+                    if ($this -> miEstado -> almacenesFiltrados){
+                        $this->generarDatosGrafica($this->miEstado->temperaturas, $this->miEstado->almacenesFiltrados);
+                    }
+                    else{
+                        $this->generarDatosGrafica($this->miEstado->temperaturas, $this->miEstado->almacenes);
+                    }
+                    $arrayAuxiliarHtml = ["graficaTemperatura" => $this->miEstado->dataset];
+                    $accionJs = 4;
                     break;
             }
-            
-            $this -> navegarPestanas($nav);
         }
-        //Logica acceder a Detalles de Captura//
-        elseif($c == 3 && !empty($arrayDatos) && isset($arrayDatos[0]) && $arrayDatos[0] == 3){
- 
-            $nav = null;
-
-            $this -> setNewCaptura($arrayDatos[1]);
-            $this -> generarDatosGrafica($this -> miEstado -> temperaturas, $this -> miEstado -> almacenes);
-            $this ->miEstado -> TagPez = $arrayDatos[1];
-            
-            switch($arrayDatos[0]){
-                case 3:
-                    $nav = 4;
-                    break;
-            }
-            $arrayAuxiliarHtml = array("graficaTemperatura" => $this -> miEstado -> dataset);
-            $accionJs = 4;
-            $this -> navegarPestanas($nav);
-        }
-
-        //logica de cerrar sesion//
-        elseif (isset($arrayDatos[0]) && $arrayDatos[0] == -1 && $arrayDatos[1] == -1){
-            $nav = 0;
-            $this -> cerrarSesion();
-            $this -> navegarPestanas($nav);
-        }
-
-        //Logica Boton Volver//
-        elseif(isset($arrayDatos[0]) && $arrayDatos[0] == -1){
-            $this -> navegarPestanas(-1);
-        }
-
-
-        //Logica de Filtros//
-
-        elseif($c == 0.5  && !empty($arrayDatos) && $arrayDatos[0] == 0 && $arrayDatos[1] == 4 ){
-
-            $arrayFiltrado = $this -> filtrarNombre($arrayDatos[2], $c);
-            $this -> miEstado -> usuariosFiltrados = $arrayFiltrado;
-        }
-
-        elseif($c == 2  && !empty($arrayDatos) && $arrayDatos[0] == 0 && $arrayDatos[1] == 4 ){
-
-            $arrayFlitrado = $this -> filtrarNombre($arrayDatos[2], $c);
-
-            $this -> miEstado -> barcosFiltrados = $arrayFlitrado;
     
-        }
-
-        elseif($c == 3  && !empty($arrayDatos) && $arrayDatos[0] == 0 && $arrayDatos[1] == 4 ){
-
-            $arrayFlitrado = $this -> filtrarNombre($arrayDatos[2], $c);
-
-            $this -> miEstado -> capturasFiltradas = $arrayFlitrado;
+        // Depuración
+        $txtErr = sprintf(
+            "idUsuarioLogIn : %s<br>idUsuarioElegido: %s<br>IdLastUser: %s<br>TagPez: %s<br>LastTagPez: %s<br>Estado: %s<br>EstadosAnteriores: %s<br>ArrayDatos: %s",
+            $this->miEstado->IdUsuarioLogin,
+            $this->miEstado->IdUsuarioSeleccionado,
+            $this->miEstado->IdLastUser,
+            $this->miEstado->TagPez,
+            $this->miEstado->LastTagPez,
+            $this->miEstado->Estado,
+            implode(",", $this->miEstado->EstadosAnteriores),
+            implode(",", $arrayDatos)
+        );
     
-        }
-
-        elseif($c == 4  && !empty($arrayDatos) && $arrayDatos[0] == 0 && $arrayDatos[1] == 4 ){
-
-            $arrayFlitrado = $this -> filtrarNombre($arrayDatos[2], $c);
-
-            $this -> miEstado -> almacenesFiltrados = $arrayFlitrado;
-    
-        }
-
-        
-        
-        
-         
-        $txtErr = "";
-
-        
-        $txtErr = "idUsuarioLogIn : ".$this -> miEstado -> IdUsuarioLogin.
-        "<br> idUsuarioElegido: ".$this -> miEstado -> IdUsuarioSeleccionado.
-        "<br> IdLastUser: ".$this -> miEstado -> IdLastUser.
-        "<br> TagPez: ".$this -> miEstado -> TagPez.
-        "<br> LastTagPez: ".$this -> miEstado -> LastTagPez.
-        "<br> Estado: ".$this -> miEstado -> Estado.
-        "<br> EstadosAnteriores: ".implode(",",$this -> miEstado -> EstadosAnteriores).
-        
-        "<br> ArrayDatos: ".implode($arrayDatos);   
-
-        
-    
-        return array(pinta_contenido($this -> miEstado -> Estado).$txtErr,$msgError,$AccionSinRepintar,$arrayAuxiliarHtml,$accionJs);
-
-        
+        return [
+            pinta_contenido($this->miEstado->Estado) . $txtErr,
+            $msgError,
+            $AccionSinRepintar,
+            $arrayAuxiliarHtml,
+            $accionJs
+        ];
     }
+    
         
 }
 
