@@ -251,7 +251,8 @@
                     $contenido .= "<div class='card p-3 border shadow-sm' style='$backgroundColor margin-bottom: 0;'>";
                     
                     $contenido .= "<div class='d-flex justify-content-between align-items-start mb-2'>";
-                    $contenido .= "<h5 class='card-title mb-0'>" . ($tituloAlternativo ?? "Nombre: <strong>" . htmlspecialchars($usuario["NombreUsuario"]) . "</strong>") . "</h5>";
+                    $contenido .= "<h5 class='card-title mb-0'>" . ($tituloAlternativo ?? "<strong>" . htmlspecialchars($usuario["NombreUsuario"]) . "</strong>") . "</h5>";
+                    $contenido .=  "<p class='card-text' style='font-size: 0.825rem;'>" . htmlspecialchars($usuario["Rol"]) . "</p>";
                     $contenido .= "<button type='submit' class='btn btn-primary btn-sm' onclick='dibuja_pagina([1, $idUsuario])' >Entrar</button>";
 
                     $contenido .= "</div>"; // cierre d-flex

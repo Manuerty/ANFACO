@@ -47,9 +47,9 @@ use Pdo\Sqlite;
             $conn = obtener_conexion();
             if (!$conn) return false;
 
-            $sql = 'SELECT IdUsuario, Usuario, Contrasena
+            $sql = 'SELECT IdUsuario, Usuario, Contrasena, Rol
                     FROM usuarios
-                    WHERE Rol = "Usuarios"';
+                    WHERE Rol != "Administrador"';
 
             $stmt = $conn->prepare($sql);
 
@@ -69,7 +69,8 @@ use Pdo\Sqlite;
 
                     'IdUsuario'=> $row['IdUsuario'],
                     'NombreUsuario'=> $row['Usuario'],
-                    'Contrasena'=> $row['Contrasena']
+                    'Contrasena'=> $row['Contrasena'],
+                    'Rol'=> $row['Rol'],
                 ];
             }
 
