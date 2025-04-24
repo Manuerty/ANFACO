@@ -214,8 +214,18 @@ function dibujaGrafica(dataset) {
     const minYWithMargin = minY - margen;
     const maxYWithMargin = maxY + margen;
 
+    // Calcular la fecha mínima y máxima en los datos para el eje X
+    const fechas = datos.map(item => item.x);
+    const minFecha = Math.min(...fechas);
+    const maxFecha = Math.max(...fechas);
+
+    // Añadir un día antes y después de las fechas
+    const unDiaEnMilisegundos = 6 * 60 * 60 * 1000;  // Un día en milisegundos
+    const minFechaConMargen = minFecha - unDiaEnMilisegundos;  // Resta un día
+    const maxFechaConMargen = maxFecha + unDiaEnMilisegundos;  // Suma un día
+
     // Crear la gráfica
-    new Chart(ctx, {
+    const myChart = new Chart(ctx, {
         type: 'line',
         data: {
             datasets: [{
@@ -249,18 +259,19 @@ function dibujaGrafica(dataset) {
                 zoom: {
                     pan: {
                         enabled: true,
-                        mode: 'x',
-                        modifierKey: 'alt',
+                        mode: 'x',  // Habilitar el desplazamiento solo en el eje X
+                        modifierKey: 'alt',  // Hacer que se pueda mover solo con la tecla Alt presionada
                     },
                     zoom: {
                         wheel: {
                             enabled: true,
+                            mode: 'x',  // Limitar el zoom solo al eje X
                         },
                         pinch: {
-                            enabled: true
+                            enabled: true,
+                            mode: 'x',  // Limitar el pinch zoom solo al eje X
                         },
-                        mode: 'x',
-                    }
+                    },
                 }
             },
             scales: {
@@ -285,7 +296,9 @@ function dibujaGrafica(dataset) {
                         maxRotation: 45,
                         minRotation: 0,
                         source: 'auto'
-                    }
+                    },
+                    min: minFechaConMargen,  // Usar la fecha mínima ajustada
+                    max: maxFechaConMargen,  // Usar la fecha máxima ajustada
                 },
                 y: {
                     title: {
@@ -302,7 +315,61 @@ function dibujaGrafica(dataset) {
             }
         }
     });
+
+    // Asegurarse de que el gráfico se haya ajustado correctamente al principio
+    myChart.update();  // Forzar una actualización del gráfico después de su creación
+
+    // Mover el gráfico (drag)
+    const canvas = document.getElementById('graficaTemperatura');
+    let isDragging = false;
+    let startX = 0;
+    let startY = 0;
+
+    // Detectar el inicio del drag
+    canvas.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+    });
+
+    // Detectar el movimiento del drag
+    canvas.addEventListener('mousemove', (e) => {
+        if (isDragging) {
+            const deltaX = e.clientX - startX;
+            const deltaY = e.clientY - startY;
+
+            // Ajustar el movimiento en el eje X
+            const chartArea = myChart.chartArea;
+            const chartWidth = chartArea.right - chartArea.left;
+            const dataRangeX = myChart.scales.x.max - myChart.scales.x.min;
+            const pixelsPerUnitX = chartWidth / dataRangeX;
+            const offsetX = deltaX / pixelsPerUnitX;
+            myChart.options.scales.x.min -= offsetX;
+            myChart.options.scales.x.max -= offsetX;
+
+            // Ajustar el movimiento en el eje Y
+            const chartHeight = chartArea.bottom - chartArea.top;
+            const dataRangeY = myChart.scales.y.max - myChart.scales.y.min;
+            const pixelsPerUnitY = chartHeight / dataRangeY;
+            const offsetY = deltaY / pixelsPerUnitY;
+            myChart.options.scales.y.min += offsetY;
+            myChart.options.scales.y.max += offsetY;
+
+            myChart.update('none');
+            startX = e.clientX;
+            startY = e.clientY;
+        }
+    });
+
+    // Detener el drag cuando se suelta el mouse
+    canvas.addEventListener('mouseup', () => isDragging = false);
+    canvas.addEventListener('mouseleave', () => isDragging = false);
 }
+
+
+
+
+
 
 
 
