@@ -113,23 +113,45 @@
 
      function dibujaOpciones($tab = 0){
 
-        if ($tab == 1){
-
-            $arrayDoc = $_SESSION["Controlador"] -> miEstado -> barcos;
-            $arrayDoc = array_values($arrayDoc);
+        $contenido = "";
 
         
-            $contenido = '';
-            foreach($arrayDoc as $valor){
-                $contenido .= '<option value="'.$valor['IdBarco'].'">'.$valor['Nombre'].'</option>';
+
+        if ($tab == 1) {
+            $arrayDoc = $_SESSION["Controlador"]->miEstado->barcos;
+            $barcosUnicos = array_column($arrayDoc, 'IdBarco', 'Nombre');
+            foreach ($barcosUnicos as $nombre => $id) {
+                $contenido .= "<option value=\"$id\">$nombre</option>";
+            }
+        }
+        $arrayDoc = $_SESSION["Controlador"]->miEstado->capturas;
+
+        if ($tab == 2) {
+
+            
+            $arrayDoc = array_values($arrayDoc); // Asegura índices consecutivos
+        
+            // Extraer especies únicas
+            $especiesUnicas = array_unique(array_column($arrayDoc, 'Especie'));
+            sort($especiesUnicas); // Ordenar alfabéticamente
+        
+            foreach ($especiesUnicas as $especie) {
+                $contenido .= '<option value="' . htmlspecialchars($especie) . '">' . htmlspecialchars($especie) . '</option>';
             }
         }
 
-        if ($tab == 2){
-
-        }
-
         if ($tab == 3){
+            
+            $arrayDoc = array_values($arrayDoc); // Asegura índices consecutivos
+        
+            // Extraer especies únicas
+            $especiesUnicas = array_unique(array_column($arrayDoc, 'Zona'));
+            sort($especiesUnicas); // Ordenar alfabéticamente
+        
+            foreach ($especiesUnicas as $especie) {
+                $contenido .= '<option value="' . htmlspecialchars($especie) . '">' . htmlspecialchars($especie) . '</option>';
+            }
+
 
         }
 
