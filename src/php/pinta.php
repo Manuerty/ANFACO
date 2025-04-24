@@ -70,7 +70,7 @@
             $filetext = str_replace("%LineasE%", DibujaTablaGenerica(1),$filetext);
         }
         elseif($_SESSION["Controlador"] -> miEstado -> Estado == 3){
-            $filetext = str_replace(["%LineasE%","%Dropdown%"], [DibujaTablaGenerica(2), dibujaOpciones()],$filetext);
+            $filetext = str_replace(["%LineasE%","%DropdownBarcos%", "%DropdownEspecie%", "%DropdownZonas%"], [DibujaTablaGenerica(2), dibujaOpciones(1), dibujaOpciones(2), dibujaOpciones(3)],$filetext);
         }
         elseif($_SESSION["Controlador"] -> miEstado -> Estado == 4){
             $filetext = str_replace("%LineasE%", DibujaTablaGenerica(3),$filetext);
@@ -111,15 +111,26 @@
     }
 
 
-     function dibujaOpciones(){
+     function dibujaOpciones($tab = 0){
 
-        $arrayDoc = $_SESSION["Controlador"] -> miEstado -> barcos;
-        $arrayDoc = array_values($arrayDoc);
+        if ($tab == 1){
 
-      
-        $contenido = '';
-        foreach($arrayDoc as $valor){
-            $contenido .= '<option value="'.$valor['IdBarco'].'">'.$valor['Nombre'].'</option>';
+            $arrayDoc = $_SESSION["Controlador"] -> miEstado -> barcos;
+            $arrayDoc = array_values($arrayDoc);
+
+        
+            $contenido = '';
+            foreach($arrayDoc as $valor){
+                $contenido .= '<option value="'.$valor['IdBarco'].'">'.$valor['Nombre'].'</option>';
+            }
+        }
+
+        if ($tab == 2){
+
+        }
+
+        if ($tab == 3){
+
         }
 
         return $contenido;

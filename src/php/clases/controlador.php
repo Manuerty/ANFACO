@@ -317,7 +317,19 @@ function filtrarDesplegable($data, $arrayFiltros) {
     //BARCOS//
     $idBarco = $arrayFiltros[4];
 
-    $resultado = array_filter($data, function($item) use ($diaInicio, $diaFin, $temperaturaMin, $temperaturaMax, $fechaInicioLimpia, $fechaFinLimpia, $idBarco) {
+    //ZONA DE CAPTURA//
+
+    $zonaCaptura = $arrayFiltros[5];
+
+    //ESPECIE//
+
+    $especieCaptura = $arrayFiltros[6];
+
+    //TAG PEZ//
+
+    $tagPezCaptura = $arrayFiltros[7];
+
+    $resultado = array_filter($data, function($item) use ($diaInicio, $diaFin, $temperaturaMin, $temperaturaMax, $fechaInicioLimpia, $fechaFinLimpia, $idBarco, $zonaCaptura, $especieCaptura, $tagPezCaptura) {
 
 
         //FECHAS//
@@ -366,6 +378,20 @@ function filtrarDesplegable($data, $arrayFiltros) {
         if($idBarco != 0 && $item['IdBarco'] != $idBarco ){
                 return false;
         }
+
+        //ZONA DE CAPTURA//
+
+        if($zonaCaptura != 0 && $item['Zona'] != $zonaCaptura ){
+            return false;
+        }
+
+        //ESPECIE//
+        
+        if($especieCaptura != 0 && $item['Especie'] != $especieCaptura ){
+            return false;
+        }
+
+        //TAG PEZ//
 
         return true;
     });

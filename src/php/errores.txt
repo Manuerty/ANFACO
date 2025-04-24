@@ -146,4 +146,8 @@ Error [2] en C:\xampp\htdocs\ProyectoAnfaco\src\php\clases\controlador.php:442: 
 [2025-04-24 10:57:21] -> Error [2] en C:\xampp\htdocs\ProyectoAnfaco\src\php\clases\controlador.php:540: Array to string conversion -> Error [2] en C:\xampp\htdocs\ProyectoAnfaco\src\php\clases\controlador.php:540: Array to string conversion
 [2025-04-24 10:57:28] -> Error [2] en C:\xampp\htdocs\ProyectoAnfaco\src\php\clases\controlador.php:540: Array to string conversion -> Error [2] en C:\xampp\htdocs\ProyectoAnfaco\src\php\clases\controlador.php:540: Array to string conversion
 [2025-04-24 10:57:45] -> Error [2] en C:\xampp\htdocs\ProyectoAnfaco\src\php\clases\controlador.php:540: Array to string conversion -> Error [2] en C:\xampp\htdocs\ProyectoAnfaco\src\php\clases\controlador.php:540: Array to string conversion
-[2025-04-24 10:57:50] -> Error [2] en C:\xampp\htdocs\ProyectoAnfaco\src\php\clases\controlador.php:540: Array to string conversion -> 
+[2025-04-24 10:57:50] -> Error [2] en C:\xampp\htdocs\ProyectoAnfaco\src\php\clases\controlador.php:540: Array to string conversion -> Error [2] en C:\xampp\htdocs\ProyectoAnfaco\src\php\pinta.php:136: Undefined variable $contenido
+[2025-04-24 11:20:41] -> Error [2] en C:\xampp\htdocs\ProyectoAnfaco\src\php\pinta.php:136: Undefined variable $contenido -> Error [2] en C:\xampp\htdocs\ProyectoAnfaco\src\php\pinta.php:136: Undefined variable $contenido
+[2025-04-24 11:20:41] -> Error [2] en C:\xampp\htdocs\ProyectoAnfaco\src\php\pinta.php:136: Undefined variable $contenido -> Error [2] en C:\xampp\htdocs\ProyectoAnfaco\src\php\pinta.php:136: Undefined variable $contenido
+[2025-04-24 11:20:42] -> Error [2] en C:\xampp\htdocs\ProyectoAnfaco\src\php\pinta.php:136: Undefined variable $contenido -> Error [2] en C:\xampp\htdocs\ProyectoAnfaco\src\php\pinta.php:136: Undefined variable $contenido
+[2025-04-24 11:20:42] -> Error [2] en C:\xampp\htdocs\ProyectoAnfaco\src\php\pinta.php:136: Undefined variable $contenido -> 

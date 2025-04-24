@@ -380,11 +380,23 @@ function dibujaGrafica(dataset) {
 
         var IdBarco = document.getElementById("BarcoCaptura").value;
 
+        //ZONA DE CAPTURA//
+
+        var ZonaDeCaptura = document.getElementById("ZonaCaptura").value;
+
+        //ESPECIE//
+
+        var Especie = document.getElementById("EspecieCaptura").value;
+
+        //TAG PEZ//
+
+        var TagPez = document.getElementById("TagPezCaptura").value;
+
 
 
         //DEVOLUCION DE FILTROS//
 
-        arrayFiltros = [fechaInicioObj, fechaFinObj, tempMin, tempMax, IdBarco];
+        arrayFiltros = [fechaInicioObj, fechaFinObj, tempMin, tempMax, IdBarco, ZonaDeCaptura, Especie, TagPez];
 
         desplegarPanelFiltros();
 
