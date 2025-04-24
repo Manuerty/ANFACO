@@ -66,5 +66,4 @@ Thumbs.db
 *.debug
 
 #Archivos a ignorar
-src/php/errores.txt
-src/php/errores.txt
+* .txt
