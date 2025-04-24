@@ -80,6 +80,7 @@ var ctx;
 
 //arrayDatos(ElContenidoHtml[0],ElMensajedeError[1],Accion[2],ArrayAuxiliar[3],$accionJs)
 async function dibuja_pagina(arrayDatos = []) {
+    console.log("dibuja_pagina", arrayDatos);
     if (dibujaPaginaBloqueado) {
         return;
     }
@@ -101,8 +102,9 @@ async function dibuja_pagina(arrayDatos = []) {
                 type: 'POST',
                 success: function(response) {
                     try {
+                        
                         let respuesta = JSON.parse(response);
-                        console.log(respuesta);
+                        console.log("Respuesta del servidor:", respuesta[3]);
                         /***************************************/
                         // Si el elemento 2 es 0 pinta la pestaña y luego realiza las acciones correspondientes
                         /***************************************/
@@ -180,6 +182,7 @@ async function dibuja_pagina(arrayDatos = []) {
 }
 
 function dibujaGrafica(dataset) {
+    console.log("dibujaGrafica", dataset);
     // Procesar los datos, convirtiendo el timestamp con luxon
     const datos = dataset.graficaTemperatura.map(item => {
         return {
@@ -290,17 +293,20 @@ function dibujaGrafica(dataset) {
 
         var textoBuscado = '';
 
+        
+        textoBuscado = $("#TxtBoxInputBuscarHeader").val();
+
+        console.log("texto buscado:" + textoBuscado);
+
         if(ValorBusqueda == null){
-            textoBuscado = $("#TxtBoxInputBuscarHeader").val();
+            dibuja_pagina([0, 0, textoBuscado , []]);
         }
+        else if(ValorBusqueda == 1 || textoBuscado == '' || textoBuscado == null){
 
-        else if(ValorBusqueda == 1){
-
-            dibuja_pagina([0, 1, "reset", []]);
+            dibuja_pagina([0, 0, '' , []]);
+            
 
         }
-
-        dibuja_pagina([0, 0, textoBuscado, []]);
     }
 
     function desplegarPanelFiltros(aplicarFiltros = null) {

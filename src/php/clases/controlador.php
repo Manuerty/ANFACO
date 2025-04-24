@@ -29,6 +29,21 @@ Class Controlador{
     function navegarPestanas($ps){
         //volver a la anterior
         if($ps == -1){
+
+
+            //limpiar Filtros antes de cambiar de pagina//
+            if ($this -> miEstado -> Estado == 0.5) {
+                $this -> resetFilter($this -> miEstado -> Estado);
+            }
+            elseif ($this -> miEstado -> Estado == 2) {
+                $this -> resetFilter($this -> miEstado -> Estado);
+            }
+            elseif( $this ->miEstado->Estado == 3) {
+                $this -> resetFilter($this -> miEstado -> Estado);
+            }
+            elseif ( $this -> miEstado->Estado == 4) {
+                $this -> resetFilter($this -> miEstado -> Estado);
+            }
             //salir del modo formulario
             
             $estadoAnterior = array_shift($this->miEstado->EstadosAnteriores);
@@ -44,11 +59,13 @@ Class Controlador{
             elseif ($this ->miEstado->Estado == 0.5) {
                 $this -> miEstado -> IdLastUser = $this -> miEstado -> IdUsuarioSeleccionado;
                 $this -> miEstado -> IdUsuarioSeleccionado = null;
+                $this -> resetFilter();
             }
             //reiniciar variables de captura
             elseif( $this ->miEstado->Estado == 3) {
                 $this -> miEstado -> LastTagPez = $this -> miEstado -> TagPez;
                 $this -> miEstado -> TagPez = null;
+                
             }
 
             // Reinicialización común
@@ -327,21 +344,47 @@ function filtrarDesplegable($data, $arrayFiltros) {
 
     return array_values($resultado); // Reindexamos
 }
+
+
+
+    function resetFilter($data = null){
+
+        if ($data == null){
+            $this -> miEstado -> usuariosFiltrados = null;
+            $this -> miEstado -> barcosFiltrados = null;
+            $this -> miEstado -> capturasFiltradas = null;
+            $this -> miEstado -> almacenesFiltrados = null;
+        }
+        else{
+            switch ($data) {
+                case 0.5:
+                    $this -> miEstado -> usuariosFiltrados = null;
+                    break;
+                case 2:
+                    $this -> miEstado -> barcosFiltrados = null;
+                    break;
+                case 3:
+                    $this -> miEstado -> capturasFiltradas = null;
+                    break;
+                case 4:
+                    $this -> miEstado -> almacenesFiltrados = null;
+                    break;
+            }
+        }
+    }
     
     
 
 
     function generarContenido($arrayDatos = array()) {
+
+        //var_dump($arrayDatos);
         $arrayAuxiliarHtml = [];
         $accionJs = null;
         $msgError = "";
         $AccionSinRepintar = 0;
         $c = $this->miEstado->Estado;
         $nav = null;
-
-        
-    
-        
 
         // Cerrar sesión
         if (isset($arrayDatos[0], $arrayDatos[1]) && $arrayDatos[0] == -1 && $arrayDatos[1] == -1) {
@@ -399,46 +442,54 @@ function filtrarDesplegable($data, $arrayFiltros) {
         //Header
         elseif (!empty($arrayDatos) && $arrayDatos[0] == 0 && $arrayDatos[1] == 0 && isset($arrayDatos[2])) {
 
-            $arrayFiltrado = $this->filtrarNombre($arrayDatos[2], $c);
-    
-            switch ($c) {
-                case 0.5:
-                    $this->miEstado->usuariosFiltrados = $arrayFiltrado;
-                    break;
-                case 2:
-                    $this->miEstado->barcosFiltrados = $arrayFiltrado;
-                    break;
-                case 3:
-                    $this->miEstado->capturasFiltradas = $arrayFiltrado;
-                    break;
-                case 4:
-                    $this->miEstado->almacenesFiltrados = $arrayFiltrado;
-                    if ($this -> miEstado -> almacenesFiltrados){
-                        $this->generarDatosGrafica($this->miEstado->temperaturas, $this->miEstado->almacenesFiltrados);
-                    }
-                    else{
-                        $this->generarDatosGrafica($this->miEstado->temperaturas, $this->miEstado->almacenes);
-                    }
+           
+
+            if ($arrayDatos[2] == null) {
+
+                $this -> resetFilter($this -> miEstado -> Estado);
+
+                if ($c == 4){
+                    $this -> generarDatosGrafica($this->miEstado->temperaturas, $this->miEstado->almacenes);
                     $arrayAuxiliarHtml = ["graficaTemperatura" => $this->miEstado->dataset];
                     $accionJs = 4;
-                    break;
+                }
+
             }
+            else{
+                $arrayFiltrado = $this->filtrarNombre($arrayDatos[2], $c);
+            
+        
+                switch ($c) {
+                    case 0.5:
+                        $this->miEstado->usuariosFiltrados = $arrayFiltrado;
+                        break;
+                    case 2:
+                        $this->miEstado->barcosFiltrados = $arrayFiltrado;
+                        break;
+                    case 3:
+                        $this->miEstado->capturasFiltradas = $arrayFiltrado;
+                        break;
+                    case 4:
+                        $this->miEstado->almacenesFiltrados = $arrayFiltrado;
+                        if ($this -> miEstado -> almacenesFiltrados){
+                            $this->generarDatosGrafica($this->miEstado->temperaturas, $this->miEstado->almacenesFiltrados);
+                        }
+                        else{
+                            $this->generarDatosGrafica($this->miEstado->temperaturas, $this->miEstado->almacenes);
+                        }
+                        $arrayAuxiliarHtml = ["graficaTemperatura" => $this->miEstado->dataset];
+                        $accionJs = 4;
+                        break;
+                }
+            }       
         }
 
         //Desplegable
         elseif (!empty($arrayDatos) && $arrayDatos[0] == 0 && $arrayDatos[1] == 1 && isset($arrayDatos[2])) {
 
-            if ($arrayDatos[2] == "reset") {
-
-                $this -> miEstado -> capturasFiltradas = null;
-                
-            }
-            else{
-
-                $arrayFiltrado = $this-> filtrarDesplegable($this -> miEstado -> capturas, $arrayDatos[2]);            
-                $this->miEstado->capturasFiltradas = $arrayFiltrado;
-            }
-      
+            $arrayFiltrado = $this-> filtrarDesplegable($this -> miEstado -> capturas, $arrayDatos[2]);            
+            $this->miEstado->capturasFiltradas = $arrayFiltrado;
+            
         }
     
         // Depuración

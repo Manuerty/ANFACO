@@ -22,9 +22,19 @@
       </div>
       <!-- <h5 onclick="toggleContentPorId('EstadoPanelDeslizable')" class="aparienciaBoton">Temperatura </h5> -->
       <h5  class="aparienciaBoton">Temperatura </h5>
-      <div id="EstadoPanelDeslizable" class="seccion-panelDeslizable">
+      <div id="TemperaturaPanelDeslizable" class="seccion-panelDeslizable">
         <input type="number" id="TempMin" class="form-control mb-3" placeholder="Temperatura Minima">
         <input type="number" id="TempMax" class="form-control mb-3" placeholder="Temperatura Maxima">
+      </div>
+      <h5  class="aparienciaBoton">Barcos </h5>
+      <div id="BarcosPanelDeslizable" class="seccion-panelDeslizable">
+        <select id="Barcos" class="form-control mb-3">
+          %Dropdown%
+          
+          <!-- <option value="">Barco</option>
+          <option value="1">Barco A</option>
+          <option value="2">Barco B</option> -->
+      </select>
       </div>
       <br>
       <button class="btn btn-primary" onclick="desplegarPanelFiltros(1)">Aplicar</button>

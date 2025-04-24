@@ -280,10 +280,14 @@ use Pdo\Sqlite;
             if (!$conn) return false;
     
             $sql = "SELECT  Fecha, LectorRFID, tiposalmacen.Nombre, tiposalmacen.IdTipoAlmacen, Id  
-                        FROM almacen 
-                        LEFT JOIN tiposalmacen ON tiposalmacen.IdTipoAlmacen = almacen.IdTipoAlmacen
-                        WHERE almacen.TagPez = ?
-                        ORDER BY almacen.Fecha DESC";
+                            FROM almacen 
+                            LEFT JOIN tiposalmacen ON tiposalmacen.IdTipoAlmacen = almacen.IdTipoAlmacen
+                            WHERE almacen.TagPez = ?
+                    UNION
+                    SELECT FechaCaptura as Fecha, 'Bodega' as LectorRFID, 'Bodega'as Nombre, 0 as IdTipoAlmacen, 0 as Id
+                                            FROM bodegas
+                                            WHERE bodegas.TagPez = ?
+                                            ORDER BY FECHA DESC;";
 
     
             $stmt = $conn->prepare($sql);
@@ -294,7 +298,7 @@ use Pdo\Sqlite;
             }
     
             
-            $stmt->bind_param("s", $tagPez);
+            $stmt->bind_param("ss", $tagPez, $tagPez);
             
     
             if (!$stmt->execute()) {
