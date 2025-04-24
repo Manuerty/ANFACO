@@ -55,6 +55,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/luxon@3/build/global/luxon.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
+
 
 
     <!-- link de css -->
@@ -202,6 +204,16 @@ function dibujaGrafica(dataset) {
         return;
     }
 
+    // Calcular los valores mínimo y máximo de los datos
+    const valoresY = datos.map(item => item.y);
+    const minY = Math.min(...valoresY);
+    const maxY = Math.max(...valoresY);
+
+    // Calcular el margen (por ejemplo, 5 unidades hacia abajo y hacia arriba)
+    const margen = 5;
+    const minYWithMargin = minY - margen;
+    const maxYWithMargin = maxY + margen;
+
     // Crear la gráfica
     new Chart(ctx, {
         type: 'line',
@@ -223,10 +235,9 @@ function dibujaGrafica(dataset) {
                 tooltip: {
                     callbacks: {
                         label: function(context) {
-                            // Extraer los valores para mostrar en el tooltip
-                            const temp = context.raw?.y; // Temperatura
-                            const fecha = luxon.DateTime.fromJSDate(context.raw.x).toFormat('MMM dd, yyyy HH:mm');// Fecha formateada con luxon
-                            const almacen = context.raw?.almacen || '';  // Almacén
+                            const temp = context.raw?.y;
+                            const fecha = luxon.DateTime.fromJSDate(context.raw.x).toFormat('MMM dd, yyyy HH:mm');
+                            const almacen = context.raw?.almacen || '';
                             return [
                                 'Fecha: ' + fecha,
                                 'Temperatura: ' + temp + ' °C',
@@ -234,16 +245,35 @@ function dibujaGrafica(dataset) {
                             ];
                         }
                     }
+                },
+                zoom: {
+                    pan: {
+                        enabled: true,
+                        mode: 'x',
+                        modifierKey: 'alt',
+                    },
+                    zoom: {
+                        wheel: {
+                            enabled: true,
+                        },
+                        pinch: {
+                            enabled: true
+                        },
+                        mode: 'x',
+                    }
                 }
             },
             scales: {
                 x: {
-                    type: 'time',  // Usamos un tipo de escala 'time'
+                    type: 'time',
                     time: {
-                        unit: 'day',  // Para tener un formato de día
-                        tooltipFormat: 'yyyy-MM-dd',  // Formato del tooltip
+                        unit: false,  // Dejar que Chart.js elija automáticamente
+                        tooltipFormat: 'MMM dd, yyyy HH:mm',  // Formato detallado del tooltip
                         displayFormats: {
-                            day: 'MMM dd, yyyy',  // Formato visual de la fecha
+                            hour: 'HH:mm',
+                            day: 'MMM dd',
+                            month: 'MMM yyyy',
+                            minute: 'HH:mm',
                         },
                     },
                     title: {
@@ -252,7 +282,9 @@ function dibujaGrafica(dataset) {
                     },
                     ticks: {
                         autoSkip: true,
-                        maxTicksLimit: 6,  // Limitar a 6 marcas en el eje x
+                        maxRotation: 45,
+                        minRotation: 0,
+                        source: 'auto'
                     }
                 },
                 y: {
@@ -260,7 +292,12 @@ function dibujaGrafica(dataset) {
                         display: true,
                         text: 'Temperatura (°C)',
                     },
-                    min: 0  // Aseguramos que el eje Y comience en 0 para evitar que los puntos sean negativos
+                    min: minYWithMargin,  // Usar el mínimo calculado con margen
+                    max: maxYWithMargin,  // Usar el máximo calculado con margen
+                    ticks: {
+                        stepSize: 5,  // Define los intervalos de los ticks
+                        padding: 10,  // Agrega espacio adicional entre los ticks
+                    }
                 }
             }
         }
