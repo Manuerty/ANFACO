@@ -80,7 +80,6 @@ var ctx;
 
 //arrayDatos(ElContenidoHtml[0],ElMensajedeError[1],Accion[2],ArrayAuxiliar[3],$accionJs)
 async function dibuja_pagina(arrayDatos = []) {
-    console.log("dibuja_pagina", arrayDatos);
     if (dibujaPaginaBloqueado) {
         return;
     }
@@ -104,7 +103,6 @@ async function dibuja_pagina(arrayDatos = []) {
                     try {
                         
                         let respuesta = JSON.parse(response);
-                        console.log("Respuesta del servidor:", respuesta[3]);
                         /***************************************/
                         // Si el elemento 2 es 0 pinta la pestaña y luego realiza las acciones correspondientes
                         /***************************************/
@@ -182,7 +180,6 @@ async function dibuja_pagina(arrayDatos = []) {
 }
 
 function dibujaGrafica(dataset) {
-    console.log("dibujaGrafica", dataset);
     // Procesar los datos, convirtiendo el timestamp con luxon
     const datos = dataset.graficaTemperatura.map(item => {
         return {
@@ -331,6 +328,7 @@ function dibujaGrafica(dataset) {
 
     // Aplicar los filtros del calendario
     function aplicaFiltrosCalendario() {
+
         var selectedIds = [];
         var checkboxes = $('#panelDeslizable :input[type="checkbox"]').toArray();
         checkboxes.forEach(function (checkbox) {
@@ -338,6 +336,11 @@ function dibujaGrafica(dataset) {
                 selectedIds.push(Number(checkbox.value));
             }
         });
+
+
+        //FECHAS//
+
+
 
         // Obtener valores de fecha
         var fechaInicio = document.getElementById("F.IniDeslizable").value;
@@ -358,6 +361,11 @@ function dibujaGrafica(dataset) {
             fechaFinObj.setHours(23, 59, 59, 999);
         }
 
+
+
+        //TEMPERATURAS//
+
+
         // Obtener valores de temperatura
         var tempMin = document.getElementById("TempMin").value;
         var tempMax = document.getElementById("TempMax").value;
@@ -367,9 +375,16 @@ function dibujaGrafica(dataset) {
         tempMax = tempMax !== "" ? parseFloat(tempMax) : null;
 
 
-        console.log("aplicar filtros calendario", selectedIds, fechaInicioObj, fechaFinObj, tempMin, tempMax);
 
-        arrayFiltros = [fechaInicioObj, fechaFinObj, tempMin, tempMax];
+        //BARCOS//
+
+        var IdBarco = document.getElementById("BarcoCaptura").value;
+
+
+
+        //DEVOLUCION DE FILTROS//
+
+        arrayFiltros = [fechaInicioObj, fechaFinObj, tempMin, tempMax, IdBarco];
 
         desplegarPanelFiltros();
 

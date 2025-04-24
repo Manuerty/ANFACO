@@ -295,6 +295,10 @@ function limpiarFechaJS($fecha) {
 }
 
 function filtrarDesplegable($data, $arrayFiltros) {
+
+    //FECHAS//
+
+
     // Limpiamos las fechas recibidas desde JS
     $fechaInicioLimpia = $this->limpiarFechaJS($arrayFiltros[0]);
     $fechaFinLimpia = $this->limpiarFechaJS($arrayFiltros[1]);
@@ -303,19 +307,44 @@ function filtrarDesplegable($data, $arrayFiltros) {
     $diaInicio = new DateTime($fechaInicioLimpia);
     $diaFin = new DateTime($fechaFinLimpia);
 
+    //TEMPERATURAS//
+
     // Asegurar valores válidos, incluso si son 0
     $temperaturaMin = (isset($arrayFiltros[2]) && $arrayFiltros[2] !== '') ? (float)$arrayFiltros[2] : null;
     $temperaturaMax = (isset($arrayFiltros[3]) && $arrayFiltros[3] !== '') ? (float)$arrayFiltros[3] : null;
 
-    $resultado = array_filter($data, function($item) use ($diaInicio, $diaFin, $temperaturaMin, $temperaturaMax, $fechaInicioLimpia, $fechaFinLimpia) {
+
+    //BARCOS//
+    $idBarco = $arrayFiltros[4];
+
+    $resultado = array_filter($data, function($item) use ($diaInicio, $diaFin, $temperaturaMin, $temperaturaMax, $fechaInicioLimpia, $fechaFinLimpia, $idBarco) {
+
+
+        //FECHAS//
 
         // Validar rango de fechas si se proporciona
-        if (!empty($fechaInicioLimpia) && !empty($fechaFinLimpia) && !empty($item['FechaCaptura'])) {
+        if (!empty($item['FechaCaptura'])) {
             $fechaCaptura = new DateTime(substr($item['FechaCaptura'], 0, 10));
-            if ($fechaCaptura < $diaInicio || $fechaCaptura > $diaFin) {
-                return false;
+
+            if (!empty($fechaInicioLimpia) && !empty($fechaFinLimpia)) {
+                // Validar entre ambas fechas
+                if ($fechaCaptura < $diaInicio || $fechaCaptura > $diaFin) {
+                    return false;
+                }
+            } elseif (!empty($fechaInicioLimpia)) {
+                // Solo desde fecha de inicio
+                if ($fechaCaptura < $diaInicio) {
+                    return false;
+                }
+            } elseif (!empty($fechaFinLimpia)) {
+                // Solo hasta fecha fin
+                if ($fechaCaptura > $diaFin) {
+                    return false;
+                }
             }
         }
+
+        //TEMPERATURAS//
 
         // Si falta alguna temperatura en el item, no lo incluimos
         if (!isset($item['TemperaturaMinima']) || !isset($item['TemperaturaMaxima'])) {
@@ -330,6 +359,12 @@ function filtrarDesplegable($data, $arrayFiltros) {
         // Validar temperatura máxima
         if (!is_null($temperaturaMax) && $item['TemperaturaMaxima'] > $temperaturaMax) {
             return false;
+        }
+
+        //BARCOS//
+
+        if($idBarco != 0 && $item['IdBarco'] != $idBarco ){
+                return false;
         }
 
         return true;
