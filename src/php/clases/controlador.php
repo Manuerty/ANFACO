@@ -386,12 +386,16 @@ function filtrarDesplegable($data, $arrayFiltros) {
         }
 
         //ESPECIE//
-        
+
         if($especieCaptura != 0 && $item['Especie'] != $especieCaptura ){
             return false;
         }
 
         //TAG PEZ//
+
+        if($tagPezCaptura != $item['TagPez'] ){
+            return false;
+        }
 
         return true;
     });
