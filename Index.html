@@ -257,20 +257,15 @@ function dibujaGrafica(dataset) {
                     }
                 },
                 zoom: {
-                    pan: {
+                        zoom: {
                         enabled: true,
-                        mode: 'x',  // Habilitar el desplazamiento solo en el eje X
-                        modifierKey: 'alt',  // Hacer que se pueda mover solo con la tecla Alt presionada
-                    },
-                    zoom: {
+                        mode: 'x', // Solo habilitar zoom en el eje X
+                        speed: 0.1, // Velocidad del zoom
+                        sensitivity: 3, // Sensibilidad del zoom con la rueda del ratón
                         wheel: {
-                            enabled: true,
-                            mode: 'x',  // Limitar el zoom solo al eje X
-                        },
-                        pinch: {
-                            enabled: true,
-                            mode: 'x',  // Limitar el pinch zoom solo al eje X
-                        },
+                            enabled: true, // Habilitar zoom con la rueda del ratón
+                            speed: 0.1 // Velocidad del zoom con la rueda del ratón
+                        }
                     },
                 }
             },
@@ -365,6 +360,7 @@ function dibujaGrafica(dataset) {
     canvas.addEventListener('mouseup', () => isDragging = false);
     canvas.addEventListener('mouseleave', () => isDragging = false);
 }
+
 
 
 

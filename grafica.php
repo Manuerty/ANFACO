@@ -124,15 +124,10 @@
             }
           },
           zoom: {
-            pan: {
-              enabled: true,
-              mode: 'xy', // Permite mover tanto el eje X como el Y
-              speed: 10 // Velocidad de movimiento con el mouse
-            },
             zoom: {
               enabled: true,
-              mode: 'xy', // Permite hacer zoom tanto en el eje X como en el Y
-              speed: 0.1, // Velocidad de zoom
+              mode: 'x', // Solo habilitar zoom en el eje X
+              speed: 0.1, // Velocidad del zoom
               sensitivity: 3, // Sensibilidad del zoom con la rueda del ratón
               wheel: {
                 enabled: true, // Habilitar zoom con la rueda del ratón
@@ -144,8 +139,8 @@
       }
     });
 
-     // Control manual de pan estilo "Google Maps"
-     const canvas = document.getElementById('myChart');
+    // Control manual de pan estilo "Google Maps"
+    const canvas = document.getElementById('myChart');
     let isDragging = false;
     let startX = 0;
     let startY = 0;
