@@ -321,8 +321,8 @@ function filtrarDesplegable($data, $arrayFiltros) {
 
     if ($resultado == null){
         $resultado = [];
-        $resultado[1] = 1;
     }
+
 
 
     return array_values($resultado); // Reindexamos
@@ -398,6 +398,7 @@ function filtrarDesplegable($data, $arrayFiltros) {
         // Filtros
         //Header
         elseif (!empty($arrayDatos) && $arrayDatos[0] == 0 && $arrayDatos[1] == 0 && isset($arrayDatos[2])) {
+
             $arrayFiltrado = $this->filtrarNombre($arrayDatos[2], $c);
     
             switch ($c) {
@@ -423,15 +424,21 @@ function filtrarDesplegable($data, $arrayFiltros) {
                     break;
             }
         }
+
         //Desplegable
         elseif (!empty($arrayDatos) && $arrayDatos[0] == 0 && $arrayDatos[1] == 1 && isset($arrayDatos[2])) {
 
+            if ($arrayDatos[2] == "reset") {
 
-            $arrayFiltrado = $this-> filtrarDesplegable($this -> miEstado -> capturas, $arrayDatos[2]);
+                $this -> miEstado -> capturasFiltradas = null;
+                
+            }
+            else{
 
-            
-            $this->miEstado->capturasFiltradas = $arrayFiltrado;
-                 
+                $arrayFiltrado = $this-> filtrarDesplegable($this -> miEstado -> capturas, $arrayDatos[2]);            
+                $this->miEstado->capturasFiltradas = $arrayFiltrado;
+            }
+      
         }
     
         // Depuración

@@ -136,20 +136,13 @@
         //Ventana de Capturas// 
         elseif($Pestana == 2){
             //Si no hay capturas filtradas, se muestran todas las capturas//
-            if ( $_SESSION["Controlador"] -> miEstado -> capturasFiltradas == null) {
-                if ( $_SESSION["Controlador"] -> miEstado -> capturasFiltradas == 1) {
+            if (!isset($_SESSION["Controlador"]->miEstado->capturasFiltradas) || 
+                $_SESSION["Controlador"]->miEstado->capturasFiltradas === null) {
 
-                    $arraydatos =  null;
+                $arraydatos = $_SESSION["Controlador"]->miEstado->capturas;
 
-
-
-                } else{
-                    $arraydatos = $_SESSION["Controlador"] -> miEstado -> capturas;
-                }
-                    
-                
             } else {
-                $arraydatos = $_SESSION["Controlador"] -> miEstado -> capturasFiltradas;
+                $arraydatos = $_SESSION["Controlador"]->miEstado->capturasFiltradas;
             }
         }
         //Ventana de Detalles de Captura//

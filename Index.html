@@ -294,6 +294,11 @@ function dibujaGrafica(dataset) {
             textoBuscado = $("#TxtBoxInputBuscarHeader").val();
         }
 
+        else if(ValorBusqueda == 1){
+
+            dibuja_pagina([0, 1, "reset", []]);
+
+        }
 
         dibuja_pagina([0, 0, textoBuscado, []]);
     }
