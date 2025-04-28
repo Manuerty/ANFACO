@@ -173,13 +173,16 @@ Class Controlador{
         
     }
 
-    function setNewUser($IdUser){
+    function setNewUser($IdUser, $UserName){
+
+        
 
         if ($IdUser == $this -> miEstado -> IdLastUser) {
             return;
         }
         else{
             $this -> miEstado -> IdUsuarioSeleccionado = $IdUser;
+            $this -> miEstado -> nombreUsuario = $UserName;
             $this -> miEstado -> capturas = get_capturas($IdUser);
             $this -> miEstado -> barcos = get_Barcos($IdUser);
         }
@@ -457,13 +460,16 @@ Class Controlador{
 
     function generarContenido($arrayDatos = array()) {
 
-        //var_dump($arrayDatos);
         $arrayAuxiliarHtml = [];
         $accionJs = null;
         $msgError = "";
         $AccionSinRepintar = 0;
         $c = $this->miEstado->Estado;
         $nav = null;
+
+        
+
+
 
         // Cerrar sesión
         if (isset($arrayDatos[0], $arrayDatos[1]) && $arrayDatos[0] == -1 && $arrayDatos[1] == -1) {
@@ -490,10 +496,15 @@ Class Controlador{
     
             $this->navegarPestanas($nav);
         }
+
+        
     
         // Selección de usuario
         elseif ($c === 0.5 && isset($arrayDatos[0]) && $arrayDatos[0] == 1 or $arrayDatos[0] == 1.5) {
-            $this->setNewUser($arrayDatos[1]);
+
+            
+            
+            $this->setNewUser($arrayDatos[1], $arrayDatos[2] );
             $this->miEstado->IdUsuarioSeleccionado = $arrayDatos[1];
             if ($arrayDatos[0] == 1) {
                 $this->navegarPestanas(1);

@@ -24,11 +24,11 @@
                 $filename = "../html/documentos.html";
                 break;
             case 2:
-                $titulo = "Barcos";
+                $titulo = "Barcos de " .$_SESSION["Controlador"] -> miEstado -> nombreUsuario;
                 $filename = "../html/documentos.html";
                 break;
             case 3:
-                $titulo = "Capturas";
+                $titulo = "Capturas de " .$_SESSION["Controlador"] -> miEstado -> nombreUsuario;
                 $filename = "../html/documentos.html";
                 break;
             case 4:
@@ -265,10 +265,15 @@
     
             if ($Pestana == 0){
                 foreach ($arraydatos as $index => $usuario) {
+
             
                     $idUsuario = $usuario["IdUsuario"];
+                    $NombreUsuario = $usuario["NombreUsuario"];
                     $tipoUsuario = $usuario["Rol"];
                     $backgroundColor = ($index % 2 == 0) ? 'background-color: whitesmoke;' : 'background-color: white;';
+
+                    
+
                     $contenido .= "<div style='width: 70%; margin: 0 auto;'>"; // Contenedor ahora al 70%
                     $contenido .= "<div class='card p-3 border shadow-sm' style='$backgroundColor margin-bottom: 0;'>";
             
@@ -287,9 +292,9 @@
                     // Botón
                     $contenido .= "<div class='col-3 text-end'>";
                     if ($tipoUsuario == "Conservero") {
-                        $contenido .= "<button type='submit' class='btn btn-primary btn-sm' onclick='dibuja_pagina([1.5, $idUsuario ])'>Entrar</button>";
+                        $contenido .= "<button type='submit' class='btn btn-primary btn-sm' onclick='dibuja_pagina([1.5, $idUsuario,".'"'.$NombreUsuario.'"'."  ])'>Entrar</button>";
                     } else {
-                        $contenido .= "<button type='submit' class='btn btn-primary btn-sm' onclick='dibuja_pagina([1, $idUsuario ])'>Entrar</button>";
+                        $contenido .= "<button type='submit' class='btn btn-primary btn-sm' onclick='dibuja_pagina([1, $idUsuario,".'"'.$NombreUsuario.'"'." ])'>Entrar</button>";
                     }
 
                     $contenido .= "</div>";
