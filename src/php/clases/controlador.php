@@ -100,7 +100,12 @@ Class Controlador{
         $this->miEstado->Estado = 0;
     
         if ($datosSesion != false && $datosSesion != 0) {
+
+            
             $this->miEstado->IdUsuarioLogin = $datosSesion[0];
+            $this -> miEstado -> nombreUsuario = $datosSesion[1];
+
+
     
             // Determinar si es administrador
             $this -> miEstado -> esAdmin = ($datosSesion[3] === "Administrador");
@@ -290,125 +295,134 @@ Class Controlador{
 
 
     // Función para limpiar el texto del timezone en la fecha
-function limpiarFechaJS($fecha) {
-    return preg_replace('/\s*\(.*?\)\s*$/', '', $fecha);
-}
+    function limpiarFechaJS($fecha) {
+        return preg_replace('/\s*\(.*?\)\s*$/', '', $fecha);
+    }
 
-function filtrarDesplegable($data, $arrayFiltros) {
-
-    //FECHAS//
-
-
-    // Limpiamos las fechas recibidas desde JS
-    $fechaInicioLimpia = $this->limpiarFechaJS($arrayFiltros[0]);
-    $fechaFinLimpia = $this->limpiarFechaJS($arrayFiltros[1]);
-
-    // Creamos los objetos DateTime con las fechas limpias
-    $diaInicio = new DateTime($fechaInicioLimpia);
-    $diaFin = new DateTime($fechaFinLimpia);
-
-    //TEMPERATURAS//
-
-    // Asegurar valores válidos, incluso si son 0
-    $temperaturaMin = (isset($arrayFiltros[2]) && $arrayFiltros[2] !== '') ? (float)$arrayFiltros[2] : null;
-    $temperaturaMax = (isset($arrayFiltros[3]) && $arrayFiltros[3] !== '') ? (float)$arrayFiltros[3] : null;
-
-
-    //BARCOS//
-    $idBarco = $arrayFiltros[4];
-
-    //ZONA DE CAPTURA//
-
-    $zonaCaptura = $arrayFiltros[5];
-
-    //ESPECIE//
-
-    $especieCaptura = $arrayFiltros[6];
-
-    //TAG PEZ//
-
-    $tagPezCaptura = $arrayFiltros[7];
-
-    $resultado = array_filter($data, function($item) use ($diaInicio, $diaFin, $temperaturaMin, $temperaturaMax, $fechaInicioLimpia, $fechaFinLimpia, $idBarco, $zonaCaptura, $especieCaptura, $tagPezCaptura) {
+    function filtrarDesplegable($data, $arrayFiltros) {
 
 
         //FECHAS//
 
-        // Validar rango de fechas si se proporciona
-        if (!empty($item['FechaCaptura'])) {
-            $fechaCaptura = new DateTime(substr($item['FechaCaptura'], 0, 10));
 
-            if (!empty($fechaInicioLimpia) && !empty($fechaFinLimpia)) {
-                // Validar entre ambas fechas
-                if ($fechaCaptura < $diaInicio || $fechaCaptura > $diaFin) {
-                    return false;
-                }
-            } elseif (!empty($fechaInicioLimpia)) {
-                // Solo desde fecha de inicio
-                if ($fechaCaptura < $diaInicio) {
-                    return false;
-                }
-            } elseif (!empty($fechaFinLimpia)) {
-                // Solo hasta fecha fin
-                if ($fechaCaptura > $diaFin) {
-                    return false;
-                }
-            }
-        }
+        // Limpiamos las fechas recibidas desde JS
+        $fechaInicioLimpia = $this->limpiarFechaJS($arrayFiltros[0]);
+        $fechaFinLimpia = $this->limpiarFechaJS($arrayFiltros[1]);
+
+        // Creamos los objetos DateTime con las fechas limpias
+        $diaInicio = new DateTime($fechaInicioLimpia);
+        $diaFin = new DateTime($fechaFinLimpia);
 
         //TEMPERATURAS//
 
-        // Si falta alguna temperatura en el item, no lo incluimos
-        if (!isset($item['TemperaturaMinima']) || !isset($item['TemperaturaMaxima'])) {
-            return false;
-        }
+        // Asegurar valores válidos, incluso si son 0
+        $temperaturaMin = (isset($arrayFiltros[2]) && $arrayFiltros[2] !== '') ? (float)$arrayFiltros[2] : null;
+        $temperaturaMax = (isset($arrayFiltros[3]) && $arrayFiltros[3] !== '') ? (float)$arrayFiltros[3] : null;
 
-        // Validar temperatura mínima
-        if (!is_null($temperaturaMin) && $item['TemperaturaMinima'] < $temperaturaMin) {
-            return false;
-        }
-
-        // Validar temperatura máxima
-        if (!is_null($temperaturaMax) && $item['TemperaturaMaxima'] > $temperaturaMax) {
-            return false;
-        }
 
         //BARCOS//
-
-        if($idBarco != 0 && $item['IdBarco'] != $idBarco ){
-                return false;
-        }
+        $nombreBarco = $arrayFiltros[4];
 
         //ZONA DE CAPTURA//
 
-        if($zonaCaptura != 0 && $item['Zona'] != $zonaCaptura ){
-            return false;
-        }
+        $zonaCaptura = $arrayFiltros[5];
 
         //ESPECIE//
 
-        if($especieCaptura != 0 && $item['Especie'] != $especieCaptura ){
-            return false;
-        }
+        $especieCaptura = $arrayFiltros[6];
 
         //TAG PEZ//
 
-        if($tagPezCaptura != $item['TagPez'] ){
-            return false;
+        $tagPezCaptura = $arrayFiltros[7];
+
+        $resultado = array_filter($data, function($item) use ($diaInicio, $diaFin, $temperaturaMin, $temperaturaMax, $fechaInicioLimpia, $fechaFinLimpia, $nombreBarco, $zonaCaptura, $especieCaptura, $tagPezCaptura) {
+
+            //FECHAS//
+
+            // Validar rango de fechas si se proporciona
+            if (!empty($item['FechaCaptura'])) {
+                $fechaCaptura = new DateTime(substr($item['FechaCaptura'], 0, 10));
+
+                if (!empty($fechaInicioLimpia) && !empty($fechaFinLimpia)) {
+                    // Validar entre ambas fechas
+                    if ($fechaCaptura < $diaInicio || $fechaCaptura > $diaFin) {
+                        return false;
+                    }
+                } elseif (!empty($fechaInicioLimpia)) {
+                    // Solo desde fecha de inicio
+                    if ($fechaCaptura < $diaInicio) {
+                        return false;
+                    }
+                } elseif (!empty($fechaFinLimpia)) {
+                    // Solo hasta fecha fin
+                    if ($fechaCaptura > $diaFin) {
+                        return false;
+                    }
+                }
+            }
+
+            //TEMPERATURAS//
+
+            // Si falta alguna temperatura en el item, no lo incluimos
+            if (!isset($item['TemperaturaMinima']) || !isset($item['TemperaturaMaxima'])) {
+                return false;
+            }
+
+            // Validar temperatura mínima
+            if (!is_null($temperaturaMin) && $item['TemperaturaMinima'] < $temperaturaMin) {
+                return false;
+            }
+
+            // Validar temperatura máxima
+            if (!is_null($temperaturaMax) && $item['TemperaturaMaxima'] > $temperaturaMax) {
+                return false;
+            }
+
+            //BARCOS//
+
+
+
+            if(!empty($nombreBarco) && $item['NombreBarco'] != $nombreBarco ){
+                    return false;
+            }
+
+    
+
+            //ZONA DE CAPTURA//
+
+            if($zonaCaptura != 0 && $item['Zona'] != $zonaCaptura ){
+                return false;
+            }
+
+
+            //ESPECIE//
+
+            if($especieCaptura != 0 && $item['Especie'] != $especieCaptura ){
+                return false;
+            }
+
+ 
+
+            //TAG PEZ//
+
+            if(!empty($tagPezCaptura) && $tagPezCaptura != $item['TagPez'] ){
+                return false;
+            }
+
+
+
+            return true;
+        });
+
+
+
+        if ($resultado == null){
+            $resultado = [];
         }
 
-        return true;
-    });
 
-
-    if ($resultado == null){
-        $resultado = [];
+        return array_values($resultado); // Reindexamos
     }
-
-
-
-    return array_values($resultado); // Reindexamos
-}
 
 
 
@@ -478,11 +492,17 @@ function filtrarDesplegable($data, $arrayFiltros) {
         }
     
         // Selección de usuario
-        elseif ($c === 0.5 && isset($arrayDatos[0]) && $arrayDatos[0] == 1) {
+        elseif ($c === 0.5 && isset($arrayDatos[0]) && $arrayDatos[0] == 1 or $arrayDatos[0] == 1.5) {
             $this->setNewUser($arrayDatos[1]);
             $this->miEstado->IdUsuarioSeleccionado = $arrayDatos[1];
-            $this->navegarPestanas(1);
+            if ($arrayDatos[0] == 1) {
+                $this->navegarPestanas(1);
+            } elseif ($arrayDatos[0] == 1.5) {
+                $this->navegarPestanas(1.5);
+            }
         }
+
+        
     
         // Navegación dashboard
         elseif ($c === 1 && isset($arrayDatos[0])) {
@@ -491,6 +511,16 @@ function filtrarDesplegable($data, $arrayFiltros) {
                 $this->navegarPestanas($navMap[$arrayDatos[0]]);
             }
         }
+
+        //ACCESO A CAPTURA DESDE CONSERVERO
+
+        elseif ($c === 1.5&& isset($arrayDatos[0])) {
+            $navMap = [3 => 2, 4 => 3];
+            if (array_key_exists($arrayDatos[0], $navMap)) {
+                $this->navegarPestanas($navMap[$arrayDatos[0]]);
+            }
+        }
+
     
         // Detalles de captura
         elseif ($c === 3 && isset($arrayDatos[0]) && $arrayDatos[0] == 3) {
@@ -551,6 +581,8 @@ function filtrarDesplegable($data, $arrayFiltros) {
 
         //Desplegable
         elseif (!empty($arrayDatos) && $arrayDatos[0] == 0 && $arrayDatos[1] == 1 && isset($arrayDatos[2])) {
+
+
 
             $arrayFiltrado = $this-> filtrarDesplegable($this -> miEstado -> capturas, $arrayDatos[2]);            
             $this->miEstado->capturasFiltradas = $arrayFiltrado;

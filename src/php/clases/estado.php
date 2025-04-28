@@ -39,6 +39,10 @@ class Estado{
 
     public $dataset;
 
+    public $nombreUsuario;
+
+    
+
 
 
  

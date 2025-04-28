@@ -16,8 +16,12 @@
                 $filename = "../html/documentos.html";
                 break;
             case 1:
-                $titulo = "Dashboard";
+                $titulo = $_SESSION["Controlador"] -> miEstado -> nombreUsuario;
                 $filename = "../html/dashboard.html";
+                break;
+            case 1.5:
+                $titulo = "Cliente";
+                $filename = "../html/documentos.html";
                 break;
             case 2:
                 $titulo = "Barcos";
@@ -61,10 +65,11 @@
                 $filetext = str_replace('%FuncionFiltrar%','aplicafiltros()',$filetext);
             }
         }
-
-        
         if($_SESSION["Controlador"] -> miEstado -> Estado == 0.5){
             $filetext = str_replace("%LineasE%", DibujaTablaGenerica(0),$filetext);
+        }
+        if($_SESSION["Controlador"] -> miEstado -> Estado == 1.5){
+            $filetext = str_replace("%LineasE%", DibujaTablaGenerica(0.5),$filetext);
         }
         elseif($_SESSION["Controlador"] -> miEstado -> Estado == 2){
             $filetext = str_replace("%LineasE%", DibujaTablaGenerica(1),$filetext);
@@ -116,15 +121,22 @@
         $contenido = "";
 
         
+        $arrayDoc = $_SESSION["Controlador"]->miEstado->capturas;
+        
 
         if ($tab == 1) {
-            $arrayDoc = $_SESSION["Controlador"]->miEstado->barcos;
-            $barcosUnicos = array_column($arrayDoc, 'IdBarco', 'Nombre');
-            foreach ($barcosUnicos as $nombre => $id) {
-                $contenido .= "<option value=\"$id\">$nombre</option>";
+
+            $arrayDoc = array_values($arrayDoc); // Asegura índices consecutivos
+        
+            // Extraer especies únicas
+            $barcosUnicos = array_unique(array_column($arrayDoc, 'NombreBarco'));
+            sort($barcosUnicos); // Ordenar alfabéticamente
+        
+            foreach ($barcosUnicos as $barco) {
+                $contenido .= '<option value="' . htmlspecialchars($barco) . '">' . htmlspecialchars($barco) . '</option>';
             }
         }
-        $arrayDoc = $_SESSION["Controlador"]->miEstado->capturas;
+        
 
         if ($tab == 2) {
 
@@ -172,6 +184,12 @@
             } else {
                 $arraydatos = $_SESSION["Controlador"]->miEstado->usuariosFiltrados;
             }
+        }
+
+        //Ventana de Conservero//
+        if ($Pestana == 0.5) {
+            
+            $arraydatos = ["conservero", "tipo"];
         }
 
         //Ventana de barcos//
@@ -227,8 +245,12 @@
 
 
         $contenido = "";
+
+
+
     
         if (isset($arraydatos) && !empty($arraydatos)) {
+
 
             if($Pestana == 0){
 
@@ -245,6 +267,7 @@
                 foreach ($arraydatos as $index => $usuario) {
             
                     $idUsuario = $usuario["IdUsuario"];
+                    $tipoUsuario = $usuario["Rol"];
                     $backgroundColor = ($index % 2 == 0) ? 'background-color: whitesmoke;' : 'background-color: white;';
                     $contenido .= "<div style='width: 70%; margin: 0 auto;'>"; // Contenedor ahora al 70%
                     $contenido .= "<div class='card p-3 border shadow-sm' style='$backgroundColor margin-bottom: 0;'>";
@@ -258,12 +281,17 @@
             
                     // Rol de usuario
                     $contenido .= "<div class='col-4'>";
-                    $contenido .= "<p class='card-text mb-0' style='font-size: 0.825rem;'>" . htmlspecialchars($usuario["Rol"]) . "</p>";
+                    $contenido .= "<p class='card-text mb-0' style='font-size: 0.825rem;'>" . htmlspecialchars($tipoUsuario) . "</p>";
                     $contenido .= "</div>";
             
                     // Botón
                     $contenido .= "<div class='col-3 text-end'>";
-                    $contenido .= "<button type='submit' class='btn btn-primary btn-sm' onclick='dibuja_pagina([1, $idUsuario])'>Entrar</button>";
+                    if ($tipoUsuario == "Conservero") {
+                        $contenido .= "<button type='submit' class='btn btn-primary btn-sm' onclick='dibuja_pagina([1.5, $idUsuario ])'>Entrar</button>";
+                    } else {
+                        $contenido .= "<button type='submit' class='btn btn-primary btn-sm' onclick='dibuja_pagina([1, $idUsuario ])'>Entrar</button>";
+                    }
+
                     $contenido .= "</div>";
             
                     $contenido .= "</div>"; // cierre row
@@ -272,6 +300,29 @@
                     $contenido .= "</div>"; // cierre contenedor ancho limitado
                     
                 }
+            }
+
+            //Logica para buscador de conserveros
+
+            if($Pestana == 0.5) {
+                $nombreConservero = "Nombre del Conservero"; // Puedes cambiarlo luego
+                $dniConservero = "00000000H"; // Puedes cambiarlo luego
+
+                $contenido = "";
+
+                // Primer div: Datos del conservero
+                $contenido .= "<div class='card p-3 border shadow-sm mb-3' style='background-color: whitesmoke;'>";
+                $contenido .= "<h5 class='card-title mb-2'><strong>" . htmlspecialchars($nombreConservero) . "</strong></h5>";
+                $contenido .= "<div><span>Código: </span><strong>" . htmlspecialchars($dniConservero) . "</strong></div>";
+                $contenido .= "</div>";
+
+                // Segundo div: Formulario para buscar por tag
+                $contenido .= "<div class='card p-3 border shadow-sm mb-3' style='background-color: white;'>";
+                $contenido .= "<div class='d-flex align-items-center'>";
+                $contenido .= "<input type='text' class='form-control me-2' placeholder='Buscar por tag de pez' style='max-width: 200px;'>";
+                $contenido .= "<button class='btn btn-primary' onclick='dibuja_pagina([4])'>Buscar</button>";
+                $contenido .= "</div>";
+                $contenido .= "</div>";
             }
     
             // Lógica específica para barcos
@@ -289,6 +340,8 @@
                     $contenido .= "</div>";
                 }
             }
+
+            
     
             // Lógica específica para capturas
             elseif ($Pestana == 2) {
