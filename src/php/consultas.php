@@ -86,6 +86,103 @@ use Pdo\Sqlite;
         }
     }
 
+    function get_Captura($tag_pez = null) {
+        try {
+            $conn = obtener_conexion();
+            if (!$conn) return false;
+
+
+    
+            // Si no se proporciona un TagPez, devolvemos false
+            if (!$tag_pez) return false;
+
+
+
+
+    
+            // Consulta SQL para obtener la captura específica por TagPez
+            $sql = "SELECT bodegas.IdBodega, bodegas.Zona, bodegas.Especie, bodegas.FechaCaptura, bodegas.TagPez, 
+                           barcos.Nombre as Barco, barcos.IdBarco, 
+                           UltimaFecha.FechaUltimoAlmacen, UltimaFecha.CuentaAlmacen, 
+                           MaxTemperatura.temperaturaMaxima, MaxTemperatura.temperaturaMinima, 
+                           AlmacenUltimo.IdTipoAlmacen, tiposalmacen.Nombre, barcos.Codigo  
+                    FROM bodegas 
+                    LEFT JOIN (
+                        SELECT TagPez, MAX(fecha) AS FechaUltimoAlmacen, COUNT(TagPez) AS CuentaAlmacen 
+                        FROM almacen GROUP BY TagPez
+                    ) UltimaFecha ON bodegas.TagPez = UltimaFecha.TagPez
+                    LEFT JOIN (
+                        SELECT MAX(temperatura) AS temperaturaMaxima, MIN(temperatura) AS temperaturaMinima, TagPez 
+                        FROM almacen 
+                        INNER JOIN almacen_temperaturas ON almacen.ID = almacen_temperaturas.ID 
+                        GROUP BY TagPez
+                    ) MaxTemperatura ON MaxTemperatura.TagPez = bodegas.TagPez
+                    LEFT JOIN barcos ON barcos.IdBarco = bodegas.IdBarco 
+                    LEFT JOIN almacen AlmacenUltimo ON AlmacenUltimo.TagPez = bodegas.TagPez AND AlmacenUltimo.Fecha = UltimaFecha.FechaUltimoAlmacen
+                    LEFT JOIN tiposalmacen ON tiposalmacen.IdTipoAlmacen = AlmacenUltimo.IdTipoAlmacen
+                    WHERE bodegas.TagPez = ?"; // Filtrar por TagPez específico
+    
+            $stmt = $conn->prepare($sql);
+
+
+            
+    
+            if (!$stmt) {
+                $conn->close();
+                return false;
+            }
+    
+            // Vinculamos el parámetro TagPez
+            $stmt->bind_param("s", $tag_pez); // "s" es para string, ya que TagPez puede ser un string
+
+    
+            if (!$stmt->execute()) {
+                $stmt->close();
+                $conn->close();
+                return false;
+            }
+
+    
+            $result = $stmt->get_result();
+
+            $captura = [];
+
+         
+    
+            // Si encontramos un resultado, lo agregamos al array de captura
+            if ($row = $result->fetch_assoc()) {
+                $captura = [
+                    'IdBodega'             => $row['IdBodega'],
+                    'Zona'                 => $row['Zona'],
+                    'Especie'              => $row['Especie'],
+                    'FechaCaptura'         => $row['FechaCaptura'],
+                    'TagPez'               => $row['TagPez'],
+                    'NombreBarco'          => $row['Barco'],
+                    'IdBarco'              => $row['IdBarco'],
+                    'FechaUltimoAlmacen'   => $row['FechaUltimoAlmacen'],
+                    'CuentaAlmacen'        => $row['CuentaAlmacen'],
+                    'TemperaturaMaxima'    => $row['temperaturaMaxima'],
+                    'TemperaturaMinima'    => $row['temperaturaMinima'],
+                    'IdTipoAlmacen'        => $row['IdTipoAlmacen'],
+                    'TipoAlmacen'          => $row['Nombre'],
+                ];
+            }
+
+            
+    
+            $stmt->close();
+            $conn->close();
+
+            // Retornar el resultado
+            
+            return $captura;
+    
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+    
+
     function get_capturas($idUsuario = null) {
         try {
             $conn = obtener_conexion();

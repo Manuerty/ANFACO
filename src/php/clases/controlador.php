@@ -296,6 +296,10 @@ Class Controlador{
         return $arrayFiltrado;
     }
 
+    function filtarTagPezConservero(){
+
+    }
+
 
     // Función para limpiar el texto del timezone en la fecha
     function limpiarFechaJS($fecha) {
@@ -454,8 +458,6 @@ Class Controlador{
             }
         }
     }
-    
-    
 
 
     function generarContenido($arrayDatos = array()) {
@@ -526,10 +528,10 @@ Class Controlador{
         //ACCESO A CAPTURA DESDE CONSERVERO
 
         elseif ($c === 1.5&& isset($arrayDatos[0])) {
-            $navMap = [3 => 2, 4 => 3];
-            if (array_key_exists($arrayDatos[0], $navMap)) {
-                $this->navegarPestanas($navMap[$arrayDatos[0]]);
-            }
+
+            $this -> miEstado -> capturas = get_Captura($arrayDatos[0]);
+            $navMap = [4 => 3];
+            $this->navegarPestanas($navMap[4]);
         }
 
     

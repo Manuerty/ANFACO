@@ -122,6 +122,7 @@
 
         
         $arrayDoc = $_SESSION["Controlador"]->miEstado->capturas;
+
         
 
         if ($tab == 1) {
@@ -188,7 +189,7 @@
 
         //Ventana de Conservero//
         if ($Pestana == 0.5) {
-            
+
             $arraydatos = ["conservero", "tipo"];
         }
 
@@ -316,8 +317,8 @@
                 $contenido .= "<div class='d-flex justify-content-center align-items-center' style='min-height: 100vh;'>";
                 $contenido .= "<div class='card p-3 border shadow-sm mb-3' style='background-color: white; width: 100%; max-width: 500px;'>"; // max-width para limitar el tamaño
                 $contenido .= "<div class='d-flex align-items-center'>";
-                $contenido .= "<input type='text' class='form-control me-2' placeholder='Buscar por tag de pez' style='max-width: 200px;'>";
-                $contenido .= "<button class='btn btn-primary' onclick='dibuja_pagina([4, ])'>Buscar</button>";
+                $contenido .= "<input type='text' id='TxtBoxInputTagPez class='form-control me-2' placeholder='Buscar por tag de pez' style='max-width: 200px;'>";
+                $contenido .= "<button class='btn btn-primary' onclick='filtrarTagPez()'>Buscar</button>";
                 $contenido .= "</div>";
                 $contenido .= "</div>";
                 $contenido .= "</div>";
