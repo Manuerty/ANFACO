@@ -20,7 +20,7 @@
                 $filename = "../html/dashboard.html";
                 break;
             case 1.5:
-                $titulo = "Cliente";
+                $titulo = $_SESSION["Controlador"] -> miEstado -> nombreUsuario;
                 $filename = "../html/documentos.html";
                 break;
             case 2:
@@ -307,25 +307,18 @@
                 }
             }
 
-            //Logica para buscador de conserveros
+            // Lógica para buscador de conserveros
 
-            if($Pestana == 0.5) {
-                $nombreConservero = "Nombre del Conservero"; // Puedes cambiarlo luego
-                $dniConservero = "00000000H"; // Puedes cambiarlo luego
-
+            if ($Pestana == 0.5) {
                 $contenido = "";
 
-                // Primer div: Datos del conservero
-                $contenido .= "<div class='card p-3 border shadow-sm mb-3' style='background-color: whitesmoke;'>";
-                $contenido .= "<h5 class='card-title mb-2'><strong>" . htmlspecialchars($nombreConservero) . "</strong></h5>";
-                $contenido .= "<div><span>Código: </span><strong>" . htmlspecialchars($dniConservero) . "</strong></div>";
-                $contenido .= "</div>";
-
-                // Segundo div: Formulario para buscar por tag
-                $contenido .= "<div class='card p-3 border shadow-sm mb-3' style='background-color: white;'>";
+                // Usamos una clase de Bootstrap para centrar el contenido
+                $contenido .= "<div class='d-flex justify-content-center align-items-center' style='min-height: 100vh;'>";
+                $contenido .= "<div class='card p-3 border shadow-sm mb-3' style='background-color: white; width: 100%; max-width: 500px;'>"; // max-width para limitar el tamaño
                 $contenido .= "<div class='d-flex align-items-center'>";
                 $contenido .= "<input type='text' class='form-control me-2' placeholder='Buscar por tag de pez' style='max-width: 200px;'>";
-                $contenido .= "<button class='btn btn-primary' onclick='dibuja_pagina([4])'>Buscar</button>";
+                $contenido .= "<button class='btn btn-primary' onclick='dibuja_pagina([4, ])'>Buscar</button>";
+                $contenido .= "</div>";
                 $contenido .= "</div>";
                 $contenido .= "</div>";
             }
