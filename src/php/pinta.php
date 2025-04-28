@@ -241,21 +241,32 @@
             }
     
     
-           // Lógica específica para usuarios
             if ($Pestana == 0){
                 foreach ($arraydatos as $index => $usuario) {
-
+            
                     $idUsuario = $usuario["IdUsuario"];
                     $backgroundColor = ($index % 2 == 0) ? 'background-color: whitesmoke;' : 'background-color: white;';
-                    $contenido .= "<div style='width: 50%; margin: 0 auto;'>"; // Contenedor para centrar y limitar el ancho
+                    $contenido .= "<div style='width: 70%; margin: 0 auto;'>"; // Contenedor ahora al 70%
                     $contenido .= "<div class='card p-3 border shadow-sm' style='$backgroundColor margin-bottom: 0;'>";
-                    
-                    $contenido .= "<div class='d-flex justify-content-between align-items-start mb-2'>";
+            
+                    $contenido .= "<div class='row align-items-center'>"; // Usamos row de Bootstrap
+            
+                    // Nombre de usuario
+                    $contenido .= "<div class='col-5'>";
                     $contenido .= "<h5 class='card-title mb-0'>" . ($tituloAlternativo ?? "<strong>" . htmlspecialchars($usuario["NombreUsuario"]) . "</strong>") . "</h5>";
-                    $contenido .=  "<p class='card-text' style='font-size: 0.825rem;'>" . htmlspecialchars($usuario["Rol"]) . "</p>";
-                    $contenido .= "<button type='submit' class='btn btn-primary btn-sm' onclick='dibuja_pagina([1, $idUsuario])' >Entrar</button>";
-
-                    $contenido .= "</div>"; // cierre d-flex
+                    $contenido .= "</div>";
+            
+                    // Rol de usuario
+                    $contenido .= "<div class='col-4'>";
+                    $contenido .= "<p class='card-text mb-0' style='font-size: 0.825rem;'>" . htmlspecialchars($usuario["Rol"]) . "</p>";
+                    $contenido .= "</div>";
+            
+                    // Botón
+                    $contenido .= "<div class='col-3 text-end'>";
+                    $contenido .= "<button type='submit' class='btn btn-primary btn-sm' onclick='dibuja_pagina([1, $idUsuario])'>Entrar</button>";
+                    $contenido .= "</div>";
+            
+                    $contenido .= "</div>"; // cierre row
                     
                     $contenido .= "</div>"; // cierre card
                     $contenido .= "</div>"; // cierre contenedor ancho limitado
