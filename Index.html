@@ -407,25 +407,19 @@ function dibujaGrafica(dataset) {
         }
     }
 
-    function filtrarTagPez(ValorBusqueda = null){
+    function filtrarTagPez(ValorBusqueda = null) {
+    var textoBuscado = $("#TxtBoxInputTagPez").val();
 
-        var textoBuscado = '';
+    // Imprimir textoBuscado en la consola para depuración
+    console.log("texto buscado:", textoBuscado);
 
-        
-        textoBuscado = $("#TxtBoxInputTagPez").val();
-
-        console.log("texto buscado:" + textoBuscado);
-
-        if(ValorBusqueda == null){
-            dibuja_pagina([4, 0, textoBuscado , []]);
-        }
-        else if(ValorBusqueda == 1 || textoBuscado == '' || textoBuscado == null){
-
-            dibuja_pagina([4, 0, '' , []]);
-            
-        }
-
+    if (ValorBusqueda == null) {
+        dibuja_pagina([4, 0, textoBuscado , []]);
     }
+    else if (ValorBusqueda == 1 || textoBuscado == '' || textoBuscado == null) {
+        dibuja_pagina([4, 0, '' , []]);
+    }
+}
 
     function desplegarPanelFiltros(aplicarFiltros = null) {
         const panel = document.getElementById("panelDeslizable");

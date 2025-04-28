@@ -525,11 +525,31 @@ Class Controlador{
             }
         }
 
-        //ACCESO A CAPTURA DESDE CONSERVERO
+        elseif ($c === 1.5 && isset($arrayDatos[0])) {
 
-        elseif ($c === 1.5&& isset($arrayDatos[0])) {
-
-            $this -> miEstado -> capturas = get_Captura($arrayDatos[0]);
+            // Verificamos si ya existe una captura con el mismo TagPez
+            $tagPez = $arrayDatos[2]; // Suponiendo que el TagPez es el tercer valor en $arrayDatos
+        
+            // Comprobamos si ya existe un objeto con ese TagPez en el array de capturas
+            $capturaExistente = null;
+            foreach ($this->miEstado->capturas as $captura) {
+                if ($captura['TagPez'] === $tagPez) {
+                    $capturaExistente = $captura;
+                    break;
+                }
+            }
+        
+            // Si no existe, agregamos la nueva captura y la mostramos
+            if ($capturaExistente === null) {
+                // Agregar al array de capturas
+                $nuevaCaptura = get_Captura($arrayDatos[2]);  // Suponiendo que esta función devuelve la captura con el TagPez
+                array_push($this->miEstado->capturas, $nuevaCaptura);
+                $capturaExistente = $nuevaCaptura; // Asignar la nueva captura para mostrar
+            }
+        
+            $this -> miEstado -> capturasFiltradas[0] = $capturaExistente;
+        
+            // Si lo deseas, puedes actualizar la navegación
             $navMap = [4 => 3];
             $this->navegarPestanas($navMap[4]);
         }
