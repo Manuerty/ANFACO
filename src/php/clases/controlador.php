@@ -548,6 +548,8 @@ Class Controlador{
             }
         
             $this -> miEstado -> capturasFiltradas[0] = $capturaExistente;
+
+            $this -> miEstado -> nombreUsuario = $capturaExistente["NombreUsuario"];
         
             // Si lo deseas, puedes actualizar la navegación
             $navMap = [4 => 3];

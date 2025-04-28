@@ -32,7 +32,7 @@
                 $filename = "../html/documentos.html";
                 break;
             case 4:
-                $titulo = "Datos de la Captura";
+                $titulo = "Detalles de la Captura";
                 $filename = "../html/documentos.html";
                 break;
         }

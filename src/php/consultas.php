@@ -105,7 +105,7 @@ use Pdo\Sqlite;
                            barcos.Nombre as Barco, barcos.IdBarco, 
                            UltimaFecha.FechaUltimoAlmacen, UltimaFecha.CuentaAlmacen, 
                            MaxTemperatura.temperaturaMaxima, MaxTemperatura.temperaturaMinima, 
-                           AlmacenUltimo.IdTipoAlmacen, tiposalmacen.Nombre, barcos.Codigo  
+                           AlmacenUltimo.IdTipoAlmacen, tiposalmacen.Nombre, barcos.Codigo, usuarios.Usuario  
                     FROM bodegas 
                     LEFT JOIN (
                         SELECT TagPez, MAX(fecha) AS FechaUltimoAlmacen, COUNT(TagPez) AS CuentaAlmacen 
@@ -114,10 +114,11 @@ use Pdo\Sqlite;
                     LEFT JOIN (
                         SELECT MAX(temperatura) AS temperaturaMaxima, MIN(temperatura) AS temperaturaMinima, TagPez 
                         FROM almacen 
-                        INNER JOIN almacen_temperaturas ON almacen.ID = almacen_temperaturas.ID 
+                        INNER JOIN almacen_temperaturas ON almacen.ID = almacen_temperaturas.ID
                         GROUP BY TagPez
                     ) MaxTemperatura ON MaxTemperatura.TagPez = bodegas.TagPez
                     LEFT JOIN barcos ON barcos.IdBarco = bodegas.IdBarco 
+                    LEFT JOIN usuarios ON barcos.IdUsuario = usuarios.IdUsuario
                     LEFT JOIN almacen AlmacenUltimo ON AlmacenUltimo.TagPez = bodegas.TagPez AND AlmacenUltimo.Fecha = UltimaFecha.FechaUltimoAlmacen
                     LEFT JOIN tiposalmacen ON tiposalmacen.IdTipoAlmacen = AlmacenUltimo.IdTipoAlmacen
                     WHERE bodegas.TagPez = ?"; // Filtrar por TagPez específico
@@ -165,6 +166,7 @@ use Pdo\Sqlite;
                     'TemperaturaMinima'    => $row['temperaturaMinima'],
                     'IdTipoAlmacen'        => $row['IdTipoAlmacen'],
                     'TipoAlmacen'          => $row['Nombre'],
+                    'NombreUsuario'        => $row['Usuario'],
                 ];
             }
 
