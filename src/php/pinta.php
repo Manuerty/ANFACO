@@ -192,12 +192,8 @@
 
         //Ventana de barcos//
         elseif ($Pestana == 1) {
-            // Si no hay barcos filtrados, se muestran todos los barcos
-            if (!isset($_SESSION["Controlador"]->miEstado->barcosFiltrados) || 
-                $_SESSION["Controlador"]->miEstado->barcosFiltrados === null) {
-
+            if (empty($_SESSION["Controlador"]->miEstado->barcosFiltrados)) {
                 $arraydatos = $_SESSION["Controlador"]->miEstado->barcos;
-
             } else {
                 $arraydatos = $_SESSION["Controlador"]->miEstado->barcosFiltrados;
             }
