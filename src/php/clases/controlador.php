@@ -499,7 +499,7 @@ Class Controlador{
 
         
         // Selección de usuario
-        elseif ($c === 0.5 && isset($arrayDatos[0]) && $arrayDatos[0] == 1 or $arrayDatos[0] == 1.5) {
+        elseif ($c === 0.5 && isset($arrayDatos[0]) && ($arrayDatos[0] == 1 || $arrayDatos[0] == 1.5)) {
             
             $this->setNewUser($arrayDatos[1], $arrayDatos[2] );
             $this->miEstado->IdUsuarioSeleccionado = $arrayDatos[1];
