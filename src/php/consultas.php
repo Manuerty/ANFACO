@@ -378,6 +378,70 @@ use Pdo\Sqlite;
         }
     }
 
+    function procesarTemperaturas($txtTemperaturas, $IdAlmacen, $accion) {
+
+
+        // Limpiar cadena
+        $cadenaTemperatura = $txtTemperaturas;
+        //$cadenaTemperatura = "#2025-04-28,08:00,12.1;2025-04-28,12:00,18.3;2025-04-28,16:00,20.0;2025-04-29,08:00,13.0;2025-04-29,12:00,19.1;2025-04-29,16:00,21.5;2025-04-30,08:00,14.2;2025-04-30,12:00,20.4;2025-04-30,16:00,22.3;#";
+        $cadenaTemperatura = trim($cadenaTemperatura, "#");
+        $registros = explode(";", $cadenaTemperatura);
+    
+        $datos = [];
+        $valoresSQL = [];
+        $parametros = [];
+        $i = 0;
+    
+        foreach ($registros as $registro) {
+            $partes = explode(",", $registro);
+            if (count($partes) === 3) {
+                $fechaHora = $partes[0] . ' ' . $partes[1] . ':00';
+                $valor = (float)$partes[2];
+    
+                // Armar el array común
+                $datos[] = [
+                    'FechaTemperatura' => $fechaHora,
+                    'ValorTemperatura' => $valor,
+                    'IdAlmacen' => $IdAlmacen
+                ];
+    
+                // Preparar para SQL si se requiere
+                if ($accion === 0) {
+                    $valoresSQL[] = "(:fecha$i, :valor$i, :almacen$i)";
+                    $parametros[":fecha$i"] = $fechaHora;
+                    $parametros[":valor$i"] = $valor;
+                    $parametros[":almacen$i"] = $IdAlmacen;
+                    $i++;
+                }
+            }
+        }
+    
+        if ($accion === 0) {
+            return $datos;
+        }
+    
+        if ($accion === 1 && !empty($valoresSQL)) {
+            $pdo = obtener_conexion();
+
+            // Verificar si DatosProcesados = 0 antes de insertar
+            $checkStmt = $pdo->prepare("SELECT DatosProcesados FROM almacen WHERE Id = :id LIMIT 1");
+            $checkStmt->execute([':id' => $IdAlmacen]);
+            $resultado = $checkStmt->fetch();
+
+            // Solo insertar si DatosProcesados = 0
+            if (is_array($resultado) && $resultado['DatosProcesados'] == 0) {
+                $sql = "INSERT INTO almacen_temperaturas (Fecha, Temperatura, Id) VALUES " . implode(", ", $valoresSQL);
+                $stmt = $pdo->prepare($sql);
+                return $stmt->execute($parametros); // true/false según éxito
+            }
+
+            // Si no se cumple la condición, no insertar
+            return false;
+        }
+    
+        return null;
+    }
+
     function get_Almacenes($tagPez){
         try {
             $conn = obtener_conexion();

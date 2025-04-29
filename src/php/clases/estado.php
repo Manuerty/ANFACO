@@ -42,7 +42,8 @@ class Estado{
     public $nombreUsuario;
 
     public $nombreConservero;
-
+    
+    public $LimiteFilas = 5;
     
 
 

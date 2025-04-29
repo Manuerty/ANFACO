@@ -203,6 +203,7 @@ Class Controlador{
             // Obtener los datos adicionales de la captura
             $this -> miEstado -> temperaturas = get_Temperaturas($tagPez);
             $this -> miEstado -> almacenes = get_Almacenes($tagPez);
+            
     
             // Llamar a details_Captura para llenar la variable de sesión con los detalles de la captura
             $this->details_Captura($tagPez);
@@ -235,8 +236,13 @@ Class Controlador{
     }
 
     function generarDatosGrafica($temperaturasVS, $almacenesVS) {
+
+       
+        
         $temperaturas = $temperaturasVS;
         $almacenes = $almacenesVS;
+
+        //$temperaturas =  procesarTemperaturas(4, 0);
         
         $dataset = [];
         foreach ($temperaturas as $temp) {
@@ -245,7 +251,7 @@ Class Controlador{
                     $dataset[] = [
                         "x" => strtotime($temp["FechaTemperatura"]) * 1000,
                         "y" => $temp["ValorTemperatura"],
-                        "almacen" => "Almacén: " . $almacen["NombreTipo"] . " " . $almacen["IdTipo"]
+                        "almacen" =>  $almacen["NombreTipo"] . " " . $almacen["IdTipo"]
                     ];
                     break;
                 }

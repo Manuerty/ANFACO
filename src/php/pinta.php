@@ -303,7 +303,7 @@
             
                     // Nombre de usuario
                     $contenido .= "<div class='col-5'>";
-                    $contenido .= "<h5 class='card-title mb-0'>" . ($tituloAlternativo ?? "<strong>" . htmlspecialchars($usuario["NombreUsuario"]) . "</strong>") . "</h5>";
+                    $contenido .= "<p class='card-title mb-0'>" . ($tituloAlternativo ?? "<strong>" . htmlspecialchars($usuario["NombreUsuario"]) . "</strong>") . "</p>";
                     $contenido .= "</div>";
             
                     // Rol de usuario
@@ -431,6 +431,11 @@
                     $contenido .= "</div>"; // fin columna derecha
                     $contenido .= "</div>"; // fin cabecera
                     $contenido .= "</div>"; // fin tarjeta
+                }
+                if(count($arraydatos) > $_SESSION["Controlador"] -> miEstado -> LimiteFilas){
+                    $contenido .= "<div class='text-center'>";
+                    $contenido .= "<button class='btn btn-primary' onclick='dibuja_pagina([])'>Ver más</button>";
+                    $contenido .= "</div>";
                 }
             }
 
