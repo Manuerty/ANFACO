@@ -44,8 +44,9 @@ Class Controlador{
             elseif ( $this -> miEstado->Estado == 4) {
                 $this -> resetFilter($this -> miEstado -> Estado);
             }
+
+
             //salir del modo formulario
-            
             $estadoAnterior = array_shift($this->miEstado->EstadosAnteriores);
             $this->miEstado->Estado = $estadoAnterior;
 
@@ -300,11 +301,6 @@ Class Controlador{
         return $arrayFiltrado;
     }
 
-    function filtarTagPezConservero(){
-
-    }
-
-
     // Función para limpiar el texto del timezone en la fecha
     function limpiarFechaJS($fecha) {
         return preg_replace('/\s*\(.*?\)\s*$/', '', $fecha);
@@ -466,7 +462,6 @@ Class Controlador{
 
     function generarContenido($arrayDatos = array()) {
 
-        //var_dump($arrayDatos);
 
         $arrayAuxiliarHtml = [];
         $accionJs = null;

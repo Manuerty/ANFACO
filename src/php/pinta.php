@@ -4,6 +4,7 @@
         $titulo = ""; 
         $cabecera = "../html/header.html";
         $fileheadertext = "";
+        $OcultarCabecera = 0;
         
         switch($estado){
 
@@ -14,18 +15,22 @@
             case 0.5:
                 $titulo = "Usuarios";
                 $filename = "../html/documentos.html";
+                $OcultarCabecera = 1;
                 break;
             case 1:
                 $titulo = $_SESSION["Controlador"] -> miEstado -> nombreUsuario;
                 $filename = "../html/dashboard.html";
+                $OcultarCabecera = 2;
                 break;
             case 1.5:
                 $titulo = $_SESSION["Controlador"] -> miEstado -> nombreUsuario;
                 $filename = "../html/documentos.html";
+                $OcultarCabecera = 2;
                 break;
             case 2:
                 $titulo = "Barcos de " .$_SESSION["Controlador"] -> miEstado -> nombreUsuario;
                 $filename = "../html/documentos.html";
+                $OcultarCabecera = 1;
                 break;
             case 3:
                 $titulo = "Capturas de " .$_SESSION["Controlador"] -> miEstado -> nombreUsuario;
@@ -34,6 +39,7 @@
             case 4:
                 $titulo = "Detalles de la Captura";
                 $filename = "../html/documentos.html";
+                $OcultarCabecera = 1;
                 break;
         }
 
@@ -45,6 +51,24 @@
             fclose($fileheader);
 
             $fileheadertext = str_replace("%NombreE%",$titulo,$fileheadertext);
+            if ($OcultarCabecera == 1){
+                $fileheadertext = str_replace("<button id=\"LupaHeader2\" class=\"btn position-absolute end-0  h-100\" style=\"border: none; background: transparent; padding-right: 10px;\" >",
+                "<button id=\"LupaHeader2\" class=\"btn position-absolute end-0  h-100\" style=\"border: none; background: transparent; padding-right: 10px; display: none;\" >", $fileheadertext);
+            }
+            elseif ($OcultarCabecera == 2){
+                $fileheadertext = str_replace("<button id=\"LupaHeader\" class=\"col-2 flecha_volver %accionBuscarHeader%\" onclick=\"abrirTxtBoxBuscar()\">",
+                '<button id="LupaHeader" class="col-2 flecha_volver %accionBuscarHeader%" onclick="abrirTxtBoxBuscar()" style="display: none;">', $fileheadertext);
+            }
+            
+            if ($_SESSION["Controlador"] -> miEstado -> EstadosAnteriores[0] === 1.5){
+                $fileheadertext = str_replace("<button id=\"LupaHeader2\" class=\"btn position-absolute end-0  h-100\" style=\"border: none; background: transparent; padding-right: 10px;\" >",
+                "<button id=\"LupaHeader2\" class=\"btn position-absolute end-0  h-100\" style=\"border: none; background: transparent; padding-right: 10px; display: none;\" >", $fileheadertext);
+                $fileheadertext = str_replace("<button id=\"CruzHeader\" class=\"col-2 flecha_volver d-none\">",
+                "<button id=\"CruzHeader\" class=\"col-2 flecha_volver d-none\" style=\"display: none;\">", $fileheadertext);
+            }
+
+
+
 
         }
 
