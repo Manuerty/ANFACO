@@ -402,13 +402,12 @@ function dibujaGrafica(dataset) {
     // Función para aplicar filtro genérico
     function aplicaFiltrado(ValorBusqueda = null, tipoBusqueda = null) {
 
-        console.log("Valor de busqueda:", ValorBusqueda);
         var textoBuscado = '';
 
         // Determinamos qué campo usar para la búsqueda, según el tipo de búsqueda
         if (tipoBusqueda === 'header') {
             textoBuscado = $("#TxtBoxInputBuscarHeader").val();
-        } else if (tipoBusqueda === 'tagPez') {
+        } else if (tipoBusqueda === 'tagPez') {  
             textoBuscado = $("#TxtBoxInputTagPez").val();
         }
 

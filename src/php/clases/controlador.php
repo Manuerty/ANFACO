@@ -460,7 +460,24 @@ Class Controlador{
     }
 
 
+    private function obtenerOCrearCapturaPorTagPez($tagPez) {
+
+        foreach ($this->miEstado->capturas as $captura) {
+            if ($captura['TagPez'] === $tagPez) {
+                return $captura;
+            }
+        }
+    
+        // No se encontró, se crea una nueva
+        $nuevaCaptura = get_Captura($tagPez);
+        array_push($this->miEstado->capturas, $nuevaCaptura);
+        return $nuevaCaptura;
+    }
+
+
     function generarContenido($arrayDatos = array()) {
+
+        
 
 
         $arrayAuxiliarHtml = [];
@@ -519,38 +536,36 @@ Class Controlador{
             }
         }
 
+        // Pantalla conservero
         elseif ($c === 1.5 && isset($arrayDatos[0])) {
 
-            // Verificamos si ya existe una captura con el mismo TagPez
             $tagPez = $arrayDatos[2]; // Suponiendo que el TagPez es el tercer valor en $arrayDatos
         
-            // Comprobamos si ya existe un objeto con ese TagPez en el array de capturas
-            $capturaExistente = null;
-            foreach ($this->miEstado->capturas as $captura) {
-                if ($captura['TagPez'] === $tagPez) {
-                    $capturaExistente = $captura;
-                    break;
-                }
-            }
+            $captura = $this->obtenerOCrearCapturaPorTagPez($tagPez);
         
-            // Si no existe, agregamos la nueva captura y la mostramos
-            if ($capturaExistente === null) {
-                // Agregar al array de capturas
-                $nuevaCaptura = get_Captura($arrayDatos[2]);  // Suponiendo que esta función devuelve la captura con el TagPez
-                array_push($this->miEstado->capturas, $nuevaCaptura);
-                $capturaExistente = $nuevaCaptura; // Asignar la nueva captura para mostrar
-            }
+            $this->miEstado->capturasFiltradas[0] = $captura;
         
-            $this -> miEstado -> capturasFiltradas[0] = $capturaExistente;
-
-            $this -> miEstado -> nombreConservero = $this -> miEstado -> nombreUsuario;
-
-            $this -> miEstado -> nombreUsuario = $capturaExistente["NombreUsuario"];
+            $this->miEstado->nombreConservero = $this->miEstado->nombreUsuario;
+            $this->miEstado->nombreUsuario = $captura["NombreUsuario"];
         
-            // Si lo deseas, puedes actualizar la navegación
             $navMap = [4 => 3];
             $this->navegarPestanas($navMap[4]);
         }
+
+        //Busquedas dentro de la busqueda de conservero
+
+        elseif ($c === 3 && isset($arrayDatos[0]) && $arrayDatos[0] == 4) {
+
+            $tagPez = $arrayDatos[2]; // Suponiendo que el TagPez es el tercer valor en $arrayDatos
+        
+            $captura = $this->obtenerOCrearCapturaPorTagPez($tagPez);
+        
+            $this->miEstado->capturasFiltradas[0] = $captura;
+
+            
+            
+        }
+
 
     
         // Detalles de captura
@@ -632,6 +647,8 @@ Class Controlador{
             implode(",", $this->miEstado->EstadosAnteriores),
             implode(",", $arrayDatos)
         );
+
+        //echo "hola2";
     
         return [
             pinta_contenido($this->miEstado->Estado) . $txtErr,

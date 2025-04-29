@@ -65,6 +65,10 @@
                 "<button id=\"LupaHeader2\" class=\"btn position-absolute end-0  h-100\" style=\"border: none; background: transparent; padding-right: 10px; display: none;\" >", $fileheadertext);
                 $fileheadertext = str_replace("<button id=\"CruzHeader\" class=\"col-2 flecha_volver d-none\">",
                 "<button id=\"CruzHeader\" class=\"col-2 flecha_volver d-none\" style=\"display: none;\">", $fileheadertext);
+                $fileheadertext = str_replace('<img src="Img/IconosAcciones/Lupa.png" width="20px" onclick="aplicaFiltrado(null, \'header\')">',
+                "<img src=\"Img/IconosAcciones/Lupa.png\" width=\"20px\" onclick=\"aplicaFiltrado(null, 'tagPez')\">", $fileheadertext);
+                $fileheadertext = str_replace("TxtBoxInputBuscarHeader",
+                "TxtBoxInputTagPez", $fileheadertext);
             }
 
 
