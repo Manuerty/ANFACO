@@ -14,7 +14,7 @@
                     <input id="TxtBoxInputBuscarHeader" type="text" class="form-control" placeholder="Buscar...">
                     
                     <button id="LupaHeader3" class="btn position-absolute end-0 h-100" style="border: none; background: transparent; padding-right: 40px;" onclick="abrirTxtBoxBuscar()">
-                        <img src="Img/IconosAcciones/Lupa.png" width="20px" onclick="aplicaFiltradoHeader()">
+                        <img src="Img/IconosAcciones/Lupa.png" width="20px" onclick="aplicaFiltrado(null, 'header')">
                     </button>
                     <button id="LupaHeader2" class="btn position-absolute end-0  h-100" style="border: none; background: transparent; padding-right: 10px;" >
                       <img src="Img/IconosAcciones/Filtro.png" width="20px" onclick="desplegarPanelFiltros()">
@@ -25,7 +25,7 @@
                     <img src="Img/IconosAcciones/Lupa.png" width="30px">
                   </button>
                   <button id="CruzHeader" class="col-2 flecha_volver d-none">
-                    <img src="Img/IconosAcciones/Cross.png" width="20px" onclick="aplicaFiltradoHeader(1)">
+                    <img src="Img/IconosAcciones/Cross.png" width="20px" onclick="aplicaFiltrado(1 , 'header')">
                   </button>
                   <div class="btn-group d-flex" >
                     <button type="button" class="btn  dropdown-toggle col-2" data-bs-toggle="dropdown" aria-expanded="false">

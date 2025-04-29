@@ -407,19 +407,31 @@ function dibujaGrafica(dataset) {
         }
     }
 
-    function filtrarTagPez(ValorBusqueda = null) {
-    var textoBuscado = $("#TxtBoxInputTagPez").val();
+    // Función para aplicar filtro genérico
+    function aplicaFiltrado(ValorBusqueda = null, tipoBusqueda = null) {
 
-    // Imprimir textoBuscado en la consola para depuración
-    console.log("texto buscado:", textoBuscado);
+        console.log("Valor de busqueda:", ValorBusqueda);
+        var textoBuscado = '';
 
-    if (ValorBusqueda == null) {
-        dibuja_pagina([4, 0, textoBuscado , []]);
+        // Determinamos qué campo usar para la búsqueda, según el tipo de búsqueda
+        if (tipoBusqueda === 'header') {
+            textoBuscado = $("#TxtBoxInputBuscarHeader").val();
+        } else if (tipoBusqueda === 'tagPez') {
+            textoBuscado = $("#TxtBoxInputTagPez").val();
+        }
+
+        // Imprimimos el texto buscado en consola para depuración
+        console.log("Texto buscado:", textoBuscado);
+
+        // Caso cuando no se pasa un valor de búsqueda específico
+        if (ValorBusqueda == null) {
+            dibuja_pagina([tipoBusqueda === 'header' ? 0 : 4, 0, textoBuscado, []]);
+        }
+        // Caso cuando el valor de búsqueda es 1 o el texto de búsqueda está vacío o es nulo
+        else if (ValorBusqueda == 1 || textoBuscado === '' || textoBuscado === null) {
+            dibuja_pagina([tipoBusqueda === 'header' ? 0 : 4, 0, '', []]);
+        }
     }
-    else if (ValorBusqueda == 1 || textoBuscado == '' || textoBuscado == null) {
-        dibuja_pagina([4, 0, '' , []]);
-    }
-}
 
     function desplegarPanelFiltros(aplicarFiltros = null) {
         const panel = document.getElementById("panelDeslizable");

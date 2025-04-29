@@ -314,7 +314,7 @@
                 $contenido .= "<div class='card p-3 border shadow-sm mb-3' style='background-color: white; width: 100%; max-width: 500px;'>"; // max-width para limitar el tamaño
                 $contenido .= "<div class='d-flex align-items-center'>";
                 $contenido .= "<input type='text' id='TxtBoxInputTagPez' class='form-control me-2' placeholder='Buscar por tag de pez' style='max-width: 200px;'>";
-                $contenido .= "<button class='btn btn-primary' onclick='filtrarTagPez()'>Buscar</button>";
+                $contenido .= "<button class='btn btn-primary' onclick='aplicaFiltrado(null ,".'"'.'tagPez'.'"'.") '>Buscar</button>";
                 $contenido .= "</div>";
                 $contenido .= "</div>";
                 $contenido .= "</div>";
