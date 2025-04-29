@@ -562,7 +562,7 @@ Class Controlador{
         
             $this->miEstado->capturasFiltradas[0] = $captura;
 
-            
+
             
         }
 

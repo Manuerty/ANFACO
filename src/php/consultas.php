@@ -47,7 +47,11 @@ use Pdo\Sqlite;
             $conn = obtener_conexion();
             if (!$conn) return false;
 
-            $sql = 'SELECT IdUsuario, Usuario, Contrasena, Rol
+            $sql = 'SELECT IdUsuario, Usuario, Contrasena,
+                CASE 
+                    WHEN Rol = "Usuarios" THEN "Armador"
+                    ELSE Rol 
+                END AS Rol
                     FROM usuarios
                     WHERE Rol != "Administrador"';
 
