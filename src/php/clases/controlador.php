@@ -61,6 +61,10 @@ Class Controlador{
                 $this -> miEstado -> IdUsuarioSeleccionado = null;
                 $this -> resetFilter();
             }
+            //reiniciar nombre si vas a la vista de conservero
+            elseif ($this ->miEstado->Estado == 1.5) {
+                $this -> miEstado -> nombreUsuario = $this -> miEstado -> nombreConservero;
+            }
             //reiniciar variables de captura
             elseif( $this ->miEstado->Estado == 3) {
                 $this -> miEstado -> LastTagPez = $this -> miEstado -> TagPez;
@@ -543,6 +547,8 @@ Class Controlador{
             }
         
             $this -> miEstado -> capturasFiltradas[0] = $capturaExistente;
+
+            $this -> miEstado -> nombreConservero = $this -> miEstado -> nombreUsuario;
 
             $this -> miEstado -> nombreUsuario = $capturaExistente["NombreUsuario"];
         

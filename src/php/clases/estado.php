@@ -41,6 +41,8 @@ class Estado{
 
     public $nombreUsuario;
 
+    public $nombreConservero;
+
     
 
 
