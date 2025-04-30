@@ -186,57 +186,101 @@ function dibujaGrafica(dataset) {
     // Procesar los datos, convirtiendo el timestamp con luxon
     const datos = dataset.graficaTemperatura.map(item => {
         return {
-            x: luxon.DateTime.fromMillis(item.x).toJSDate(),  // Convierte el timestamp a un objeto Date con luxon
-            y: item.y,  // Temperatura
-            almacen: item.almacen  // Almacén asociado
+            x: luxon.DateTime.fromMillis(item.x).toJSDate(),
+            y: item.y,
+            almacen: item.almacen
         };
     });
 
-    // Validar si los datos son correctos
     if (!Array.isArray(datos) || datos.length === 0) {
         console.error("Los datos para la gráfica no son válidos.");
         return;
     }
 
-    // Buscar el canvas para dibujar la gráfica
+    // === 1. Detectar segmentos por cambio de almacén ===
+    const segmentos = [];
+    let segmentoActual = 0;
+    for (let i = 0; i < datos.length; i++) {
+        if (i === 0 || datos[i].almacen !== datos[i - 1].almacen) {
+            segmentoActual++;
+        }
+        datos[i].segmento = segmentoActual - 1;
+    }
+
+    // === 2. Colores fijos por posición ===
+    const coloresPredefinidos = [
+    '#1f77b4', // azul
+    '#ff7f0e', // naranja
+    '#2ca02c', // verde
+    '#d62728', // rojo
+    '#9467bd', // púrpura
+    '#8c564b', // marrón
+    '#e377c2', // rosa
+    '#7f7f7f', // gris
+    '#bcbd22', // lima
+    '#17becf', // cyan
+    '#393b79', // azul oscuro
+    '#637939', // oliva
+    '#8c6d31', // dorado oscuro
+    '#843c39', // rojo oscuro
+    '#7b4173'  // magenta oscuro
+];
+
+    function colorPorIndice(indice) {
+        if (indice < coloresPredefinidos.length) {
+            return coloresPredefinidos[indice];
+        } else {
+            const hue = (indice * 137) % 360;
+            return `hsl(${hue}, 70%, 50%)`;
+        }
+    }
+
+    // === 3. Mapa de colores por segmento ===
+    const segmentosUnicos = [...new Set(datos.map(d => d.segmento))];
+    const colorMap = {};
+    segmentosUnicos.forEach(index => {
+        colorMap[index] = colorPorIndice(index);
+    });
+
+    // === 4. Calcular márgenes ===
+    const valoresY = datos.map(item => item.y);
+    const minY = Math.min(...valoresY);
+    const maxY = Math.max(...valoresY);
+    const margen = 5;
+    const minYWithMargin = minY - margen;
+    const maxYWithMargin = maxY + margen;
+
+    const fechas = datos.map(item => item.x);
+    const minFecha = Math.min(...fechas);
+    const maxFecha = Math.max(...fechas);
+    const unDiaEnMilisegundos = 6 * 60 * 60 * 1000;
+    const minFechaConMargen = minFecha - unDiaEnMilisegundos;
+    const maxFechaConMargen = maxFecha + unDiaEnMilisegundos;
+
+    // === 5. Crear la gráfica ===
     const ctx = document.getElementById('graficaTemperatura')?.getContext('2d');
     if (!ctx) {
         console.error("No se encontró el canvas con id 'graficaTemperatura'");
         return;
     }
 
-    // Calcular los valores mínimo y máximo de los datos
-    const valoresY = datos.map(item => item.y);
-    const minY = Math.min(...valoresY);
-    const maxY = Math.max(...valoresY);
-
-    // Calcular el margen (por ejemplo, 5 unidades hacia abajo y hacia arriba)
-    const margen = 5;
-    const minYWithMargin = minY - margen;
-    const maxYWithMargin = maxY + margen;
-
-    // Calcular la fecha mínima y máxima en los datos para el eje X
-    const fechas = datos.map(item => item.x);
-    const minFecha = Math.min(...fechas);
-    const maxFecha = Math.max(...fechas);
-
-    // Añadir un día antes y después de las fechas
-    const unDiaEnMilisegundos = 6 * 60 * 60 * 1000;  // Un día en milisegundos
-    const minFechaConMargen = minFecha - unDiaEnMilisegundos;  // Resta un día
-    const maxFechaConMargen = maxFecha + unDiaEnMilisegundos;  // Suma un día
-
-    // Crear la gráfica
     const myChart = new Chart(ctx, {
         type: 'line',
         data: {
             datasets: [{
                 label: 'Temperatura (°C)',
                 data: datos,
-                borderColor: '#3b82f6',
-                backgroundColor: 'rgba(59,130,246,0.2)',
-                tension: 0,  // Líneas rectas
+                tension: 0,
                 fill: false,
-                pointRadius: 3  // Tamaño de los puntos
+                pointRadius: 3,
+                segment: {
+                    borderColor: ctx => {
+                        const seg = ctx.p0?.raw?.segmento;
+                        return colorMap[seg] || '#000';
+                    }
+                },
+                pointBackgroundColor: datos.map(d => colorMap[d.segmento]),
+                pointBorderColor: datos.map(d => colorMap[d.segmento]),
             }]
         },
         options: {
@@ -258,14 +302,14 @@ function dibujaGrafica(dataset) {
                     }
                 },
                 zoom: {
-                        zoom: {
+                    zoom: {
                         enabled: true,
-                        mode: 'x', // Solo habilitar zoom en el eje X
-                        speed: 0.1, // Velocidad del zoom
-                        sensitivity: 3, // Sensibilidad del zoom con la rueda del ratón
+                        mode: 'x',
+                        speed: 0.1,
+                        sensitivity: 3,
                         wheel: {
-                            enabled: true, // Habilitar zoom con la rueda del ratón
-                            speed: 0.1 // Velocidad del zoom con la rueda del ratón
+                            enabled: true,
+                            speed: 0.1
                         }
                     },
                 }
@@ -274,8 +318,8 @@ function dibujaGrafica(dataset) {
                 x: {
                     type: 'time',
                     time: {
-                        unit: false,  // Dejar que Chart.js elija automáticamente
-                        tooltipFormat: 'MMM dd, yyyy HH:mm',  // Formato detallado del tooltip
+                        unit: false,
+                        tooltipFormat: 'MMM dd, yyyy HH:mm',
                         displayFormats: {
                             hour: 'HH:mm',
                             day: 'MMM dd',
@@ -293,48 +337,44 @@ function dibujaGrafica(dataset) {
                         minRotation: 0,
                         source: 'auto'
                     },
-                    min: minFechaConMargen,  // Usar la fecha mínima ajustada
-                    max: maxFechaConMargen,  // Usar la fecha máxima ajustada
+                    min: minFechaConMargen,
+                    max: maxFechaConMargen,
                 },
                 y: {
                     title: {
                         display: true,
                         text: 'Temperatura (°C)',
                     },
-                    min: minYWithMargin,  // Usar el mínimo calculado con margen
-                    max: maxYWithMargin,  // Usar el máximo calculado con margen
+                    min: minYWithMargin,
+                    max: maxYWithMargin,
                     ticks: {
-                        stepSize: 5,  // Define los intervalos de los ticks
-                        padding: 10,  // Agrega espacio adicional entre los ticks
+                        stepSize: 5,
+                        padding: 10,
                     }
                 }
             }
         }
     });
 
-    // Asegurarse de que el gráfico se haya ajustado correctamente al principio
-    myChart.update();  // Forzar una actualización del gráfico después de su creación
+    myChart.update();
 
-    // Mover el gráfico (drag)
+    // === 6. Arrastre manual ===
     const canvas = document.getElementById('graficaTemperatura');
     let isDragging = false;
     let startX = 0;
     let startY = 0;
 
-    // Detectar el inicio del drag
     canvas.addEventListener('mousedown', (e) => {
         isDragging = true;
         startX = e.clientX;
         startY = e.clientY;
     });
 
-    // Detectar el movimiento del drag
     canvas.addEventListener('mousemove', (e) => {
         if (isDragging) {
             const deltaX = e.clientX - startX;
             const deltaY = e.clientY - startY;
 
-            // Ajustar el movimiento en el eje X
             const chartArea = myChart.chartArea;
             const chartWidth = chartArea.right - chartArea.left;
             const dataRangeX = myChart.scales.x.max - myChart.scales.x.min;
@@ -343,7 +383,6 @@ function dibujaGrafica(dataset) {
             myChart.options.scales.x.min -= offsetX;
             myChart.options.scales.x.max -= offsetX;
 
-            // Ajustar el movimiento en el eje Y
             const chartHeight = chartArea.bottom - chartArea.top;
             const dataRangeY = myChart.scales.y.max - myChart.scales.y.min;
             const pixelsPerUnitY = chartHeight / dataRangeY;
@@ -357,7 +396,6 @@ function dibujaGrafica(dataset) {
         }
     });
 
-    // Detener el drag cuando se suelta el mouse
     canvas.addEventListener('mouseup', () => isDragging = false);
     canvas.addEventListener('mouseleave', () => isDragging = false);
 }
