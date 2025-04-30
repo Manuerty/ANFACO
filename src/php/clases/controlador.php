@@ -539,15 +539,15 @@ Class Controlador{
             } elseif ($InicioS === 0) {
                 $msgError = "Usuario o contraseña incorrectos.";
             } elseif ($InicioS === true) {
-                if ($this -> miEstado -> esAdmin) {
-                    $this->navegarPestanas(0.5);
-                } 
-                elseif($this -> miEstado -> esConservero) {
-                    $this->navegarPestanas(1.5);
+                $pestana = 1;
+
+                if ($this->miEstado->esAdmin) {
+                    $pestana = 0.5;
+                } elseif ($this->miEstado->esConservero) {
+                    $pestana = 1.5;
                 }
-                else {
-                    $this->navegarPestanas(1);
-                }
+
+                $this->navegarPestanas($pestana);
                 
             }
 
