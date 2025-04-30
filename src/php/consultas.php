@@ -327,7 +327,7 @@ use Pdo\Sqlite;
         }
     }
 
-    function get_Temperaturas($tagPez) {
+    function getTemperaturas($tagPez) {
         try {
 
             $conn = obtener_conexion();
@@ -378,12 +378,63 @@ use Pdo\Sqlite;
         }
     }
 
+    function getTemperaturasProcesar($tagPez) {
+        try {
+            $conn = obtener_conexion();
+            if (!$conn) return false;
+
+            $sql ="SELECT TagPez, DatosTemp, Id, DatosProcesados, IdTipoAlmacen
+                   FROM almacen 
+                   WHERE TagPez = ?";
+            
+            $stmt = $conn->prepare($sql);
+    
+            if (!$stmt) {
+                $conn->close();
+                return false;
+            }
+    
+            // Si hay un tagPez, lo vinculamos a la consulta
+            if ($tagPez) {
+                $stmt->bind_param("s", $tagPez); // "s" porque TagPez es tipo string
+            }
+    
+            if (!$stmt->execute()) {
+                $stmt->close();
+                $conn->close();
+                return false;
+            }
+
+            $result = $stmt->get_result();
+            $almacenesProcesar = [];
+
+            while ($row = $result->fetch_assoc()) {
+                $almacenesProcesar[] = [
+                    "TagPezProcesar" => $row["TagPez"],
+                    "DatosTempProcesar" => $row["DatosTemp"],
+                    "IdAlmacenProcesar" => $row["Id"],
+                    "DatosProcesados"=> $row["DatosProcesados"],
+                    "IdTipoAlmacen" => $row["IdTipoAlmacen"],
+                ];
+            }
+    
+            $stmt->close();
+            $conn->close();
+
+            //var_dump($almacenesProcesar);
+
+            return $almacenesProcesar;
+
+        }
+        catch (Exception $e) {
+            return false;
+        }
+    }
+
     function procesarTemperaturas($txtTemperaturas, $IdAlmacen, $accion) {
 
-
-        // Limpiar cadena
         $cadenaTemperatura = $txtTemperaturas;
-        //$cadenaTemperatura = "#2025-04-28,08:00,12.1;2025-04-28,12:00,18.3;2025-04-28,16:00,20.0;2025-04-29,08:00,13.0;2025-04-29,12:00,19.1;2025-04-29,16:00,21.5;2025-04-30,08:00,14.2;2025-04-30,12:00,20.4;2025-04-30,16:00,22.3;#";
+        
         $cadenaTemperatura = trim($cadenaTemperatura, "#");
         $registros = explode(";", $cadenaTemperatura);
     
@@ -419,24 +470,39 @@ use Pdo\Sqlite;
         if ($accion === 0) {
             return $datos;
         }
-    
+            
         if ($accion === 1 && !empty($valoresSQL)) {
-            $pdo = obtener_conexion();
-
-            // Verificar si DatosProcesados = 0 antes de insertar
-            $checkStmt = $pdo->prepare("SELECT DatosProcesados FROM almacen WHERE Id = :id LIMIT 1");
-            $checkStmt->execute([':id' => $IdAlmacen]);
-            $resultado = $checkStmt->fetch();
-
-            // Solo insertar si DatosProcesados = 0
-            if (is_array($resultado) && $resultado['DatosProcesados'] == 0) {
-                $sql = "INSERT INTO almacen_temperaturas (Fecha, Temperatura, Id) VALUES " . implode(", ", $valoresSQL);
-                $stmt = $pdo->prepare($sql);
-                return $stmt->execute($parametros); // true/false según éxito
+            $conn = obtener_conexion(); // Esto devuelve un mysqli, no PDO
+        
+            $conn->begin_transaction(); // Comienza la transacción
+        
+            try {
+                // Preparar y ejecutar la consulta para verificar DatosProcesados
+                $checkStmt = $conn->prepare("SELECT DatosProcesados FROM almacen WHERE Id = ? LIMIT 1 FOR UPDATE");
+                $checkStmt->bind_param("i", $IdAlmacen);
+                $checkStmt->execute();
+                $result = $checkStmt->get_result();
+                $row = $result->fetch_assoc();
+        
+                if ($row && $row['DatosProcesados'] == 0) {
+                    // Construir la consulta dinámica con los valores
+                    $sql = "INSERT INTO almacen_temperaturas (Fecha, Temperatura, Id) VALUES " . implode(", ", $valoresSQL);
+                    $stmt = $conn->prepare($sql);
+        
+                    // Ejecutar la consulta
+                    $success = $stmt->execute();
+        
+                    $conn->commit(); // Confirmar transacción
+                    return $success;
+                } else {
+                    $conn->rollback(); // Revertir si la condición no se cumple
+                    return false;
+                }
+            } catch (Exception $e) {
+                $conn->rollback(); // Revertir si hay error
+                error_log("Error en la transacción: " . $e->getMessage());
+                return false;
             }
-
-            // Si no se cumple la condición, no insertar
-            return false;
         }
     
         return null;

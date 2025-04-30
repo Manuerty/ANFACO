@@ -9,7 +9,13 @@ class Estado{
 
     public $IdUsuarioLogin;
     public $IdUsuarioSeleccionado;
+
+    public $esAdmin;
     public $IdLastUser;
+
+    public $nombreUsuario;
+
+    public $nombreConservero;
 
     public $TagPez;
     public $LastTagPez;
@@ -26,24 +32,25 @@ class Estado{
 
     public $usuariosFiltrados;
 
+    public $almacenes;
+
+    public $almacenesFiltrados;
 
     public $capturaDetalle;
 
     public $temperaturas;
 
-    public $almacenes;
+    public $temperaturasProcesar;
 
-    public $almacenesFiltrados;
 
-    public $esAdmin;
+
+   
 
     public $dataset;
 
-    public $nombreUsuario;
 
-    public $nombreConservero;
     
-    public $LimiteFilas = 5;
+    public $LimiteFilas = 30;
     
 
 

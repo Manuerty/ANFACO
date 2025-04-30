@@ -201,8 +201,27 @@ Class Controlador{
             $this -> miEstado -> TagPez = $tagPez;
 
             // Obtener los datos adicionales de la captura
-            $this -> miEstado -> temperaturas = get_Temperaturas($tagPez);
+            
             $this -> miEstado -> almacenes = get_Almacenes($tagPez);
+            $temperaturasProcesar = getTemperaturasProcesar($tagPez);
+            
+            $tempProcesada = [];
+            foreach ($temperaturasProcesar as $temp) {
+                $datosTemp = $temp['DatosTempProcesar'] ?? null;
+                $idAlmacen = $temp['IdAlmacenProcesar'] ?? null;
+        
+            
+                if ($datosTemp !== null && $idAlmacen !== null) {
+                    $resultado = procesarTemperaturas($datosTemp, $idAlmacen, 0);
+                    if (is_array($resultado)) {
+                        $tempProcesada = array_merge($tempProcesada, $resultado);
+                    }
+                }
+            }
+
+            //$this -> miEstado -> temperaturas = getTemperaturas($tagPez);
+            $this -> miEstado -> temperaturas = $tempProcesada;
+            
             
     
             // Llamar a details_Captura para llenar la variable de sesión con los detalles de la captura
@@ -242,12 +261,14 @@ Class Controlador{
         $temperaturas = $temperaturasVS;
         $almacenes = $almacenesVS;
 
+        //var_dump($temperaturas);
+
         //$temperaturas =  procesarTemperaturas(4, 0);
         
         $dataset = [];
         foreach ($temperaturas as $temp) {
             foreach ($almacenes as $almacen) {
-                if ($temp['IdLector'] == $almacen['IdAlmacen']) {
+                if ($temp['IdLector'] == $almacen['IdAlmacen'] or $temp['IdAlmacen'] == $almacen['IdAlmacen']) {
                     $dataset[] = [
                         "x" => strtotime($temp["FechaTemperatura"]) * 1000,
                         "y" => $temp["ValorTemperatura"],
