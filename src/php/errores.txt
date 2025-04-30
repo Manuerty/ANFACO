@@ -1,2 +1,0 @@
-Error [2] en C:\xampp\htdocs\ProyectoAnfaco\src\php\clases\controlador.php:222: Undefined array key "TagPez"
-[2025-04-29 12:38:09] -> Error [2] en C:\xampp\htdocs\ProyectoAnfaco\src\php\clases\controlador.php:222: Undefined array key "TagPez" -> 
