@@ -206,9 +206,8 @@ use Pdo\Sqlite;
                         FROM almacen GROUP BY TagPez
                     ) UltimaFecha ON bodegas.TagPez = UltimaFecha.TagPez
                     LEFT JOIN (
-                        SELECT MAX(temperatura) AS temperaturaMaxima, MIN(temperatura) AS temperaturaMinima, TagPez 
+                        SELECT MAX(TempMax) AS temperaturaMaxima, MIN(TempMin) AS temperaturaMinima, TagPez 
                         FROM almacen 
-                        INNER JOIN almacen_temperaturas ON almacen.ID = almacen_temperaturas.ID 
                         GROUP BY TagPez
                     ) MaxTemperatura ON MaxTemperatura.TagPez = bodegas.TagPez
                     LEFT JOIN barcos ON barcos.IdBarco = bodegas.IdBarco 
@@ -323,57 +322,6 @@ use Pdo\Sqlite;
 
         }catch (Exception $e) {
             
-            return false;
-        }
-    }
-
-    function getTemperaturas($tagPez) {
-        try {
-
-            $conn = obtener_conexion();
-            if (!$conn) return false;
-    
-            $sql = "SELECT aTmp.Fecha, aTmp.Temperatura, atmp.Id
-                    FROM almacen_temperaturas aTmp
-                    JOIN almacen a ON aTmp.Id = a.Id
-                    WHERE a.TagPez = ?
-                    ORDER BY aTmp.Fecha DESC";
-    
-            $stmt = $conn->prepare($sql);
-    
-            if (!$stmt) {
-                $conn->close();
-                return false;
-            }
-    
-            // Si hay un tagPez, lo vinculamos a la consulta
-            if ($tagPez) {
-                $stmt->bind_param("s", $tagPez); // "s" porque TagPez es tipo string
-            }
-    
-            if (!$stmt->execute()) {
-                $stmt->close();
-                $conn->close();
-                return false;
-            }
-    
-            $result = $stmt->get_result();
-            $temperaturas = [];
-    
-            while ($row = $result->fetch_assoc()) {
-                $temperaturas[] = [
-                    "FechaTemperatura" => $row["Fecha"],
-                    "ValorTemperatura" => $row["Temperatura"],
-                    "IdLector" => $row["Id"]
-                ];
-            }
-    
-            $stmt->close();
-            $conn->close();
-    
-            return $temperaturas;
-    
-        } catch (Exception $e) {
             return false;
         }
     }
