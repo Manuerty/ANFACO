@@ -116,6 +116,9 @@ Class Controlador{
             // Determinar si es administrador
             $this -> miEstado -> esAdmin = ($datosSesion[3] === "Administrador");
 
+            // Determinar si es conservero
+            $this  -> miEstado -> esConservero = ($datosSesion[3] === "Conservero");
+
 
             // Inicializar variables
             $usuarios = [];
@@ -536,10 +539,18 @@ Class Controlador{
             } elseif ($InicioS === 0) {
                 $msgError = "Usuario o contraseña incorrectos.";
             } elseif ($InicioS === true) {
-                $nav = $this->miEstado->esAdmin ? 0.5 : 1;
+                if ($this -> miEstado -> esAdmin) {
+                    $this->navegarPestanas(0.5);
+                } 
+                elseif($this -> miEstado -> esConservero) {
+                    $this->navegarPestanas(1.5);
+                }
+                else {
+                    $this->navegarPestanas(1);
+                }
+                
             }
-    
-            $this->navegarPestanas($nav);
+
         }
 
         

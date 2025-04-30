@@ -11,6 +11,9 @@ class Estado{
     public $IdUsuarioSeleccionado;
 
     public $esAdmin;
+
+    public $esConservero;
+    
     public $IdLastUser;
 
     public $nombreUsuario;
