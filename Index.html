@@ -51,13 +51,11 @@
     <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/dist/tippy.css" />
     <script src="https://unpkg.com/tippy.js@6"></script>
 
-    <!-- Librerías de los gráficos -->
+    <!-- librerias de los graficos/chars -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/luxon@3/build/global/luxon.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.0"></script> <!-- Agregar el plugin de anotaciones -->
-
 
 
 
@@ -272,17 +270,17 @@ function dibujaGrafica(dataset) {
             datasets: [{
                 label: 'Temperatura (°C)',
                 data: datos,
-                tension: 0,  // Líneas rectas
+                tension: 0,
                 fill: false,
-                pointRadius: 3,  // Tamaño de los puntos
+                pointRadius: 3,
                 segment: {
                     borderColor: ctx => {
-                        const seg = ctx.p0?.raw?.segmento;  // Se usa el almacén del punto
-                        return colorMap[seg] || '#000';  // Asigna el color desde el mapa de colores
+                        const seg = ctx.p0?.raw?.segmento;
+                        return colorMap[seg] || '#000';
                     }
                 },
-                pointBackgroundColor: datos.map(d => colorMap[d.segmento]),  // Color de fondo de los puntos
-                pointBorderColor: datos.map(d => colorMap[d.segmento]),  // Color del borde de los puntos
+                pointBackgroundColor: datos.map(d => colorMap[d.segmento]),
+                pointBorderColor: datos.map(d => colorMap[d.segmento]),
             }]
         },
         options: {
@@ -303,16 +301,17 @@ function dibujaGrafica(dataset) {
                         }
                     }
                 },
-                annotation: {  // Agregar el plugin de anotación para la línea horizontal
-                    annotations: {
-                        line1: {
-                            type: 'line',
-                            yMin: 10,  // Valor mínimo de la línea (en -5°C)
-                            yMax: 10,  // Valor máximo de la línea (se mantiene horizontal)
-                            borderColor: 'red',  // Color de la línea (roja)
-                            borderWidth: 1,  // Ancho de la línea
+                zoom: {
+                    zoom: {
+                        enabled: true,
+                        mode: 'x',
+                        speed: 0.1,
+                        sensitivity: 3,
+                        wheel: {
+                            enabled: true,
+                            speed: 0.1
                         }
-                    }
+                    },
                 }
             },
             scales: {
