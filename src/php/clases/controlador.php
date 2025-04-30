@@ -200,6 +200,8 @@ Class Controlador{
         } else {
             $this -> miEstado -> TagPez = $tagPez;
 
+            procesarInformacion();
+
             // Obtener los datos adicionales de la captura
             
             $this -> miEstado -> almacenes = get_Almacenes($tagPez);
@@ -212,7 +214,7 @@ Class Controlador{
         
             
                 if ($datosTemp !== null && $idAlmacen !== null) {
-                    $resultado = procesarTemperaturas($datosTemp, $idAlmacen, 0);
+                    $resultado = procesarTemperaturasString($datosTemp, $idAlmacen);
                     if (is_array($resultado)) {
                         $tempProcesada = array_merge($tempProcesada, $resultado);
                     }
@@ -261,7 +263,6 @@ Class Controlador{
         $temperaturas = $temperaturasVS;
         $almacenes = $almacenesVS;
 
-        //var_dump($temperaturas);
 
         //$temperaturas =  procesarTemperaturas(4, 0);
         

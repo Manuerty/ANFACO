@@ -421,7 +421,6 @@ use Pdo\Sqlite;
             $stmt->close();
             $conn->close();
 
-            //var_dump($almacenesProcesar);
 
             return $almacenesProcesar;
 
@@ -431,17 +430,13 @@ use Pdo\Sqlite;
         }
     }
 
-    function procesarTemperaturas($txtTemperaturas, $IdAlmacen, $accion) {
+    function procesarTemperaturasString($txtTemperaturas, $IdAlmacen) {
 
-        $cadenaTemperatura = $txtTemperaturas;
-        
-        $cadenaTemperatura = trim($cadenaTemperatura, "#");
+        // 1. Procesamiento del texto de temperaturas
+        $cadenaTemperatura = trim($txtTemperaturas, "#");
         $registros = explode(";", $cadenaTemperatura);
     
         $datos = [];
-        $valoresSQL = [];
-        $parametros = [];
-        $i = 0;
     
         foreach ($registros as $registro) {
             $partes = explode(",", $registro);
@@ -449,63 +444,111 @@ use Pdo\Sqlite;
                 $fechaHora = $partes[0] . ' ' . $partes[1] . ':00';
                 $valor = (float)$partes[2];
     
-                // Armar el array común
                 $datos[] = [
                     'FechaTemperatura' => $fechaHora,
                     'ValorTemperatura' => $valor,
                     'IdAlmacen' => $IdAlmacen
                 ];
-    
-                // Preparar para SQL si se requiere
-                if ($accion === 0) {
-                    $valoresSQL[] = "(:fecha$i, :valor$i, :almacen$i)";
-                    $parametros[":fecha$i"] = $fechaHora;
-                    $parametros[":valor$i"] = $valor;
-                    $parametros[":almacen$i"] = $IdAlmacen;
-                    $i++;
-                }
             }
         }
+
     
-        if ($accion === 0) {
-            return $datos;
-        }
-            
-        if ($accion === 1 && !empty($valoresSQL)) {
-            $conn = obtener_conexion(); // Esto devuelve un mysqli, no PDO
         
-            $conn->begin_transaction(); // Comienza la transacción
-        
-            try {
-                // Preparar y ejecutar la consulta para verificar DatosProcesados
-                $checkStmt = $conn->prepare("SELECT DatosProcesados FROM almacen WHERE Id = ? LIMIT 1 FOR UPDATE");
-                $checkStmt->bind_param("i", $IdAlmacen);
-                $checkStmt->execute();
-                $result = $checkStmt->get_result();
-                $row = $result->fetch_assoc();
-        
-                if ($row && $row['DatosProcesados'] == 0) {
-                    // Construir la consulta dinámica con los valores
-                    $sql = "INSERT INTO almacen_temperaturas (Fecha, Temperatura, Id) VALUES " . implode(", ", $valoresSQL);
-                    $stmt = $conn->prepare($sql);
-        
-                    // Ejecutar la consulta
-                    $success = $stmt->execute();
-        
-                    $conn->commit(); // Confirmar transacción
-                    return $success;
-                } else {
-                    $conn->rollback(); // Revertir si la condición no se cumple
-                    return false;
-                }
-            } catch (Exception $e) {
-                $conn->rollback(); // Revertir si hay error
-                error_log("Error en la transacción: " . $e->getMessage());
+    
+        return $datos;
+    }
+
+
+    function procesarInformacion() {
+        try {
+            // Obtener una única conexión
+            $conn = obtener_conexion();
+            if (!$conn) return false;
+    
+            // Iniciar la transacción
+            $conn->begin_transaction();
+    
+            // Consulta para obtener los datos de almacenes no procesados
+            $sql = "SELECT DatosTemp, TempMax, TempMin, Id FROM almacen WHERE DatosProcesados = 0";
+            $stmt = $conn->prepare($sql);
+            if (!$stmt->execute()) {
+                $conn->rollback();  // Deshacer cambios si ocurre un error
+                $stmt->close();
+                $conn->close();
                 return false;
             }
-        }
     
-        return null;
+            $result = $stmt->get_result();
+            $almacenesProcesar = [];
+    
+            // Almacenar los datos de los almacenes en un array
+            while ($row = $result->fetch_assoc()) {
+                $almacenesProcesar[] = [
+                    "DatosTemp" => $row["DatosTemp"],
+                    "TempMax" => $row["TempMax"],
+                    "TempMin" => $row["TempMin"],
+                    "IdAlmacen" => $row["Id"],
+                ];
+            }
+    
+            $stmt->close();
+    
+            // 2. Procesar los datos de cada almacén
+            foreach ($almacenesProcesar as $almacen) {
+                // Procesar las temperaturas
+                $datos = procesarTemperaturasString($almacen["DatosTemp"], $almacen["IdAlmacen"]);
+    
+                if (empty($datos)) {
+                    continue;  // Si no hay datos, saltar al siguiente almacén
+                }
+    
+                // Obtener los valores de temperatura
+                $valores = array_column($datos, 'ValorTemperatura');
+    
+                // Calcular el valor máximo y mínimo de las temperaturas
+                $maximo = max($valores);
+                $minimo = min($valores);
+    
+                // Consulta de actualización de temperaturas
+                $sqlUpdate = 'UPDATE almacen
+                              SET TempMax = ?, TempMin = ?, DatosProcesados = 1
+                              WHERE Id = ?';
+    
+                $stmtUpdate = $conn->prepare($sqlUpdate);
+                if (!$stmtUpdate) {
+                    $conn->rollback();  // Deshacer cambios si hay error
+                    $conn->close();
+                    return false;
+                }
+    
+                // Vincular parámetros y ejecutar la consulta de actualización
+                $stmtUpdate->bind_param("dds", $maximo, $minimo, $almacen['IdAlmacen']);
+                if (!$stmtUpdate->execute()) {
+                    $stmtUpdate->close();
+                    $conn->rollback();  // Deshacer cambios si hay error
+                    $conn->close();
+                    return false;
+                }
+    
+                // Cerrar la declaración de actualización
+                $stmtUpdate->close();
+            }
+    
+            // Si todo ha ido bien, hacer commit de la transacción
+            $conn->commit();
+    
+            // Cerrar la conexión después de procesar todos los almacenes
+            $conn->close();
+            return true;
+    
+        } catch (Exception $e) {
+            // En caso de error, hacer rollback de la transacción y cerrar la conexión
+            if ($conn) {
+                $conn->rollback();  // Deshacer cambios
+                $conn->close();
+            }
+            return false;
+        }
     }
 
     function get_Almacenes($tagPez){
