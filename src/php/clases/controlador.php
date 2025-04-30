@@ -103,6 +103,7 @@ Class Controlador{
         $datosSesion = comprueba_usuario($usuario, $contrasena);
         $this->miEstado = new Estado();
         $this->miEstado->Estado = 0;
+        procesarInformacion();
     
         if ($datosSesion != false && $datosSesion != 0) {
 
@@ -200,7 +201,7 @@ Class Controlador{
         } else {
             $this -> miEstado -> TagPez = $tagPez;
 
-            procesarInformacion();
+           
 
             // Obtener los datos adicionales de la captura
             
@@ -269,7 +270,7 @@ Class Controlador{
         $dataset = [];
         foreach ($temperaturas as $temp) {
             foreach ($almacenes as $almacen) {
-                if ($temp['IdLector'] == $almacen['IdAlmacen'] or $temp['IdAlmacen'] == $almacen['IdAlmacen']) {
+                if ($temp['IdAlmacen'] == $almacen['IdAlmacen']) {
                     $dataset[] = [
                         "x" => strtotime($temp["FechaTemperatura"]) * 1000,
                         "y" => $temp["ValorTemperatura"],
