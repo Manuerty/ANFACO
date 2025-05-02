@@ -56,6 +56,9 @@
     <script src="https://cdn.jsdelivr.net/npm/luxon@3/build/global/luxon.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.4.0/dist/chartjs-plugin-annotation.min.js"></script>
+
+    
 
 
 
@@ -312,7 +315,30 @@ function dibujaGrafica(dataset) {
                             speed: 0.1
                         }
                     },
-                }
+                },
+                annotation: {
+                    annotations: {
+                        lineaUmbral: {
+                            type: 'line',
+                            yMin: -18,
+                            yMax: -18,
+                            borderColor: 'red',
+                            borderWidth: 1,
+                            label: {
+                                content: '-18°C',
+                                enabled: true,
+                                position: 'start', // al principio de la línea (izquierda)
+                                backgroundColor: 'rgba(255,0,0,0.1)',
+                                color: 'red',
+                                yAdjust: -10, // lo sube por encima de la línea
+                                font: {
+                                    weight: 'bold',
+                                    size: 12,
+                                },
+                            },
+                        }
+                    }
+                },
             },
             scales: {
                 x: {
@@ -401,40 +427,21 @@ function dibujaGrafica(dataset) {
 }
 
 
-    //aplicar filtros portal del cliente (Modificar)
-    function aplicafiltros(f){
-        var filtro
-        var tipo
-        if(f == null){
-            filtro = $('#filtro_txt').val().toLowerCase();
-            tipo = 0;
-        }else{
-            filtro = f;
-            tipo = 2;
-        }
-        //alert(filtro)
-        dibuja_pagina([0,tipo,filtro]);
-    }
-
-    // aplicar filtros actualizado
-    function aplicaFiltradoHeader(ValorBusqueda = null){
-
-        var textoBuscado = '';
+    //aplicar filtros para buscar por alamcen
+    function filtarAlmacen(textoBuscado = '') {
 
         
-        textoBuscado = $("#TxtBoxInputBuscarHeader").val();
 
-        console.log("texto buscado:" + textoBuscado);
-
-        if(ValorBusqueda == null){
-            dibuja_pagina([0, 0, textoBuscado , []]);
-        }
-        else if(ValorBusqueda == 1 || textoBuscado == '' || textoBuscado == null){
+        if (textoBuscado == '') {
 
             dibuja_pagina([0, 0, '' , []]);
-            
 
         }
+        else{
+
+            dibuja_pagina([0, 0, textoBuscado , []]);
+        }
+        
     }
 
     // Función para aplicar filtro genérico

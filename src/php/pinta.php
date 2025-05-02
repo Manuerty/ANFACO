@@ -381,9 +381,9 @@
                     $tagPez = htmlspecialchars($captura["TagPez"]);
                     $refPez = $captura["TagPez"];
     
-                    $claseTemperaturaMaxima = ($temperaturaMaxima > 4) ? "text-danger" : "text-success";
-                    $claseTemperaturaMinima = ($temperaturaMinima > 4) ? "text-danger" : "text-success";
-                    $claseFecha = ($temperaturaMaxima > 4) ? "text-danger" : "text-success";
+                    $claseTemperaturaMaxima = ($temperaturaMaxima > -18) ? "text-danger" : "text-success";
+                    $claseTemperaturaMinima = ($temperaturaMinima > -18) ? "text-danger" : "text-success";
+                    $claseFecha = ($temperaturaMaxima > -18) ? "text-danger" : "text-success";
     
                     $contenido .= "<div class='card p-3 border shadow-sm' style='$backgroundColor margin-bottom: 0;'>";
     
@@ -452,8 +452,8 @@
                 $idUltimoAlmacenCaptura = safe_html($capturaDetalle["IdTipoAlmacen"] ?? '');
                 $tipoUltimoAlmacenCaptura = safe_html($capturaDetalle["TipoAlmacen"] ?? '');
         
-                $claseTemperaturaMaxima = ($temperaturaMaximaCaptura > 4) ? "text-danger" : "text-success";
-                $claseTemperaturaMinima = ($temperaturaMinimaCaptura > 4) ? "text-danger" : "text-success";
+                $claseTemperaturaMaxima = ($temperaturaMaximaCaptura > -18) ? "text-danger" : "text-success";
+                $claseTemperaturaMinima = ($temperaturaMinimaCaptura > -18) ? "text-danger" : "text-success";
 
                 
                 $contenido = "<div class='container-fluid' style='display: flex; height: 77.5vh;'>"; // Cambié para usar Flexbox
@@ -476,8 +476,11 @@
                 $contenido .= "<div class='col-md-8' style='display: flex; flex-direction: column; height: 100%;'>";
 
                 // Parte superior: gráfico de temperatura
-                $contenido .= "<div class='card p-3 border shadow-sm mb-3' style='flex-shrink: 0; max-width: 950px;' id='contenedor-grafica'>";
-                $contenido .= "<h5 class='card-title'>Gráfico de Temperatura</h5>";
+                $contenido .= "<div class='card p-3 border shadow-sm mb-3 d-flex justify-content-between align-items-center' style='flex-shrink: 0; max-width: 950px;' id='contenedor-grafica'>";
+                $contenido .= "<div class='d-flex justify-content-between w-100 align-items-center'>";
+                $contenido .= "<h5 class='card-title mb-0'>Gráfico de Temperatura</h5>";
+                $contenido .= "<button onclick='filtarAlmacen()' class='btn btn-secondary btn-sm'>Resetear Tabla</button>";
+                $contenido .= "</div>";
                 $contenido .= "<canvas id='graficaTemperatura' width='950' height='300' style='display: block; max-height: 300px;'></canvas>";
                 $contenido .= "</div>";
 
@@ -487,28 +490,39 @@
                 // Parte inferior: listado de almacenes
                 $contenido .= "<div class='card p-3 border shadow-sm' style='flex-grow: 1; overflow-y: auto;'>"; // Lista de almacenes ocupa el resto de la columna
                 $contenido .= "<h5 class='card-title'>Almacenes Visitados</h5>";
-                $contenido .= "<div  style='flex-grow: 1; overflow-y: auto;'>";
+                $contenido .= "<div style='flex-grow: 1; overflow-y: auto;'>";
 
                 foreach ($arraydatosAdiccional as $index => $Almacenes) {
                     $backgroundColor = ($index % 2 == 0) ? 'background-color: whitesmoke;' : 'background-color: white;';
                     
                     $IdTipoAlmacen = $Almacenes['IdTipo'] ?? '';
                     $NombreAlmacen = $Almacenes['NombreTipo'] ?? '';
-                    $ReferenciaAlmacen = $NombreAlmacen  . " " . $IdTipoAlmacen ;
+                    $ReferenciaAlmacen = $NombreAlmacen . " " . $IdTipoAlmacen;
                     $FechaAlmacen = $Almacenes['FechaAlmacen'] ?? '';
-                    $Lector = $Almacenes['Lector'] ?? '';
-                
+                    
+                    $esBodegaDelBarco = ($NombreAlmacen == 'Bodega'); // Comprobamos si es la bodega del barco
+                    
                     $contenido .= "<div class='card p-2 border shadow-sm mb-2' style='$backgroundColor'>";
                     $contenido .= "<table class='table table-borderless mb-0' style='table-layout: fixed; width: 100%;'>";
                     $contenido .= "<tr>";
                     $contenido .= "<td style='text-align: center; vertical-align: middle;'>$ReferenciaAlmacen</td>";
                     $contenido .= "<td style='text-align: center; vertical-align: middle;'>$FechaAlmacen</td>";
-                    $contenido .= "<td style='text-align: center; vertical-align: middle;'>$Lector</td>";
+                    
+                    if ($esBodegaDelBarco) {
+                        // Si es la bodega del barco, mostramos "Bodega" en vez de un botón
+                        $contenido .= "<td style='text-align: center; vertical-align: middle;'>Bodega</td>";
+                    } else {
+                        // Si no es bodega del barco, mostramos el botón
+                        $contenido .= "<td style='text-align: center; vertical-align: middle;'>
+                                        <button onclick='filtarAlmacen(\"$NombreAlmacen\")' class='btn btn-primary'>Mostrar</button>
+                                    </td>";
+                    }
+                    
                     $contenido .= "</tr>";
                     $contenido .= "</table>";
                     $contenido .= "</div>";
                 }
-                
+
                 $contenido .= "</div>"; // fin tarjeta almacenes
                 $contenido .= "</div>"; // fin tarjeta almacenes
                 $contenido .= "</div>"; // fin col derecha

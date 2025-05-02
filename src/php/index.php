@@ -21,6 +21,7 @@ try {
         if(!isset($_POST['arrayDatos'])){
             return $_SESSION["Controlador"] -> generarContenido();
         }else{
+            //var_dump($_POST["arrayDatos"]);
             return $_SESSION["Controlador"] -> generarContenido($_POST['arrayDatos']);   
         }  
     }
