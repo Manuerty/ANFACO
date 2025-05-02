@@ -51,6 +51,8 @@
             fclose($fileheader);
 
             $fileheadertext = str_replace("%NombreE%",$titulo,$fileheadertext);
+
+
             if ($OcultarCabecera == 1){
                 $fileheadertext = str_replace("<button id=\"LupaHeader2\" class=\"btn position-absolute end-0  h-100\" style=\"border: none; background: transparent; padding-right: 10px;\" >",
                 "<button id=\"LupaHeader2\" class=\"btn position-absolute end-0  h-100\" style=\"border: none; background: transparent; padding-right: 10px; display: none;\" >", $fileheadertext);
@@ -67,12 +69,8 @@
                 "<button id=\"CruzHeader\" class=\"col-2 flecha_volver d-none\" style=\"display: none;\">", $fileheadertext);
                 $fileheadertext = str_replace('<img src="Img/IconosAcciones/Lupa.png" width="20px" onclick="aplicaFiltrado(null, \'header\')">',
                 "<img src=\"Img/IconosAcciones/Lupa.png\" width=\"20px\" onclick=\"aplicaFiltrado(null, 'tagPez')\">", $fileheadertext);
-                $fileheadertext = str_replace("TxtBoxInputBuscarHeader",
-                "TxtBoxInputTagPez", $fileheadertext);
+                $fileheadertext = str_replace("TxtBoxInputBuscarHeader","TxtBoxInputTagPez", $fileheadertext);
             }
-
-
-
 
         }
 
@@ -108,6 +106,12 @@
         elseif($_SESSION["Controlador"] -> miEstado -> Estado == 4){
             $filetext = str_replace("%LineasE%", DibujaTablaGenerica(3),$filetext);
         }
+
+        if ($_SESSION["Controlador"] -> miEstado -> Estado == 0.5 || $_SESSION["Controlador"] -> miEstado -> Estado == 2 && $_SESSION["Controlador"] -> miEstado -> esAdmin == true){
+
+            $filetext = str_replace('<button id="BtnAnadir" onclick="" class="btn_acciones mb-4" style="display: none;">', '<button id="BtnAnadir" onclick="" class="btn_acciones mb-4">', $filetext);
+        }
+
         return $filetext;
     }
 
