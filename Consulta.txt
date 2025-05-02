@@ -1,27 +1,21 @@
-Select bodegas.IdBodega, bodegas.Zona, bodegas.Especie, bodegas.FechaCaptura, bodegas.TagPez, barcos.Nombre as Barco, barcos.IdBarco, UltimaFecha.FechaUltimoAlmacen , UltimaFecha.CuentaAlmacen, MaxTemperatura.temperaturaMaxima, MaxTemperatura.temperaturaMinima, AlmacenUltimo.IdTipoAlmacen, tiposalmacen.Nombre  from bodegas left JOIN (
-Select TagPez, max(fecha) FechaUltimoAlmacen, count(TagPez) as CuentaAlmacen from almacen
-	group by TagPez) UltimaFecha on Bodegas.TagPez = UltimaFecha.TagPez
-    left Join(
-        Select max(temperatura) temperaturaMaxima, min(temperatura) temperaturaMinima, TagPez from almacen inner Join almacen_temperaturas on almacen.ID = almacen_temperaturas.ID group by TagPez) 	MaxTemperatura on MaxTemperatura.TagPez = Bodegas.TagPez
-        left Join barcos on Barcos.IdBarco = bodegas.IdBarco 
-       left join almacen AlmacenUltimo on AlmacenUltimo.TagPez = bodegas.TagPez AND AlmacenUltimo.Fecha = UltimaFecha.FechaUltimoAlmacen
-       left join tiposalmacen on tiposalmacen.IdTipoAlmacen = AlmacenUltimo.IdTipoAlmacen
-
-
-
-
-Select bodegas.IdBodega, bodegas.Zona, bodegas.Especie, bodegas.FechaCaptura, bodegas.TagPez, barcos.Nombre as Barco, barcos.IdBarco, UltimaFecha.FechaUltimoAlmacen , UltimaFecha.CuentaAlmacen, MaxTemperatura.temperaturaMaxima, MaxTemperatura.temperaturaMinima, AlmacenUltimo.IdTipoAlmacen, tiposalmacen.Nombre  from bodegas left JOIN (
-Select TagPez, max(fecha) FechaUltimoAlmacen, count(TagPez) as CuentaAlmacen from almacen
-	group by TagPez) UltimaFecha on Bodegas.TagPez = UltimaFecha.TagPez
-    left Join(
-        Select max(temperatura) temperaturaMaxima, min(temperatura) temperaturaMinima, TagPez from almacen inner Join almacen_temperaturas on almacen.ID = almacen_temperaturas.ID group by TagPez) 	MaxTemperatura on MaxTemperatura.TagPez = Bodegas.TagPez
-        left Join barcos on Barcos.IdBarco = bodegas.IdBarco 
-       left join almacen AlmacenUltimo on AlmacenUltimo.TagPez = bodegas.TagPez AND AlmacenUltimo.Fecha = UltimaFecha.FechaUltimoAlmacen
-       left join tiposalmacen on tiposalmacen.IdTipoAlmacen = AlmacenUltimo.IdTipoAlmacen
-       WHERE bodegas.IdBarco IN (SELECT IdBarco FROM barcos WHERE IdUsuario = 1)
-       ORDER by TagPez ASC;
-
-
-
-SELECT DISTINCT tiposalmacen.Nombre FROM `almacen`
-	INNER JOIN tiposalmacen on tiposalmacen.IdTipoAlmacen = almacen.IdTipoAlmacen WHERE 1;
+SELECT bodegas.IdBodega, bodegas.Zona, bodegas.Especie, bodegas.FechaCaptura, bodegas.TagPez, 
+                           barcos.Nombre as Barco, barcos.IdBarco, 
+                           UltimaFecha.FechaUltimoAlmacen, UltimaFecha.CuentaAlmacen, UltimaFecha.Fecha_ultimo_comprador, AlmacenUltimoComprador.IdComprador, UltimoComprador.Usuario,
+                           MaxTemperatura.temperaturaMaxima, MaxTemperatura.temperaturaMinima, 
+                           AlmacenUltimo.IdTipoAlmacen as UltimoAlmacen, tiposalmacen.Nombre, barcos.Codigo, usuarios.Usuario  
+                    FROM bodegas 
+                    LEFT JOIN (
+                        SELECT TagPez, MAX(fecha) AS FechaUltimoAlmacen, COUNT(TagPez) AS CuentaAlmacen, MAX(CASE when IdComprador IS NOT NULL THEN FECHA ELSE '01/01/2050' END) AS Fecha_ultimo_comprador
+                        FROM almacen GROUP BY TagPez
+                    ) UltimaFecha ON bodegas.TagPez = UltimaFecha.TagPez
+                    LEFT JOIN (
+                        SELECT MAX(TempMax) AS temperaturaMaxima, MIN(TempMin) AS temperaturaMinima, TagPez 
+                        FROM almacen 
+                        GROUP BY TagPez
+                    ) MaxTemperatura ON MaxTemperatura.TagPez = bodegas.TagPez
+                    LEFT JOIN barcos ON barcos.IdBarco = bodegas.IdBarco 
+                    LEFT JOIN usuarios ON barcos.IdUsuario = usuarios.IdUsuario
+                    LEFT JOIN almacen AlmacenUltimo ON AlmacenUltimo.TagPez = bodegas.TagPez AND AlmacenUltimo.Fecha = UltimaFecha.FechaUltimoAlmacen
+                    LEFT JOIN almacen AlmacenUltimoComprador ON AlmacenUltimoComprador.TagPez = bodegas.TagPez AND AlmacenUltimoComprador.Fecha = UltimaFecha.Fecha_ultimo_comprador
+                    LEFT JOIN tiposalmacen ON tiposalmacen.IdTipoAlmacen = AlmacenUltimo.IdTipoAlmacen
+                    LEFT join usuarios UltimoComprador ON UltimoComprador.IdUsuario = AlmacenUltimoComprador.IdComprador;

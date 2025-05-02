@@ -492,20 +492,6 @@ Class Controlador{
     }
 
 
-    private function obtenerOCrearCapturaPorTagPez($tagPez) {
-
-        foreach ($this->miEstado->capturas as $captura) {
-            if ($captura['TagPez'] === $tagPez) {
-                return $captura;
-            }
-        }
-    
-        // No se encontró, se crea una nueva
-        $nuevaCaptura = get_Captura($tagPez);
-        array_push($this->miEstado->capturas, $nuevaCaptura);
-        return $nuevaCaptura;
-    }
-
 
     function generarContenido($arrayDatos = array()) {
 
@@ -562,11 +548,10 @@ Class Controlador{
             if ($arrayDatos[0] == 1) {
                 $this->navegarPestanas(1);
             } elseif ($arrayDatos[0] == 1.5) {
-                $this->navegarPestanas(1.5);
+                $this -> miEstado -> capturas = get_capturas_comprador($this->miEstado->IdUsuarioSeleccionado);
+                $this->navegarPestanas(3);
             }
         }
-
-        
     
         // Navegación dashboard
         elseif ($c === 1 && isset($arrayDatos[0])) {
@@ -575,37 +560,6 @@ Class Controlador{
                 $this->navegarPestanas($navMap[$arrayDatos[0]]);
             }
         }
-
-        // Pantalla conservero
-        elseif ($c === 1.5 && isset($arrayDatos[0])) {
-
-            $tagPez = $arrayDatos[2]; // Suponiendo que el TagPez es el tercer valor en $arrayDatos
-        
-            $captura = $this->obtenerOCrearCapturaPorTagPez($tagPez);
-        
-            $this->miEstado->capturasFiltradas[0] = $captura;
-        
-            $this->miEstado->nombreConservero = $this->miEstado->nombreUsuario;
-            $this->miEstado->nombreUsuario = $captura["NombreUsuario"];
-        
-            $navMap = [4 => 3];
-            $this->navegarPestanas($navMap[4]);
-        }
-
-        //Busquedas dentro de la busqueda de conservero
-
-        elseif ($c === 3 && isset($arrayDatos[0]) && $arrayDatos[0] == 4) {
-
-            $tagPez = $arrayDatos[2]; // Suponiendo que el TagPez es el tercer valor en $arrayDatos
-        
-            $captura = $this->obtenerOCrearCapturaPorTagPez($tagPez);
-        
-            $this->miEstado->capturasFiltradas[0] = $captura;
-
-
-            
-        }
-
 
     
         // Detalles de captura

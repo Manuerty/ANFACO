@@ -495,7 +495,7 @@
                 $contenido .= "<div class='card p-3 border shadow-sm mb-3 d-flex justify-content-between align-items-center' style='flex-shrink: 0; max-width: 950px;' id='contenedor-grafica'>";
                 $contenido .= "<div class='d-flex justify-content-between w-100 align-items-center'>";
                 $contenido .= "<h5 class='card-title mb-0'>Gráfico de Temperatura</h5>";
-                $contenido .= "<button onclick='filtarAlmacen()' class='btn btn-secondary btn-sm'>Resetear Tabla</button>";
+                $contenido .= "<button onclick='filtarAlmacen()' class='btn btn-secondary btn-sm'>Resetear Grafica</button>";
                 $contenido .= "</div>";
                 $contenido .= "<canvas id='graficaTemperatura' width='950' height='300' style='display: block; max-height: 300px;'></canvas>";
                 $contenido .= "</div>";
