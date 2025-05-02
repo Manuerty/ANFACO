@@ -275,7 +275,9 @@ function dibujaGrafica(dataset) {
                 data: datos,
                 tension: 0,
                 fill: false,
-                pointRadius: 3,
+                pointRadius: 0.05,
+                pointHoverRadius: 3,
+                pointBorderWidth: 0,
                 segment: {
                     borderColor: ctx => {
                         const seg = ctx.p0?.raw?.segmento;
@@ -430,7 +432,7 @@ function dibujaGrafica(dataset) {
     //aplicar filtros para buscar por alamcen
     function filtarAlmacen(textoBuscado = '') {
 
-        
+
 
         if (textoBuscado == '') {
 

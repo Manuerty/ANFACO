@@ -39,7 +39,7 @@
             case 4:
                 $titulo = "Detalles de la Captura";
                 $filename = "../html/documentos.html";
-                $OcultarCabecera = 1;
+                $OcultarCabecera = 2;
                 break;
         }
 
@@ -372,7 +372,6 @@
                     $temperaturaMaxima = safe_html($captura["TemperaturaMaxima"] ?? null);
                     $temperaturaMinima = safe_html($captura["TemperaturaMinima"] ?? null);
                     $fechaUltimaTemperatura = safe_html($captura["FechaUltimoAlmacen"] ?? null);
-                    $idUltimoAlmacen = safe_html($captura["IdTipoAlmacen"] ?? null);
                     $tipoUltimoAlmacen = safe_html($captura["TipoAlmacen"] ?? null);
                     $ZonaCaptura = safe_html($captura["Zona"] ?? null);
                     $EspecieCapturada = safe_html($captura["Especie"] ?? null);
@@ -390,7 +389,7 @@
                     $contenido .= "<div class='d-flex mb-1' style='font-size: 0.825rem;'>";
     
                     $contenido .= "<div style='flex: 0 0 90%;'>";
-                    $contenido .= "<h5 class='card-title mb-0' style='font-size: 1.125rem;'><strong>$tagPez - $EspecieCapturada</strong></h5>";
+                    $contenido .= "<h5 class='card-title mb-0' style='font-size: 1.125rem;'><strong>$tagPez</strong> - $EspecieCapturada</h5>";
                     $contenido .= "<details style='cursor: pointer; padding-top: 5px;'>";
                     $contenido .= "<summary style='font-size: 1.2rem; font-weight: bold; padding-left: 0;'></summary>";
     
@@ -404,7 +403,7 @@
     
                     $contenido .= "<div class='col'>";
                     $contenido .= "<p><span class='text-black'>Almacenes visitados: </span> <span class='font-weight-bold'><strong>$TotalAlmacenes</strong></span></p>";
-                    $contenido .= "<p><span class='text-black'>Almacén: </span> <span class='font-weight-bold'><strong>$tipoUltimoAlmacen $idUltimoAlmacen</strong></span></p>";
+                    $contenido .= "<p><span class='text-black'>Almacén: </span> <span class='font-weight-bold'><strong>$tipoUltimoAlmacen </strong></span></p>";
                     $contenido .= "</div>";
     
                     $contenido .= "<div class='col'>";
@@ -420,7 +419,7 @@
                     $contenido .= "</div>"; // fin columna izquierda
     
                     $contenido .= "<div class='d-flex flex-column align-items-end' style='flex: 0 0 10%;'>";
-                    $contenido .= "<div class='$claseFecha' style='font-size: 1.125rem; text-align: right; white-space: nowrap; margin-bottom: 0.3rem;'><strong>" . date('d/m/Y H:i', strtotime($FechaCaptura)) . "</strong></div>";
+                    $contenido .= "<div class='$claseFecha' style='font-size: 1.125rem; text-align: right; white-space: nowrap; margin-bottom: 0.3rem;'>" . date('d/m/Y H:i', strtotime($FechaCaptura)) . "</div>";
 
                     $contenido .= "<div style='width: fit-content; margin: 0 auto;'>";
                     $contenido .= "<a title='Ver detalles completos' onclick='dibuja_pagina([3,".'"'.$refPez.'"'." ])'>";
@@ -449,7 +448,6 @@
                 $NombreBarcoCaptura = safe_html($capturaDetalle["NombreBarco"] ?? '');
                 $temperaturaMaximaCaptura = safe_html($capturaDetalle["TemperaturaMaxima"] ?? '');
                 $temperaturaMinimaCaptura = safe_html($capturaDetalle["TemperaturaMinima"] ?? '');
-                $idUltimoAlmacenCaptura = safe_html($capturaDetalle["IdTipoAlmacen"] ?? '');
                 $tipoUltimoAlmacenCaptura = safe_html($capturaDetalle["TipoAlmacen"] ?? '');
         
                 $claseTemperaturaMaxima = ($temperaturaMaximaCaptura > -18) ? "text-danger" : "text-success";
@@ -468,7 +466,7 @@
                 $contenido .= "<p>Zona:<strong> $ZonaCaptura</strong></p>";
                 
                 $contenido .= "<p><span class='text-black'>Temp: </span> <span class='$claseTemperaturaMinima'><span class='font-weight-bold'><strong>" . $temperaturaMinimaCaptura . "°C</span></span><span> / </span> <span class='$claseTemperaturaMaxima'><span class='font-weight-bold'>" . $temperaturaMaximaCaptura . "°C</strong></span></span></p>";
-                $contenido .= "<p><span class='text-black'>Almacén Actual: </span> <span class='font-weight-bold'><strong>$tipoUltimoAlmacenCaptura $idUltimoAlmacenCaptura</strong></span></p>";
+                $contenido .= "<p><span class='text-black'>Almacén Actual: </span> <span class='font-weight-bold'><strong>$tipoUltimoAlmacenCaptura </strong></span></p>";
                 $contenido .= "</div>";
                 $contenido .= "</div>"; // fin col izquierda
 
@@ -495,9 +493,9 @@
                 foreach ($arraydatosAdiccional as $index => $Almacenes) {
                     $backgroundColor = ($index % 2 == 0) ? 'background-color: whitesmoke;' : 'background-color: white;';
                     
-                    $IdTipoAlmacen = $Almacenes['IdTipo'] ?? '';
+                    
                     $NombreAlmacen = $Almacenes['NombreTipo'] ?? '';
-                    $ReferenciaAlmacen = $NombreAlmacen . " " . $IdTipoAlmacen;
+                    $ReferenciaAlmacen = $NombreAlmacen;
                     $FechaAlmacen = $Almacenes['FechaAlmacen'] ?? '';
                     
                     $esBodegaDelBarco = ($NombreAlmacen == 'Bodega'); // Comprobamos si es la bodega del barco

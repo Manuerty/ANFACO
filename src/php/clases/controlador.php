@@ -277,7 +277,7 @@ Class Controlador{
                     $dataset[] = [
                         "x" => strtotime($temp["FechaTemperatura"]) * 1000,
                         "y" => $temp["ValorTemperatura"],
-                        "almacen" =>  $almacen["NombreTipo"] . " " . $almacen["IdTipo"]
+                        "almacen" =>  $almacen["NombreTipo"] 
                     ];
                     break;
                 }
@@ -677,7 +677,7 @@ Class Controlador{
 
         $txtErr = "";
     
-        /* // Depuración
+        // Depuración
         $txtErr = sprintf(
             "idUsuarioLogIn : %s<br>idUsuarioElegido: %s<br>IdLastUser: %s<br>TagPez: %s<br>LastTagPez: %s<br>Estado: %s<br>EstadosAnteriores: %s<br>ArrayDatos: %s",
             $this->miEstado->IdUsuarioLogin,
@@ -688,9 +688,8 @@ Class Controlador{
             $this->miEstado->Estado,
             implode(",", $this->miEstado->EstadosAnteriores),
             implode(",", $arrayDatos)
-        ); */
+        );
 
-        //echo "hola2";
     
         return [
             pinta_contenido($this->miEstado->Estado) . $txtErr,
