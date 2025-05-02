@@ -33,7 +33,7 @@
                 $OcultarCabecera = 1;
                 break;
             case 3:
-                $titulo = "Capturas de " .$_SESSION["Controlador"] -> miEstado -> nombreUsuario;
+                $titulo = "Pescado de " .$_SESSION["Controlador"] -> miEstado -> nombreUsuario;
                 $filename = "../html/documentos.html";
                 break;
             case 4:
@@ -366,6 +366,8 @@
             // Lógica específica para capturas
             elseif ($Pestana == 2) {
                 foreach ($arraydatos as $index => $captura) {
+
+                    
                     $backgroundColor = ($index % 2 == 0) ? 'background-color: whitesmoke;' : 'background-color: white;';
     
                     $TotalAlmacenes = safe_html($captura["CuentaAlmacen"] ?? null);
@@ -378,6 +380,7 @@
                     $FechaCaptura = safe_html($captura["FechaCaptura"] ?? null);
                     $NombreBarcoCaptura = safe_html($captura["NombreBarco"] ?? null);
                     $tagPez = htmlspecialchars($captura["TagPez"]);
+                    $NombreComprador = safe_html($captura["NombreComprador"] ?? null);
                     $refPez = $captura["TagPez"];
     
                     $claseTemperaturaMaxima = ($temperaturaMaxima > -18) ? "text-danger" : "text-success";
@@ -399,6 +402,9 @@
                     $contenido .= "<div class='col'>";
                     $contenido .= "<p><span class='text-black'>Captura: </span> <span class='font-weight-bold'><strong>$ZonaCaptura</strong></span></p>";
                     $contenido .= "<p><span class='text-black'>Barco: </span> <span class='font-weight-bold'><strong>$NombreBarcoCaptura</strong></span></p>";
+                    if($NombreComprador != null && $_SESSION["Controlador"] -> miEstado -> EstadosAnteriores[0] != 0.5){
+                        $contenido .= "<p><span class='text-black'>Comprador: </span> <span class='font-weight-bold'><strong>$NombreComprador</strong></span></p>";
+                    }
                     $contenido .= "</div>";
     
                     $contenido .= "<div class='col'>";

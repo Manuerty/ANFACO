@@ -90,22 +90,21 @@ use Pdo\Sqlite;
         }
     }
 
-
-
-    function get_capturas_comprador($IdComprador){
+    function get_pescado($IdUsuario = null, $IdComprador = null) {
         try {
             $conn = obtener_conexion();
             if (!$conn) return false;
     
-            // Si el $idUsuario es proporcionado, se agrega un filtro para ese usuario
             $sql = "SELECT bodegas.IdBodega, bodegas.Zona, bodegas.Especie, bodegas.FechaCaptura, bodegas.TagPez, 
                            barcos.Nombre as Barco, barcos.IdBarco, 
-                           UltimaFecha.FechaUltimoAlmacen, UltimaFecha.CuentaAlmacen, UltimaFecha.Fecha_ultimo_comprador, AlmacenUltimoComprador.IdComprador, UltimoComprador.Usuario as Comprador,
+                           UltimaFecha.FechaUltimoAlmacen, UltimaFecha.CuentaAlmacen, UltimaFecha.Fecha_ultimo_comprador,
+                           AlmacenUltimoComprador.IdComprador, UltimoComprador.Usuario as Comprador,
                            MaxTemperatura.temperaturaMaxima, MaxTemperatura.temperaturaMinima, 
-                           AlmacenUltimo.IdTipoAlmacen as UltimoAlmacen, tiposalmacen.Nombre, barcos.Codigo, usuarios.Usuario  
+                           AlmacenUltimo.IdTipoAlmacen, tiposalmacen.Nombre, barcos.Codigo, usuarios.Usuario  
                     FROM bodegas 
                     LEFT JOIN (
-                        SELECT TagPez, MAX(fecha) AS FechaUltimoAlmacen, COUNT(TagPez) AS CuentaAlmacen, MAX(CASE when IdComprador = 0 THEN '01/01/2050'  ELSE FECHA END) AS Fecha_ultimo_comprador
+                        SELECT TagPez, MAX(fecha) AS FechaUltimoAlmacen, COUNT(TagPez) AS CuentaAlmacen,
+                               MAX(CASE WHEN IdComprador = 0 THEN '01/01/2050' ELSE FECHA END) AS Fecha_ultimo_comprador
                         FROM almacen GROUP BY TagPez
                     ) UltimaFecha ON bodegas.TagPez = UltimaFecha.TagPez
                     LEFT JOIN (
@@ -118,8 +117,28 @@ use Pdo\Sqlite;
                     LEFT JOIN almacen AlmacenUltimo ON AlmacenUltimo.TagPez = bodegas.TagPez AND AlmacenUltimo.Fecha = UltimaFecha.FechaUltimoAlmacen
                     LEFT JOIN almacen AlmacenUltimoComprador ON AlmacenUltimoComprador.TagPez = bodegas.TagPez AND AlmacenUltimoComprador.Fecha = UltimaFecha.Fecha_ultimo_comprador
                     LEFT JOIN tiposalmacen ON tiposalmacen.IdTipoAlmacen = AlmacenUltimo.IdTipoAlmacen
-                    LEFT join usuarios UltimoComprador ON UltimoComprador.IdUsuario = AlmacenUltimoComprador.IdComprador
-                    WHERE UltimoComprador.IdUsuario = ?";
+                    LEFT JOIN usuarios UltimoComprador ON UltimoComprador.IdUsuario = AlmacenUltimoComprador.IdComprador";
+    
+            // Condiciones WHERE opcionales
+            $conditions = [];
+            $params = [];
+            $types = "";
+    
+            if ($IdUsuario !== null) {
+                $conditions[] = "bodegas.IdBarco IN (SELECT IdBarco FROM barcos WHERE IdUsuario = ?)";
+                $params[] = $IdUsuario;
+                $types .= "i";
+            }
+    
+            if ($IdComprador !== null) {
+                $conditions[] = "UltimoComprador.IdUsuario = ?";
+                $params[] = $IdComprador;
+                $types .= "i";
+            }
+    
+            if (!empty($conditions)) {
+                $sql .= " WHERE " . implode(" AND ", $conditions);
+            }
     
             $sql .= " ORDER BY FechaCaptura DESC";
     
@@ -129,9 +148,9 @@ use Pdo\Sqlite;
                 return false;
             }
     
-        
-            $stmt->bind_param("i",$IdComprador);
-                
+            if (!empty($params)) {
+                $stmt->bind_param($types, ...$params);
+            }
     
             if (!$stmt->execute()) {
                 $stmt->close();
@@ -163,93 +182,7 @@ use Pdo\Sqlite;
     
             $stmt->close();
             $conn->close();
-
-            // Guardar en variable de sesión como un array plano, sin agrupar por TagPez
-                
-            return $capturas;
     
-        } catch (Exception $e) {
-            return false;
-        }
-
-    }
-    
-
-    function get_capturas($idUsuario = null) {
-        try {
-            $conn = obtener_conexion();
-            if (!$conn) return false;
-    
-            // Si el $idUsuario es proporcionado, se agrega un filtro para ese usuario
-            $sql = "SELECT bodegas.IdBodega, bodegas.Zona, bodegas.Especie, bodegas.FechaCaptura, bodegas.TagPez, 
-                           barcos.Nombre as Barco, barcos.IdBarco, 
-                           UltimaFecha.FechaUltimoAlmacen, UltimaFecha.CuentaAlmacen, 
-                           MaxTemperatura.temperaturaMaxima, MaxTemperatura.temperaturaMinima, 
-                           AlmacenUltimo.IdTipoAlmacen, tiposalmacen.Nombre, barcos.Codigo  
-                    FROM bodegas 
-                    LEFT JOIN (
-                        SELECT TagPez, MAX(fecha) AS FechaUltimoAlmacen, COUNT(TagPez) AS CuentaAlmacen 
-                        FROM almacen GROUP BY TagPez
-                    ) UltimaFecha ON bodegas.TagPez = UltimaFecha.TagPez
-                    LEFT JOIN (
-                        SELECT MAX(TempMax) AS temperaturaMaxima, MIN(TempMin) AS temperaturaMinima, TagPez 
-                        FROM almacen 
-                        GROUP BY TagPez
-                    ) MaxTemperatura ON MaxTemperatura.TagPez = bodegas.TagPez
-                    LEFT JOIN barcos ON barcos.IdBarco = bodegas.IdBarco 
-                    LEFT JOIN almacen AlmacenUltimo ON AlmacenUltimo.TagPez = bodegas.TagPez AND AlmacenUltimo.Fecha = UltimaFecha.FechaUltimoAlmacen
-                    LEFT JOIN tiposalmacen ON tiposalmacen.IdTipoAlmacen = AlmacenUltimo.IdTipoAlmacen";
-    
-            // Si se pasó un IdUsuario, filtramos los datos por ese IdUsuario
-            if ($idUsuario) {
-                $sql .= " WHERE bodegas.IdBarco IN (SELECT IdBarco FROM barcos WHERE IdUsuario = ?)";
-            }
-
-            $sql .= " ORDER BY FechaCaptura DESC";
-    
-            $stmt = $conn->prepare($sql);
-            if (!$stmt) {
-                $conn->close();
-                return false;
-            }
-    
-            // Si hay un IdUsuario, lo vinculamos a la consulta
-            if ($idUsuario) {
-                $stmt->bind_param("i", $idUsuario);
-            }      
-    
-            if (!$stmt->execute()) {
-                $stmt->close();
-                $conn->close();
-                return false;
-            }
-    
-            $result = $stmt->get_result();
-            $capturas = [];
-    
-            while ($row = $result->fetch_assoc()) {
-                $capturas[] = [
-                    'IdBodega'             => $row['IdBodega'],
-                    'Zona'                 => $row['Zona'],
-                    'Especie'              => $row['Especie'],
-                    'FechaCaptura'         => $row['FechaCaptura'],
-                    'TagPez'               => $row['TagPez'],
-                    'NombreBarco'          => $row['Barco'],
-                    'IdBarco'              => $row['IdBarco'],
-                    'FechaUltimoAlmacen'   => $row['FechaUltimoAlmacen'],
-                    'CuentaAlmacen'        => $row['CuentaAlmacen'],
-                    'TemperaturaMaxima'    => $row['temperaturaMaxima'],
-                    'TemperaturaMinima'    => $row['temperaturaMinima'],
-                    'IdTipoAlmacen'        => $row['IdTipoAlmacen'],
-                    'TipoAlmacen'          => $row['Nombre'],
-                ];
-            }
-    
-            $stmt->close();
-            $conn->close();
-
-            // Guardar en variable de sesión como un array plano, sin agrupar por TagPez
-                
             return $capturas;
     
         } catch (Exception $e) {

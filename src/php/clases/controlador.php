@@ -133,7 +133,7 @@ Class Controlador{
                 
                 
             } else {
-                $capturas = get_capturas($datosSesion[0]);
+                $capturas = get_pescado($datosSesion[0], null);
                 $barcos = get_Barcos($datosSesion[0]);
                 
             }
@@ -192,7 +192,7 @@ Class Controlador{
         else{
             $this -> miEstado -> IdUsuarioSeleccionado = $IdUser;
             $this -> miEstado -> nombreUsuario = $UserName;
-            $this -> miEstado -> capturas = get_capturas($IdUser);
+            $this -> miEstado -> capturas = get_pescado($IdUser, null);
             $this -> miEstado -> barcos = get_Barcos($IdUser);
         }
     }
@@ -530,7 +530,8 @@ Class Controlador{
                 if ($this->miEstado->esAdmin) {
                     $pestana = 0.5;
                 } elseif ($this->miEstado->esConservero) {
-                    $pestana = 1.5;
+                    $this -> miEstado -> capturas = get_pescado(null, $this -> miEstado -> IdUsuarioLogin);
+                    $pestana = 3;
                 }
 
                 $this->navegarPestanas($pestana);
@@ -548,7 +549,7 @@ Class Controlador{
             if ($arrayDatos[0] == 1) {
                 $this->navegarPestanas(1);
             } elseif ($arrayDatos[0] == 1.5) {
-                $this -> miEstado -> capturas = get_capturas_comprador($this->miEstado->IdUsuarioSeleccionado);
+                $this -> miEstado -> capturas = get_pescado(null, $this->miEstado->IdUsuarioSeleccionado);
                 $this->navegarPestanas(3);
             }
         }
