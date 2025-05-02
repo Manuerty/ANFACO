@@ -94,16 +94,10 @@ use Pdo\Sqlite;
         try {
             $conn = obtener_conexion();
             if (!$conn) return false;
-
-
     
             // Si no se proporciona un TagPez, devolvemos false
             if (!$tag_pez) return false;
 
-
-
-
-    
             // Consulta SQL para obtener la captura específica por TagPez
             $sql = "SELECT bodegas.IdBodega, bodegas.Zona, bodegas.Especie, bodegas.FechaCaptura, bodegas.TagPez, 
                            barcos.Nombre as Barco, barcos.IdBarco, 
@@ -116,9 +110,8 @@ use Pdo\Sqlite;
                         FROM almacen GROUP BY TagPez
                     ) UltimaFecha ON bodegas.TagPez = UltimaFecha.TagPez
                     LEFT JOIN (
-                        SELECT MAX(temperatura) AS temperaturaMaxima, MIN(temperatura) AS temperaturaMinima, TagPez 
+                        SELECT MAX(TempMax) AS temperaturaMaxima, MIN(TempMin) AS temperaturaMinima, TagPez 
                         FROM almacen 
-                        INNER JOIN almacen_temperaturas ON almacen.ID = almacen_temperaturas.ID
                         GROUP BY TagPez
                     ) MaxTemperatura ON MaxTemperatura.TagPez = bodegas.TagPez
                     LEFT JOIN barcos ON barcos.IdBarco = bodegas.IdBarco 
