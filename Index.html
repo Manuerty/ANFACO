@@ -63,6 +63,11 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 
+
+
+
+
+
     
 
 
@@ -773,131 +778,70 @@ function dibujaGrafica(dataset) {
         dibuja_pagina(valArray);
     })
     
-    function SubmitModalForm(tipoApp = 0,IdRegisto = null,claseFormulario = null,nombreForm = null ){
+    function SubmitModalForm(nombreForm = null ){
+
+        console.log("Entrar en la fucion")
         
         event.preventDefault();
         let campoRequeridoVacio = 0;
         let erroresEnv = 0;
 
-        if ($(".formulario_modal :file").length > 0 && $(".formulario_modal :file")[0].files.length > 0 && IdRegisto == null) {
-            var formulario = document.getElementsByClassName('formulario_modal');
-            var inputArchivo = $(".formulario_modal :file")[0];
-            var tamanioMaximo = 4 * 1024 * 1024;
-            var archivo  = inputArchivo.files[0];
-            var nombreArchivo = archivo.name;
-            var formData = new FormData();
-            
-            if (archivo.size >= tamanioMaximo){
-                alert("El tamaño maximo del archivo no puede superar los 4 Mb");
-            }{
-                formData.append('Archivo', archivo);
-                var xhr = new XMLHttpRequest();
-                xhr.open('POST', 'php/GestionSubidaArchivos.php', true);
-                xhr.onload = function() {
 
-                if (xhr.status === 200) {
-                    
-                    // Manejar la respuesta del servidor si es necesario
-                    if(xhr.responseText == 0){
-                        alert("Error  0x80072f8f - 0x20000: Fallo al subir el archivo al servidor");
-                    }else if(xhr.responseText == 1){
-                        alert("El tamaño maximo del archivo no puede superar los 4 Mb");
-                    }else{
-                        var IdAT = $("#TipoArchivo").val()
-                        let arrayValAdicional = []
-                        let RutaArchivo = '';
-                        if(tipoApp == 0){
-                            arrayValAdicional = {'Archivo' : xhr.responseText,
-                                                    'Nombre' : nombreArchivo,
-                                                'IdAT' : IdAT};
-                        }else{
-                            $(".formulario_modal :input").each(function(){
-                                if($(this).prop("type") !== "file"){
-                                    arrayValAdicional.push($(this).val());
-                                }
-                            })
-                            RutaArchivo = xhr.responseText;
-                        }
-                        
-                        $('#SubmitModalForm').modal('hide');
-                        $('.modal-backdrop').hide();
-                        $('body').css({
-                            'overflow': 'auto',
-                            'padding-right': '0'
-                        });
-                        if (claseFormulario){
-                            //alert(arrayValAdicional);
-                            dibuja_pagina([0,3.5,arrayValAdicional,RutaArchivo,nombreArchivo]);
-                        }else{
-                            dibuja_pagina([0,3,arrayValAdicional,RutaArchivo,nombreArchivo]);
-                        }
-                        
-                    }
-                } else {
-                    // Error en la solicitud
-                    console.error('Error al subir el archivo.');
-                }
-                };
-                // Enviar el formulario con el archivo al servidor
-                xhr.send(formData);
+
+        $('#'+nombreForm).modal('hide');
+        $('.modal-backdrop').hide();
+        let valArray = [];
+
+        
+
+        $(".formulario_modal :input").each(function(){
+            
+            let classComprobacion = '#'+ $(this).prop('id') +'_condiciones'; 
+            let comprobacion = $(classComprobacion).text();
+            if(!comprobacion){
+                comprobacion = 'true';
             }
             
-            
-        }else{
-            
-            let nombreForm = 'SubmitModalForm';
-            if(claseFormulario != null){
-                nombreForm = nombreForm;
-            }
-
-            $('#'+nombreForm).modal('hide');
-            $('.modal-backdrop').hide();
-            let valArray = [];
-            if(IdRegisto != null){
-                valArray.push(claseFormulario,IdRegisto);
-            }
-            
-
-            $(".formulario_modal :input").each(function(){
-                
-                let fechaActual = new Date();
-                let anoActual = fechaActual.getFullYear();
-                let classComprobacion = '#'+ $(this).prop('id') +'_condiciones'; 
-                let comprobacion = $(classComprobacion).text();
-                if(!comprobacion){
-                    comprobacion = 'true';
-                }
-               
-                if($(this).prop('required') && ($(this).val() == null || $(this).val() =='' || !eval(comprobacion)) && $(this).closest('form').is(':visible')  ){
-                    $(this).closest('form').attr('id');
-                    $(this).addClass("border-danger");
-                    let classInput =  '#'+ $(this).prop('id') +'_msgError'; 
-                    $(classInput).removeClass('d-none');
-                    campoRequeridoVacio = 1;
-                }else{
-                    $(this).removeClass("border-danger");
-                    let classInput =  '#'+ $(this).prop('id') +'_msgError'; 
-                    $(classInput).addClass('d-none');
-                }
-               //console.log($(this))
-                valArray.push($(this).hasClass('selectBuscar-input') ? $(this).attr('data-value') : $(this).val());
-            })
-
-            $('body').css({
-                'overflow': 'auto',
-                'padding-right': '0'
-            });
-            if(campoRequeridoVacio == 1){
-                //alert("Complete todos los campos");    
+            if($(this).prop('required') && ($(this).val() == null || $(this).val() =='' || !eval(comprobacion)) && $(this).closest('form').is(':visible')  ){
+                $(this).closest('form').attr('id');
+                $(this).addClass("border-danger");
+                let classInput =  '#'+ $(this).prop('id') +'_msgError'; 
+                $(classInput).removeClass('d-none');
+                campoRequeridoVacio = 1;
             }else{
-                alert(valArray)
-                dibuja_pagina([0,3,valArray]);
+                $(this).removeClass("border-danger");
+                let classInput =  '#'+ $(this).prop('id') +'_msgError'; 
+                $(classInput).addClass('d-none');
             }
-            
+            //console.log($(this))
+            valArray.push($(this).hasClass('selectBuscar-input') ? $(this).attr('data-value') : $(this).val());
+        })
+
+        $('body').css({
+            'overflow': 'auto',
+            'padding-right': '0'
+        });
+        if(campoRequeridoVacio == 1){
+            alert("Complete todos los campos");    
+        }else{
+
+            alert(valArray)
+
+            if(valArray[1] != valArray[2]){
+                alert("Las contraseñas no coinciden")
+                erroresEnv = 1;
+            }
+            else{
+
+            }
+
+            dibuja_pagina([0,3,valArray]);
+
         }
-        
-        
+            
     }
+        
+        
 
     function SubmitFormularioCambioDatos(){
         var valArray = [];

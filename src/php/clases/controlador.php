@@ -495,6 +495,9 @@ Class Controlador{
 
     function generarContenido($arrayDatos = array()) {
 
+
+        
+
         
 
 
@@ -538,6 +541,15 @@ Class Controlador{
                 
             }
 
+        }
+
+        // Creación de usuario
+        elseif ($c === 0.5 && isset($arrayDatos[0]) && $arrayDatos[1] == 3) {
+            
+
+            insertUsuario($arrayDatos[2]); // Assuming 'insertUsuario' is the correct function name
+            $usuarios = get_usuarios();
+            $this -> miEstado -> usuarios = $usuarios ?: [];
         }
 
         

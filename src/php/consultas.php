@@ -474,5 +474,45 @@ use Pdo\Sqlite;
         }
 
     }
+
+
+    function insertUsuario($usuario){
+
+        $NombreUsuario = $usuario[0];
+        $Contrasena = $usuario[1];
+        $Rol = $usuario[3];
+
+
+        try {
+            $conn = obtener_conexion();
+            if (!$conn) return false;
+    
+            $sql = "INSERT INTO usuarios (Usuario, Contrasena, Rol) VALUES (?, ?, ?)";
+            $stmt = $conn->prepare($sql);
+    
+            if (!$stmt) {
+                $conn->close();
+                return false;
+            }
+    
+            // Vincular parámetros
+            $stmt->bind_param("sss", $NombreUsuario, $Contrasena, $Rol);   
+    
+            // Ejecutar la consulta
+            if (!$stmt->execute()) {
+                $stmt->close();
+                $conn->close();
+                return false;
+            }
+    
+            // Cerrar la declaración y la conexión
+            $stmt->close();
+            $conn->close();
+    
+            return true;
+        } catch (Exception $e) {
+            return false;
+        }
+    }
     
 ?>
