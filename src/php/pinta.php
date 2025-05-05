@@ -107,9 +107,11 @@
             $filetext = str_replace("%LineasE%", DibujaTablaGenerica(3),$filetext);
         }
 
-        if ($_SESSION["Controlador"] -> miEstado -> Estado == 0.5 || $_SESSION["Controlador"] -> miEstado -> Estado == 2 && $_SESSION["Controlador"] -> miEstado -> esAdmin == true){
+       /*  if ($_SESSION["Controlador"] -> miEstado -> Estado == 0.5 || $_SESSION["Controlador"] -> miEstado -> Estado == 2 && $_SESSION["Controlador"] -> miEstado -> esAdmin == true){ */
+        if ($_SESSION["Controlador"] -> miEstado -> Estado == 0.5  && $_SESSION["Controlador"] -> miEstado -> esAdmin == true){
 
-            $filetext = str_replace('<button id="BtnAnadir" onclick="" class="btn_acciones mb-4" style="display: none;">', '<button id="BtnAnadir" onclick="" class="btn_acciones mb-4">', $filetext);
+            $filetext = str_replace('<button id="BtnAnadir" onclick="" class="btn_acciones mb-4" style="display: none;">', '<button id="BtnAnadir" onclick="mostrarModalFormulario()" class="btn_acciones mb-4">', $filetext);
+            $filetext .= cargaModal();
         }
 
         return $filetext;
@@ -145,6 +147,45 @@
             }
         }
         return $txt_filtros;
+    }
+
+
+    function cargaModal(){
+
+
+        if(!isset($_SESSION["PlantillaModalForm"])){
+            $fileModal = fopen('../html/PlantillaModalFormulario.html', "r");
+            $filesizeModal = filesize('../html/PlantillaModalFormulario.html');
+            $_SESSION["PlantillaModalForm"] = fread($fileModal, $filesizeModal);
+            fclose($fileModal);
+        }
+        $PlantillaModal = $_SESSION["PlantillaModalForm"];
+
+        //Creación de usuario//
+        if ($_SESSION["Controlador"] -> miEstado -> Estado == 0.5){
+            $PlantillaModal = str_replace("%TituloModal%","Creación de Usuario",$PlantillaModal);
+
+            $input = "<label for='TxtBoxInputNombreUsuario'>Nombre de usuario</label>";
+            $input .= "<input type='text' class='form-control my-2' id='TxtBoxInputNombreUsuario' placeholder='Nombre de usuario' required>";
+
+            $input .= "<label for='TxtBoxContraseña'>Contraseña</label>";
+            $input .= "<input type='password' class='form-control my-2' id='TxtBoxContraseña' placeholder='Contraseña' required>";
+            $input .= "<input type='password' class='form-control my-2' id='TxtBoxConfirmarContraseña' placeholder='Confirmar contraseña' required>";
+
+            $input .= "<label for='SelectRol'>Rol</label>";
+            $input .= "<select class='form-control my-2' id='SelectRol' required>
+                        <option value='' disabled selected>Seleccione un rol</option>
+                        <option value='Administrador'>Administrador</option>
+                        <option value='Usuarios'>Usuarios</option>
+                        <option value='Conservero'>Conservero</option>
+                    </select>";
+
+        }
+
+
+
+        return str_replace("%BodyModal%",$input,$PlantillaModal);
+        
     }
 
 

@@ -58,6 +58,11 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.4.0/dist/chartjs-plugin-annotation.min.js"></script>
 
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
     
 
 
@@ -566,6 +571,14 @@ function dibujaGrafica(dataset) {
         desplegarPanelFiltros();
 
         dibuja_pagina([0, 1, arrayFiltros, []]);
+
+    }
+
+    function mostrarModalFormulario(){
+
+        $('#modalFormularioDinamico').modal('show');
+
+        console.log("abrir modal");
 
     }
 
