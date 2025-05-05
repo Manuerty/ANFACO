@@ -172,6 +172,12 @@
             $input .= "<input type='password' class='form-control my-2' id='TxtBoxContraseña' placeholder='Contraseña' required>";
             $input .= "<input type='password' class='form-control my-2' id='TxtBoxConfirmarContraseña' placeholder='Confirmar contraseña' required>";
 
+            // Checkbox para mostrar/ocultar contraseña
+            $input .= "<div class='form-check my-2'>";
+            $input .= "<input type='checkbox' class='form-check-input' id='MostrarContraseñas' onclick=\"document.getElementById('TxtBoxContraseña').type = this.checked ? 'text' : 'password'; document.getElementById('TxtBoxConfirmarContraseña').type = this.checked ? 'text' : 'password';\">";
+            $input .= "<label class='form-check-label' for='MostrarContraseñas'>Mostrar contraseñas</label>";
+            $input .= "</div>";
+
             $input .= "<label for='SelectRol'>Rol</label>";
             $input .= "<select class='form-control my-2' id='SelectRol' required>
                         <option value='' disabled selected>Seleccione un rol</option>
@@ -179,6 +185,7 @@
                         <option value='Usuarios'>Usuarios</option>
                         <option value='Conservero'>Conservero</option>
                     </select>";
+
 
         }
 
