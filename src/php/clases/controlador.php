@@ -544,12 +544,13 @@ Class Controlador{
         }
 
         // Creación de usuario
-        elseif ($c === 0.5 && isset($arrayDatos[0]) && $arrayDatos[1] == 3) {
+        elseif ($c === 0.5 && isset($arrayDatos[0]) && $arrayDatos[1] == 3 && count($arrayDatos[2]) == 4) {
             
 
-            insertUsuario($arrayDatos[2]); // Assuming 'insertUsuario' is the correct function name
+            insertUsuario($arrayDatos[2]); 
             $usuarios = get_usuarios();
             $this -> miEstado -> usuarios = $usuarios ?: [];
+
         }
 
         
