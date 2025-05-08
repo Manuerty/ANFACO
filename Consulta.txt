@@ -1,21 +1,59 @@
-SELECT bodegas.IdBodega, bodegas.Zona, bodegas.Especie, bodegas.FechaCaptura, bodegas.TagPez, 
-                           barcos.Nombre as Barco, barcos.IdBarco, 
-                           UltimaFecha.FechaUltimoAlmacen, UltimaFecha.CuentaAlmacen, UltimaFecha.Fecha_ultimo_comprador, AlmacenUltimoComprador.IdComprador, UltimoComprador.Usuario,
-                           MaxTemperatura.temperaturaMaxima, MaxTemperatura.temperaturaMinima, 
-                           AlmacenUltimo.IdTipoAlmacen as UltimoAlmacen, tiposalmacen.Nombre, barcos.Codigo, usuarios.Usuario  
-                    FROM bodegas 
-                    LEFT JOIN (
-                        SELECT TagPez, MAX(fecha) AS FechaUltimoAlmacen, COUNT(TagPez) AS CuentaAlmacen, MAX(CASE when IdComprador IS NOT NULL THEN FECHA ELSE '01/01/2050' END) AS Fecha_ultimo_comprador
-                        FROM almacen GROUP BY TagPez
-                    ) UltimaFecha ON bodegas.TagPez = UltimaFecha.TagPez
-                    LEFT JOIN (
-                        SELECT MAX(TempMax) AS temperaturaMaxima, MIN(TempMin) AS temperaturaMinima, TagPez 
-                        FROM almacen 
-                        GROUP BY TagPez
-                    ) MaxTemperatura ON MaxTemperatura.TagPez = bodegas.TagPez
-                    LEFT JOIN barcos ON barcos.IdBarco = bodegas.IdBarco 
-                    LEFT JOIN usuarios ON barcos.IdUsuario = usuarios.IdUsuario
-                    LEFT JOIN almacen AlmacenUltimo ON AlmacenUltimo.TagPez = bodegas.TagPez AND AlmacenUltimo.Fecha = UltimaFecha.FechaUltimoAlmacen
-                    LEFT JOIN almacen AlmacenUltimoComprador ON AlmacenUltimoComprador.TagPez = bodegas.TagPez AND AlmacenUltimoComprador.Fecha = UltimaFecha.Fecha_ultimo_comprador
-                    LEFT JOIN tiposalmacen ON tiposalmacen.IdTipoAlmacen = AlmacenUltimo.IdTipoAlmacen
-                    LEFT join usuarios UltimoComprador ON UltimoComprador.IdUsuario = AlmacenUltimoComprador.IdComprador;
+DELIMITER $$
+
+CREATE PROCEDURE torneo_setup_siguiente_ronda(IN torneo_id INT)
+BEGIN
+    DECLARE fase_id INT;
+    DECLARE  num_partidas INT;
+
+    -- Paso 1: Determinar la fase actual (la primera ronda ya fue generada)
+    SELECT MAX(id_fase) INTO fase_id
+    FROM partidas
+    WHERE id_torneo = torneo_id;
+
+    -- Validar que se haya completado al menos una ronda
+    IF fase_id IS NULL THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'No hay partidas previas para avanzar a la siguiente ronda.';
+    END IF;
+    
+    -- Paso 2: Calcular la fase para la siguiente ronda
+    SET fase_id = fase_id - 1;  -- Pasamos a la siguiente fase
+
+    
+
+    -- Determinar el número de partidas de acuerdo a la fase
+    SET num_partidas = CASE
+        WHEN fase_id = 6 THEN 32  -- Dieciseisavos de final
+        WHEN fase_id = 5 THEN 16  -- Octavos de final
+        WHEN fase_id = 4 THEN 8   -- Cuartos de final
+        WHEN fase_id = 3 THEN 4   -- Semifinales
+        ELSE 0
+    END;
+
+
+    -- Validación de la fase (si ya estamos en la final o tercer y cuarto puesto)
+    IF fase_id = 2 THEN
+        -- Insertar partida para el tercer y cuarto puesto con id_fase = 2
+        INSERT INTO partidas (id_torneo, id_fase, id_lado_azul, id_lado_rojo, ganador)
+        VALUES (torneo_id, 2, NULL, NULL, NULL);
+
+        -- También insertar la final (id_fase = 1)
+        INSERT INTO partidas (id_torneo, id_fase, id_lado_azul, id_lado_rojo, ganador)
+        VALUES (torneo_id, 1, NULL, NULL, NULL);
+    ELSE
+        -- Paso 3: Crear la siguiente ronda sin necesidad de tabla temporal
+        -- Emparejar los equipos de la ronda anterior (la mitad de los equipos avanzan)
+        WHILE (num_partidas) > 1 DO
+
+            -- Insertar la nueva partida para la siguiente ronda
+            INSERT INTO partidas (id_torneo, id_fase, id_lado_azul, id_lado_rojo, ganador)
+            VALUES (torneo_id, fase_id, NULL, NULL, NULL);
+
+            num_partidas = num_partidas -1
+
+
+        END WHILE;
+    END IF;
+
+END$$
+
+DELIMITER ;

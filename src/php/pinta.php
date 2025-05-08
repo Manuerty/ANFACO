@@ -174,7 +174,7 @@
 
             // Checkbox para mostrar/ocultar contraseña
             $input .= "<div class='form-check my-2'>";
-            $input .= "<input type='checkbox' class='form-check-input' id='MostrarContraseñas' onclick=\"document.getElementById('TxtBoxContraseña').type = this.checked ? 'text' : 'password'; document.getElementById('TxtBoxConfirmarContraseña').type = this.checked ? 'text' : 'password';\">";
+            $input .= "<input type='checkbox' class='form-check-input' id='MostrarContraseñas'  onclick=\"document.getElementById('TxtBoxContraseña').type = this.checked ? 'text' : 'password'; document.getElementById('TxtBoxConfirmarContraseña').type = this.checked ? 'text' : 'password';\">";
             $input .= "<label class='form-check-label' for='MostrarContraseñas'>Mostrar contraseñas</label>";
             $input .= "</div>";
 
@@ -182,7 +182,7 @@
             $input .= "<select class='form-control my-2' id='SelectRol' required>
                         <option value='' disabled selected>Seleccione un rol</option>
                         <option value='Administrador'>Administrador</option>
-                        <option value='Usuarios'>Usuarios</option>
+                        <option value='Armador'>Armador</option>
                         <option value='Conservero'>Conservero</option>
                     </select>";
 
@@ -201,6 +201,7 @@
         $contenido = "";
 
         $arrayDoc = $_SESSION["Controlador"]->miEstado->capturas;
+
 
         if ($tab == 1) {
 
@@ -519,6 +520,7 @@
                     $colorIndex = $pos % count($coloresPredefinidos);
                     $mapaColores[$originalIndex] = $coloresPredefinidos[$colorIndex];
                 }
+
             
                 // Variables de captura
                 $tagPez = htmlspecialchars($capturaDetalle["TagPez"] ?? '');
@@ -553,7 +555,7 @@
                 $contenido .= "<div class='card p-3 border shadow-sm mb-3 d-flex justify-content-between align-items-center' style='flex-shrink: 0; max-width: 950px;' id='contenedor-grafica'>";
                 $contenido .= "<div class='d-flex justify-content-between w-100 align-items-center'>";
                 $contenido .= "<h5 class='card-title mb-0'>Gráfico de Temperatura</h5>";
-                $contenido .= "<button onclick='filtarAlmacen()' class='btn btn-secondary btn-sm'>Resetear Grafica</button>";
+                $contenido .= "<button onclick='filtrarAlmacen()' class='btn btn-secondary btn-sm'>Resetear Grafica</button>";
                 $contenido .= "</div>";
                 $contenido .= "<canvas id='graficaTemperatura' width='950' height='300' style='display: block; max-height: 300px;'></canvas>";
                 $contenido .= "</div>";
@@ -565,9 +567,12 @@
                 $contenido .= "<div style='flex-grow: 1; overflow-y: auto;'>";
             
                 foreach ($arraydatosAdiccional as $index => $Almacenes) {
+
+                
                     $backgroundColor = ($index % 2 == 0) ? 'background-color: whitesmoke;' : 'background-color: white;';
                     
                     $NombreAlmacen = $Almacenes['NombreTipo'] ?? '';
+                    $idAlmacen = $Almacenes['IdAlmacen'] ?? '';
                     $ReferenciaAlmacen = $NombreAlmacen;
                     $FechaAlmacen = $Almacenes['FechaAlmacen'] ?? '';
                     $esBodegaDelBarco = ($NombreAlmacen == 'Bodega');
@@ -583,7 +588,7 @@
                         $contenido .= "<td style='text-align: center; vertical-align: middle;'>Bodega</td>";
                     } else {
                         $contenido .= "<td style='text-align: center; vertical-align: middle;'>
-                                        <button onclick='filtarAlmacen(\"$NombreAlmacen\")' class='btn btn-primary'>Mostrar</button>
+                                        <button onclick='filtrarAlmacen(\"$NombreAlmacen\" + "." \"$idAlmacen\" )' class='btn btn-primary'>Mostrar</button>
                                     </td>";
                     }
             

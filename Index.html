@@ -196,6 +196,8 @@ async function dibuja_pagina(arrayDatos = []) {
 }
 
 function dibujaGrafica(dataset) {
+
+    console.log("dataset", dataset);
     // Procesar los datos, convirtiendo el timestamp con luxon
     const datos = dataset.graficaTemperatura.map(item => {
         return {
@@ -211,6 +213,7 @@ function dibujaGrafica(dataset) {
     }
 
     // === 1. Detectar segmentos por cambio de almacén ===
+
     const segmentos = [];
     let segmentoActual = 0;
     for (let i = 0; i < datos.length; i++) {
@@ -219,6 +222,8 @@ function dibujaGrafica(dataset) {
         }
         datos[i].segmento = segmentoActual - 1;
     }
+
+    
 
     // === 2. Colores fijos por posición ===
     const coloresPredefinidos = [
@@ -285,7 +290,7 @@ function dibujaGrafica(dataset) {
                 data: datos,
                 tension: 0,
                 fill: false,
-                pointRadius: 2,
+                pointRadius: 2.5,
                 pointHoverRadius: 3,
                 pointBorderWidth: 0,
                 segment: {
@@ -311,7 +316,7 @@ function dibujaGrafica(dataset) {
                             return [
                                 'Fecha: ' + fecha,
                                 'Temperatura: ' + temp + ' °C',
-                                'Almacén: ' + almacen
+                                'Almacén: ' + almacen.slice(0,-1)
                             ];
                         }
                     }
@@ -440,7 +445,7 @@ function dibujaGrafica(dataset) {
 
 
     //aplicar filtros para buscar por alamcen
-    function filtarAlmacen(textoBuscado = '') {
+    function filtrarAlmacen(textoBuscado = '') {
 
 
 
@@ -825,7 +830,7 @@ function dibujaGrafica(dataset) {
             alert("Complete todos los campos");    
         }else{
 
-            alert(valArray)
+            console.log("valArray",valArray);
 
             if(valArray[1] != valArray[2]){
                 alert("Las contraseñas no coinciden")
@@ -835,7 +840,7 @@ function dibujaGrafica(dataset) {
 
             }
 
-            dibuja_pagina([0,3,valArray]);
+            dibuja_pagina([0,-1,valArray]);
 
         }
             

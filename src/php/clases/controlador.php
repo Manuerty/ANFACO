@@ -277,7 +277,7 @@ Class Controlador{
                     $dataset[] = [
                         "x" => strtotime($temp["FechaTemperatura"]) * 1000,
                         "y" => $temp["ValorTemperatura"],
-                        "almacen" =>  $almacen["NombreTipo"] 
+                        "almacen" =>  $almacen["NombreTipo"] . $almacen["IdAlmacen"],
                     ];
                     break;
                 }
@@ -324,7 +324,7 @@ Class Controlador{
 
             $almacenes = is_array($this->miEstado->almacenes) ? $this->miEstado->almacenes : [];
             $arrayFiltrado = array_filter($almacenes, function($item) use($filtro){
-                return trim(strtolower($item["NombreTipo"])) === trim(strtolower($filtro));
+                return trim(strtolower($item["NombreTipo"].$item["IdAlmacen"])) === trim(strtolower($filtro));
             });
 
             
@@ -496,9 +496,7 @@ Class Controlador{
     function generarContenido($arrayDatos = array()) {
 
 
-        
-
-        
+       //var_dump($arrayDatos);
 
 
         $arrayAuxiliarHtml = [];
@@ -544,8 +542,7 @@ Class Controlador{
         }
 
         // Creación de usuario
-        elseif ($c === 0.5 && isset($arrayDatos[0]) && $arrayDatos[1] == 3 && count($arrayDatos[2]) == 4) {
-            
+        elseif ($c === 0.5 && isset($arrayDatos[0]) && $arrayDatos[1] == -1 && count($arrayDatos[2]) == 5) {
 
             insertUsuario($arrayDatos[2]); 
             $usuarios = get_usuarios();
@@ -578,6 +575,7 @@ Class Controlador{
     
         // Detalles de captura
         elseif ($c === 3 && isset($arrayDatos[0]) && $arrayDatos[0] == 3) {
+
             $this->setNewCaptura($arrayDatos[1]);
             $this->miEstado->TagPez = $arrayDatos[1];
             $this->generarDatosGrafica($this->miEstado->temperaturas, $this->miEstado->almacenes);
@@ -645,18 +643,7 @@ Class Controlador{
 
         $txtErr = "";
     
-        // Depuración
-        $txtErr = sprintf(
-            "idUsuarioLogIn : %s<br>idUsuarioElegido: %s<br>IdLastUser: %s<br>TagPez: %s<br>LastTagPez: %s<br>Estado: %s<br>EstadosAnteriores: %s<br>ArrayDatos: %s",
-            $this->miEstado->IdUsuarioLogin,
-            $this->miEstado->IdUsuarioSeleccionado,
-            $this->miEstado->IdLastUser,
-            $this->miEstado->TagPez,
-            $this->miEstado->LastTagPez,
-            $this->miEstado->Estado,
-            implode(",", $this->miEstado->EstadosAnteriores),
-            implode(",", $arrayDatos)
-        );
+
 
     
         return [
