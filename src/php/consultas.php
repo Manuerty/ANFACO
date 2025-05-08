@@ -423,7 +423,7 @@ use Pdo\Sqlite;
             $conn = obtener_conexion();
             if (!$conn) return false;
     
-            $sql = "SELECT  Fecha, LectorRFID, tiposalmacen.Nombre, tiposalmacen.IdTipoAlmacen, Id  
+            $sql = "SELECT  Fecha, LectorRFID, tiposalmacen.Nombre, tiposalmacen.IdTipoAlmacen, Id
                             FROM almacen 
                             LEFT JOIN tiposalmacen ON tiposalmacen.IdTipoAlmacen = almacen.IdTipoAlmacen
                             WHERE almacen.TagPez = ?
@@ -482,7 +482,7 @@ use Pdo\Sqlite;
 
         $NombreUsuario = $usuario[0];
         $Contrasena = $usuario[1];
-        $Rol = $usuario[4];
+        $Rol = $usuario[3];
 
 
         try {

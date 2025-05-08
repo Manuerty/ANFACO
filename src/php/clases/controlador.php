@@ -277,7 +277,7 @@ Class Controlador{
                     $dataset[] = [
                         "x" => strtotime($temp["FechaTemperatura"]) * 1000,
                         "y" => $temp["ValorTemperatura"],
-                        "almacen" =>  $almacen["NombreTipo"] . $almacen["IdAlmacen"],
+                        "almacen" =>  $almacen["NombreTipo"] . $almacen["IdTipo"],
                     ];
                     break;
                 }

@@ -504,22 +504,33 @@
                     '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf',
                     '#393b79', '#637939', '#8c6d31', '#843c39', '#7b4173'
                 ];
-            
-                // 1. Obtener índices de los almacenes que no son "Bodega", en orden invertido
+
+                
+               // 1. Obtener índices de los almacenes que no son "Bodega", en orden invertido
                 $indicesValidos = [];
                 foreach ($arraydatosAdiccional as $i => $almacen) {
                     if (($almacen['NombreTipo'] ?? '') !== 'Bodega') {
                         $indicesValidos[] = $i;
                     }
                 }
-                $indicesValidos = array_reverse($indicesValidos);
-            
-                // 2. Mapear colores a esos índices
+                $indicesValidos = array_reverse($indicesValidos); // Orden invertido
+
+                // 2. Mapear colores basados en consecutividad de tipos
                 $mapaColores = [];
-                foreach ($indicesValidos as $pos => $originalIndex) {
-                    $colorIndex = $pos % count($coloresPredefinidos);
-                    $mapaColores[$originalIndex] = $coloresPredefinidos[$colorIndex];
+                $colorPos = 0;
+                $prevTipo = null;
+
+                foreach ($indicesValidos as $index) {
+                    $tipoActual = $arraydatosAdiccional[$index]['IdTipo'] ?? null;
+
+                    if ($tipoActual !== $prevTipo && $prevTipo !== null) {
+                        $colorPos++;
+                    }
+
+                    $mapaColores[$index] = $coloresPredefinidos[$colorPos % count($coloresPredefinidos)];
+                    $prevTipo = $tipoActual;
                 }
+
 
             
                 // Variables de captura
