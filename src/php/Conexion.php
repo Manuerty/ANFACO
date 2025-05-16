@@ -1,5 +1,5 @@
 <?php
-    function ConexionBD($srvr = "localhost", $bd = "prueba_1", $un = "root", $ps = "")
+    function ConexionBD($srvr = "localhost", $bd = "anfaco", $un = "root", $ps = "")
     {
         // Variables for the database connection
         $bbdd = $bd;

@@ -25,22 +25,25 @@
                 <input type="text" id="username" name="username" class="form-control rounded-pill" placeholder="Nombre de Usuario" required>
               </div>
               
-              <div class="mb-3 input-group mb-3 input-group-lg rounded-pill">
-                <label for="password" class="form-label visually-hidden">Contraseña</label>
-                <input class="form-control rounded-pill" id="pw_text" type="password" placeholder="Contraseña" value="" required>
-                <span class="input-group-text" id="ImgPwContainer">
-                  <i class="fa fa-eye" id="ImgPw" style="cursor: pointer"></i>
+              <div class="mb-3 position-relative">
+                <label for="pw_text" class="form-label visually-hidden">Contraseña</label>
+                <input 
+                  class="form-control form-control-lg rounded-pill pe-5" 
+                  id="pw_text" 
+                  type="password" 
+                  placeholder="Contraseña" 
+                  required
+                >
+                <span 
+                  id="ImgPwContainer" 
+                  class="position-absolute top-50 end-0 translate-middle-y me-3" 
+                  style="cursor: pointer;"
+                >
+                  <i class="fa fa-eye" id="ImgPw"></i>
                 </span>
               </div>
               
-              <div class="d-flex justify-content-between align-items-center">
-                <div>
-                  <a href="html/recuperarContrasena.html" class="text-decoration-none" style="color: #0065bd;">¿Olvidaste tu contraseña?</a>
-                </div>
-                <div>
-                  <a href="html/crearUsuario.html" class="text-decoration-none" style="color: #0065bd;">Crear cuenta</a>
-                </div>
-              </div>
+              
               
               <div class="text-center mt-4">
                 <button type="submit" class="btn btn-primary w-100 rounded-pill">Entrar</button>
