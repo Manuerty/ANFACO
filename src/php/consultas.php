@@ -5,7 +5,7 @@ use Pdo\Sqlite;
 
     // Función para obtener la conexión a la base de datos
     function obtener_conexion() {
-        return ConexionBD("localhost", "Anfaco", "root", "");
+        return ConexionBD();
     }
 
     function comprueba_usuario($usuario, $contrasena) {

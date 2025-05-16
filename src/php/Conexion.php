@@ -1,11 +1,12 @@
 <?php
-    function ConexionBD($srvr = "localhost", $bd = "anfaco", $un = "root", $ps = "")
+    function ConexionBD($srvr = "81.169.200.39:23458", $bd = "anfaco", $un = "Anfaco", $ps = "Rodrigo-01*")
     {
         // Variables for the database connection
         $bbdd = $bd;
         $username = $un;
         $pass = $ps;
         $server = $srvr;
+
 
         try {
             // Create a connection using mysqli
