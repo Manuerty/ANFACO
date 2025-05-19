@@ -478,11 +478,13 @@ use Pdo\Sqlite;
 
     function insertUsuario($usuario){
 
+        
+
   
 
         $NombreUsuario = $usuario[0];
         $Contrasena = $usuario[1];
-        $Rol = $usuario[3];
+        $Rol = $usuario[4];
 
 
         try {
