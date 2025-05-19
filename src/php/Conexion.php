@@ -3,8 +3,8 @@
     {
         // Variables for the database connection
         $bbdd = $bd;
-        $username = $un;
         $pass = $ps;
+        $username = $un;
         $server = $srvr;
 
 
