@@ -126,6 +126,7 @@ async function dibuja_pagina(arrayDatos = []) {
                             let seccionBody = document.getElementById("cuerpo");
                             if(respuesta[0] != 0 && respuesta[0] != null ){
                                 seccionBody.innerHTML = respuesta[0];
+                                enlazarEventosFiltros(); // <-- Añade esto aquí
                             }
                             /***************************************/
                             // Usar Accion s que viene de php para elegir la accion que realizar
@@ -1302,6 +1303,35 @@ calendar.render();
             }
         });
     });
+
+    function enlazarEventosFiltros() {
+  const toggleBtn = document.getElementById('toggleAllFilters');
+  const secciones = document.querySelectorAll('.seccion-panelDeslizable');
+  const detallesCapturas = document.querySelectorAll('#cuerpo details');
+
+  if (!toggleBtn) return;
+
+  toggleBtn.addEventListener('click', function () {
+    let todosVisibles = true;
+
+    // Verificamos si alguna sección está oculta
+    secciones.forEach(section => {
+      if (section.style.display === 'none' || section.offsetHeight === 0) {
+        todosVisibles = false;
+      }
+    });
+
+    // Alternamos visibilidad de filtros
+    secciones.forEach(section => {
+      section.style.display = todosVisibles ? 'none' : 'block';
+    });
+
+    // Alternamos expansión de <details>
+    detallesCapturas.forEach(detail => {
+      detail.open = !todosVisibles;
+    });
+  });
+}
     
 </script>
 </head>
