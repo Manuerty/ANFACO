@@ -578,6 +578,9 @@ function dibujaGrafica(dataset) {
         //DEVOLUCION DE FILTROS//
 
         arrayFiltros = [fechaInicioObj, fechaFinObj, tempMin, tempMax, IdBarco, ZonaDeCaptura, Especie, TagPez];
+        console.log("Filtros aplicados:", arrayFiltros);
+        // arrayFiltros = [null, null, null, null, $nombreBarco, '0', '0', '']
+         //dibuja_pagina([0, 1, arrayFiltros, []]);
 
         desplegarPanelFiltros();
 
@@ -591,6 +594,12 @@ function dibujaGrafica(dataset) {
 
         console.log("abrir modal");
 
+    }
+
+    function capturasDelBarco(nombreBarco) {
+        arrayFiltros = [null, null, null, null, nombreBarco, '0', '0', '']
+        console.log("Capturas del barco:", arrayFiltros);
+        dibuja_pagina([0, 1, arrayFiltros, []]);
     }
 
    //cambiar para que filtre el php

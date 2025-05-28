@@ -402,11 +402,13 @@
             // Lógica específica para barcos
             if ($Pestana == 1) {
                 foreach ($arraydatos as $index => $barco) {
+                    $nombreBarcoJS = json_encode($barco["Nombre"]); // Escapar correctamente para JavaScript
                     $backgroundColor = ($index % 2 == 0) ? 'background-color: whitesmoke;' : 'background-color: white;';
                     $contenido .= "<div class='card p-3 border shadow-sm' style='$backgroundColor margin-bottom: 0;'>";
 
                     $contenido .= "<div class='d-flex justify-content-between align-items-start mb-2'>";
                     $contenido .= "<h5 class='card-title mb-0'><strong>" . htmlspecialchars($barco["Nombre"]) . "</strong></h5>";
+                    $contenido .= "<button class='btn btn-outline-primary btn-sm' onclick='capturasDelBarco($nombreBarcoJS)'>Capturas</button>";
                     $contenido .= "</div>";
 
                     $contenido .= "<div><span>Código: </span><strong>" . htmlspecialchars($barco["CodigoBarco"]) . "</strong></div>";

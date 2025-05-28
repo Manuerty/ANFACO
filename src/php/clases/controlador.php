@@ -572,6 +572,17 @@ Class Controlador{
             }
         }
 
+        // Vista de Barcos
+        elseif ($c === 2 && isset($arrayDatos[0]) && $arrayDatos[0] == 0) {
+            
+            if (!empty($arrayDatos) && $arrayDatos[0] == 0 && $arrayDatos[1] == 1 && isset($arrayDatos[2])) {
+                $arrayFiltrado = $this-> filtrarDesplegable($this -> miEstado -> capturas, $arrayDatos[2]);            
+                $this->miEstado->capturasFiltradas = $arrayFiltrado;
+            }
+
+            $this->navegarPestanas(3);
+        }
+
     
         // Detalles de captura
         elseif ($c === 3 && isset($arrayDatos[0]) && $arrayDatos[0] == 3) {
@@ -633,15 +644,25 @@ Class Controlador{
 
         //Desplegable
         elseif (!empty($arrayDatos) && $arrayDatos[0] == 0 && $arrayDatos[1] == 1 && isset($arrayDatos[2])) {
-
-
-
             $arrayFiltrado = $this-> filtrarDesplegable($this -> miEstado -> capturas, $arrayDatos[2]);            
             $this->miEstado->capturasFiltradas = $arrayFiltrado;
             
         }
+        
 
         $txtErr = "";
+
+        $txtErr = sprintf(
+            "idUsuarioLogIn : %s<br>idUsuarioElegido: %s<br>IdLastUser: %s<br>TagPez: %s<br>LastTagPez: %s<br>Estado: %s<br>EstadosAnteriores: %s<br>ArrayDatos: %s",
+            $this->miEstado->IdUsuarioLogin,
+            $this->miEstado->IdUsuarioSeleccionado,
+            $this->miEstado->IdLastUser,
+            $this->miEstado->TagPez,
+            $this->miEstado->LastTagPez,
+            $this->miEstado->Estado,
+            implode(",", $this->miEstado->EstadosAnteriores),
+            implode(",", $arrayDatos)
+        );
     
 
 
