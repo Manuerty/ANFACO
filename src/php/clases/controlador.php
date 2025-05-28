@@ -250,6 +250,7 @@ Class Controlador{
     
             // Si encontramos la captura, almacenamos el primer resultado en la sesión
             if (!empty($captura)) {
+                //var_dump(array_values($captura)[0]);
                 $this -> miEstado -> capturaDetalle = array_values($captura)[0]; // Tomamos el primer elemento de la array filtrado
                 return true; // Se encontró la captura
             }

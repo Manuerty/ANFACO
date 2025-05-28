@@ -100,7 +100,7 @@ use Pdo\Sqlite;
                            UltimaFecha.FechaUltimoAlmacen, UltimaFecha.CuentaAlmacen, UltimaFecha.Fecha_ultimo_comprador,
                            AlmacenUltimoComprador.IdComprador, UltimoComprador.Usuario as Comprador,
                            MaxTemperatura.temperaturaMaxima, MaxTemperatura.temperaturaMinima, 
-                           AlmacenUltimo.IdTipoAlmacen, tiposalmacen.Nombre, barcos.Codigo, usuarios.Usuario  
+                           AlmacenUltimo.IdTipoAlmacen, tiposalmacen.Nombre, barcos.Codigo, usuarios.Usuario , Armador.Usuario as Armador 
                     FROM bodegas 
                     LEFT JOIN (
                         SELECT TagPez, MAX(fecha) AS FechaUltimoAlmacen, COUNT(TagPez) AS CuentaAlmacen,
@@ -117,7 +117,8 @@ use Pdo\Sqlite;
                     LEFT JOIN almacen AlmacenUltimo ON AlmacenUltimo.TagPez = bodegas.TagPez AND AlmacenUltimo.Fecha = UltimaFecha.FechaUltimoAlmacen
                     LEFT JOIN almacen AlmacenUltimoComprador ON AlmacenUltimoComprador.TagPez = bodegas.TagPez AND AlmacenUltimoComprador.Fecha = UltimaFecha.Fecha_ultimo_comprador
                     LEFT JOIN tiposalmacen ON tiposalmacen.IdTipoAlmacen = AlmacenUltimo.IdTipoAlmacen
-                    LEFT JOIN usuarios UltimoComprador ON UltimoComprador.IdUsuario = AlmacenUltimoComprador.IdComprador";
+                    LEFT JOIN usuarios UltimoComprador ON UltimoComprador.IdUsuario = AlmacenUltimoComprador.IdComprador
+                    LEFT JOIN usuarios Armador ON Armador.IdUsuario = barcos.IdUsuario";
     
             // Condiciones WHERE opcionales
             $conditions = [];
@@ -177,6 +178,7 @@ use Pdo\Sqlite;
                     'IdTipoAlmacen'        => $row['IdTipoAlmacen'],
                     'TipoAlmacen'          => $row['Nombre'],
                     'NombreComprador'      => $row['Comprador'],
+                    'Armador'              => $row['Armador'],
                 ];
             }
     
@@ -423,12 +425,13 @@ use Pdo\Sqlite;
             $conn = obtener_conexion();
             if (!$conn) return false;
     
-            $sql = "SELECT  Fecha, LectorRFID, tiposalmacen.Nombre, tiposalmacen.IdTipoAlmacen, Id
+            $sql = "SELECT  Fecha, LectorRFID, tiposalmacen.Nombre, tiposalmacen.IdTipoAlmacen, Id, Comprador.Usuario as Comprador
                             FROM almacen 
                             LEFT JOIN tiposalmacen ON tiposalmacen.IdTipoAlmacen = almacen.IdTipoAlmacen
+                            LEFT JOIN usuarios Comprador ON Comprador.IdUsuario = almacen.IdComprador
                             WHERE almacen.TagPez = ?
                     UNION
-                    SELECT FechaCaptura as Fecha, 'Bodega' as LectorRFID, 'Bodega'as Nombre, 0 as IdTipoAlmacen, 0 as Id
+                    SELECT FechaCaptura as Fecha, 'Bodega' as LectorRFID, 'Bodega'as Nombre, 0 as IdTipoAlmacen, 0 as Id, NULL as Comprador
                                             FROM bodegas
                                             WHERE bodegas.TagPez = ?
                                             ORDER BY FECHA DESC;";
@@ -456,11 +459,12 @@ use Pdo\Sqlite;
     
             while ($row = $result->fetch_assoc()) {
                 $almacenes[] = [
-                    "FechaAlmacen" => $row["Fecha"],
-                    "Lector" => $row["LectorRFID"],
-                    "NombreTipo"=> $row["Nombre"],
-                    "IdTipo"=> $row["IdTipoAlmacen"],
-                    "IdAlmacen"=> $row["Id"]
+                    "FechaAlmacen"      => $row["Fecha"],
+                    "Lector"            => $row["LectorRFID"],
+                    "NombreTipo"        => $row["Nombre"],
+                    "IdTipo"            => $row["IdTipoAlmacen"],
+                    "IdAlmacen"         => $row["Id"],
+                    "Comprador"         => $row["Comprador"],
                 ];
             }
     

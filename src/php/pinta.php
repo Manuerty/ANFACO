@@ -437,6 +437,7 @@
                     $NombreBarcoCaptura = safe_html($captura["NombreBarco"] ?? null);
                     $tagPez = htmlspecialchars($captura["TagPez"]);
                     $NombreComprador = safe_html($captura["NombreComprador"] ?? null);
+                    $Armador = safe_html($captura["Armador"] ?? null);
                     $refPez = $captura["TagPez"];
     
                     $claseTemperaturaMaxima = ($temperaturaMaxima > -18) ? "text-danger" : "text-success";
@@ -458,14 +459,15 @@
                     $contenido .= "<div class='col'>";
                     $contenido .= "<p><span class='text-black'>Zona: </span> <span class='font-weight-bold'><strong>$ZonaCaptura</strong></span></p>";
                     $contenido .= "<p><span class='text-black'>Barco: </span> <span class='font-weight-bold'><strong>$NombreBarcoCaptura</strong></span></p>";
-                    if($NombreComprador != null && $_SESSION["Controlador"] -> miEstado -> EstadosAnteriores[0] != 0.5){
-                        $contenido .= "<p><span class='text-black'>Comprador: </span> <span class='font-weight-bold'><strong>$NombreComprador</strong></span></p>";
-                    }
+                    $contenido .= "<p><span class='text-black'>Armador: </span> <span class='font-weight-bold'><strong>$Armador</strong></span></p>";
                     $contenido .= "</div>";
     
                     $contenido .= "<div class='col'>";
                     $contenido .= "<p><span class='text-black'>Almacenes visitados: </span> <span class='font-weight-bold'><strong>$TotalAlmacenes</strong></span></p>";
                     $contenido .= "<p><span class='text-black'>Almacén actual: </span> <span class='font-weight-bold'><strong>$tipoUltimoAlmacen </strong></span></p>";
+                    if($NombreComprador != null && $_SESSION["Controlador"] -> miEstado -> EstadosAnteriores[0] != 0.5){
+                        $contenido .= "<p><span class='text-black'>Comprador: </span> <span class='font-weight-bold'><strong>$NombreComprador</strong></span></p>";
+                    }
                     $contenido .= "</div>";
     
                     $contenido .= "<div class='col'>";
@@ -545,6 +547,8 @@
                 $temperaturaMaximaCaptura = safe_html($capturaDetalle["TemperaturaMaxima"] ?? '');
                 $temperaturaMinimaCaptura = safe_html($capturaDetalle["TemperaturaMinima"] ?? '');
                 $tipoUltimoAlmacenCaptura = safe_html($capturaDetalle["TipoAlmacen"] ?? '');
+                $Armador = safe_html($capturaDetalle["Armador"] ?? '');
+                $NombreComprador = safe_html($capturaDetalle["NombreComprador"] ?? '');
             
                 $claseTemperaturaMaxima = ($temperaturaMaximaCaptura > -18) ? "text-danger" : "text-success";
                 $claseTemperaturaMinima = ($temperaturaMinimaCaptura > -18) ? "text-danger" : "text-success";
@@ -561,6 +565,10 @@
                 $contenido .= "<p>Zona:<strong> $ZonaCaptura</strong></p>";
                 $contenido .= "<p><span class='text-black'>Temp: </span> <span class='$claseTemperaturaMinima'><strong>" . $temperaturaMinimaCaptura . "°C</strong></span><span> / </span> <span class='$claseTemperaturaMaxima'><strong>" . $temperaturaMaximaCaptura . "°C</strong></span></p>";
                 $contenido .= "<p><span class='text-black'>Almacén Actual: </span> <strong>$tipoUltimoAlmacenCaptura</strong></p>";
+                $contenido .= "<p><span class='text-black'>Armador del Barco: </span> <strong>$Armador</strong></p>";
+                if($NombreComprador != null){
+                    $contenido .= "<p><span class='text-black'>Conservero: </span> <strong>$NombreComprador</strong></p>";
+                }
                 $contenido .= "</div>";
                 $contenido .= "</div>";
             
@@ -584,18 +592,26 @@
 
                 
                     $backgroundColor = ($index % 2 == 0) ? 'background-color: whitesmoke;' : 'background-color: white;';
-                    
+
                     $NombreAlmacen = $Almacenes['NombreTipo'] ?? '';
                     $idAlmacen = $Almacenes['IdAlmacen'] ?? '';
                     $ReferenciaAlmacen = $NombreAlmacen;
                     $FechaAlmacen = $Almacenes['FechaAlmacen'] ?? '';
                     $esBodegaDelBarco = ($NombreAlmacen == 'Bodega');
+                    $Comprador = $Almacenes['Comprador'] ?? null;
                     $colorTexto = isset($mapaColores[$index]) ? $mapaColores[$index] : '#000';
             
                     $contenido .= "<div class='card p-2 border shadow-sm mb-2' style='$backgroundColor'>";
                     $contenido .= "<table class='table table-borderless mb-0' style='table-layout: fixed; width: 100%;'>";
                     $contenido .= "<tr>";
                     $contenido .= "<td style='text-align: center; vertical-align: middle; color: $colorTexto;'>$ReferenciaAlmacen</td>";
+                    if($Comprador != null || $Comprador != ""){
+                        $NombreComprador = $Comprador;
+                    }
+                    else{
+                        $NombreComprador = "";
+                    }
+                    $contenido .= "<td style='text-align: center; vertical-align: middle; ;'>$NombreComprador</td>";
                     $contenido .= "<td style='text-align: center; vertical-align: middle;'>$FechaAlmacen</td>";
             
                     if ($esBodegaDelBarco) {
