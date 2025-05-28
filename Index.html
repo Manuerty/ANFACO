@@ -1305,33 +1305,26 @@ calendar.render();
     });
 
     function enlazarEventosFiltros() {
-  const toggleBtn = document.getElementById('toggleAllFilters');
-  const secciones = document.querySelectorAll('.seccion-panelDeslizable');
-  const detallesCapturas = document.querySelectorAll('#cuerpo details');
+        const toggleBtn = document.getElementById('toggleAllFilters');
+        const secciones = document.querySelectorAll('.seccion-panelDeslizable');
+        const detallesCapturas = document.querySelectorAll('#cuerpo details');
 
-  if (!toggleBtn) return;
+        if (!toggleBtn) return;
 
-  toggleBtn.addEventListener('click', function () {
-    let todosVisibles = true;
+        let estadoExpandido = false; // Sabemos que al inicio están colapsados
 
-    // Verificamos si alguna sección está oculta
-    secciones.forEach(section => {
-      if (section.style.display === 'none' || section.offsetHeight === 0) {
-        todosVisibles = false;
-      }
-    });
+        toggleBtn.addEventListener('click', function () {
+            estadoExpandido = !estadoExpandido;
 
-    // Alternamos visibilidad de filtros
-    secciones.forEach(section => {
-      section.style.display = todosVisibles ? 'none' : 'block';
-    });
+            secciones.forEach(section => {
+                section.style.display = estadoExpandido ? 'block' : 'none';
+            });
 
-    // Alternamos expansión de <details>
-    detallesCapturas.forEach(detail => {
-      detail.open = !todosVisibles;
-    });
-  });
-}
+            detallesCapturas.forEach(detail => {
+                detail.open = estadoExpandido;
+            });
+        });
+    }
     
 </script>
 </head>
