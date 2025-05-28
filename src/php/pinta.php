@@ -102,6 +102,7 @@
         }
         elseif($_SESSION["Controlador"] -> miEstado -> Estado == 3){
             $filetext = str_replace(["%LineasE%","%DropdownBarcos%", "%DropdownEspecie%", "%DropdownZonas%"], [DibujaTablaGenerica(2), dibujaOpciones(1), dibujaOpciones(2), dibujaOpciones(3)],$filetext);
+            $filetext = str_replace('<button id="toggleAllFilters" class="btn btn-outline-info btn-sm" style="display: none;">','<button id="toggleAllFilters" class="btn btn-outline-info btn-sm">', $filetext);
         }
         elseif($_SESSION["Controlador"] -> miEstado -> Estado == 4){
             $filetext = str_replace("%LineasE%", DibujaTablaGenerica(3),$filetext);
