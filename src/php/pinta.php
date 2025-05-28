@@ -456,7 +456,7 @@
                     $contenido .= "<div class='row g-3'>";
     
                     $contenido .= "<div class='col'>";
-                    $contenido .= "<p><span class='text-black'>Captura: </span> <span class='font-weight-bold'><strong>$ZonaCaptura</strong></span></p>";
+                    $contenido .= "<p><span class='text-black'>Zona: </span> <span class='font-weight-bold'><strong>$ZonaCaptura</strong></span></p>";
                     $contenido .= "<p><span class='text-black'>Barco: </span> <span class='font-weight-bold'><strong>$NombreBarcoCaptura</strong></span></p>";
                     if($NombreComprador != null && $_SESSION["Controlador"] -> miEstado -> EstadosAnteriores[0] != 0.5){
                         $contenido .= "<p><span class='text-black'>Comprador: </span> <span class='font-weight-bold'><strong>$NombreComprador</strong></span></p>";
@@ -465,7 +465,7 @@
     
                     $contenido .= "<div class='col'>";
                     $contenido .= "<p><span class='text-black'>Almacenes visitados: </span> <span class='font-weight-bold'><strong>$TotalAlmacenes</strong></span></p>";
-                    $contenido .= "<p><span class='text-black'>Almacén: </span> <span class='font-weight-bold'><strong>$tipoUltimoAlmacen </strong></span></p>";
+                    $contenido .= "<p><span class='text-black'>Almacén actual: </span> <span class='font-weight-bold'><strong>$tipoUltimoAlmacen </strong></span></p>";
                     $contenido .= "</div>";
     
                     $contenido .= "<div class='col'>";

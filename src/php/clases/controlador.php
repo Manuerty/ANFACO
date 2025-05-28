@@ -573,9 +573,9 @@ Class Controlador{
         }
 
         // Vista de Barcos
-        elseif ($c === 2 && isset($arrayDatos[0]) && $arrayDatos[0] == 0) {
+        elseif ($c === 2 && isset($arrayDatos[0]) && $arrayDatos[0] == 2) {
             
-            if (!empty($arrayDatos) && $arrayDatos[0] == 0 && $arrayDatos[1] == 1 && isset($arrayDatos[2])) {
+            if (!empty($arrayDatos) && $arrayDatos[0] == 2 && $arrayDatos[1] == 1 && isset($arrayDatos[2])) {
                 $arrayFiltrado = $this-> filtrarDesplegable($this -> miEstado -> capturas, $arrayDatos[2]);            
                 $this->miEstado->capturasFiltradas = $arrayFiltrado;
             }
