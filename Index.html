@@ -1316,15 +1316,21 @@ calendar.render();
         toggleBtn.addEventListener('click', function () {
             estadoExpandido = !estadoExpandido;
 
+            // Cambiar visibilidad de secciones
             secciones.forEach(section => {
                 section.style.display = estadoExpandido ? 'block' : 'none';
             });
 
+            // Cambiar estado de los <details>
             detallesCapturas.forEach(detail => {
                 detail.open = estadoExpandido;
             });
+
+            // Cambiar texto del botón
+            toggleBtn.textContent = estadoExpandido ? 'Contraer Filtros' : 'Expandir Filtros';
         });
     }
+
     
 </script>
 </head>
