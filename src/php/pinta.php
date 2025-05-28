@@ -465,7 +465,7 @@
                     $contenido .= "<div class='col'>";
                     $contenido .= "<p><span class='text-black'>Almacenes visitados: </span> <span class='font-weight-bold'><strong>$TotalAlmacenes</strong></span></p>";
                     $contenido .= "<p><span class='text-black'>Almacén actual: </span> <span class='font-weight-bold'><strong>$tipoUltimoAlmacen </strong></span></p>";
-                    if($NombreComprador != null && $_SESSION["Controlador"] -> miEstado -> EstadosAnteriores[0] != 0.5){
+                    if($NombreComprador != null){   
                         $contenido .= "<p><span class='text-black'>Comprador: </span> <span class='font-weight-bold'><strong>$NombreComprador</strong></span></p>";
                     }
                     $contenido .= "</div>";

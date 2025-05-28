@@ -132,7 +132,10 @@ use Pdo\Sqlite;
             }
     
             if ($IdComprador !== null) {
-                $conditions[] = "UltimoComprador.IdUsuario = ?";
+                $conditions[] = "EXISTS (
+                    SELECT 1 FROM almacen a 
+                    WHERE a.TagPez = bodegas.TagPez AND a.IdComprador = ?
+                )";
                 $params[] = $IdComprador;
                 $types .= "i";
             }
