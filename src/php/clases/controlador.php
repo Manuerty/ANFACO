@@ -650,10 +650,11 @@ Class Controlador{
             
         }
         
+        
 
         $txtErr = "";
 
-        $txtErr = sprintf(
+        /* $txtErr = sprintf(
             "idUsuarioLogIn : %s<br>idUsuarioElegido: %s<br>IdLastUser: %s<br>TagPez: %s<br>LastTagPez: %s<br>Estado: %s<br>EstadosAnteriores: %s<br>ArrayDatos: %s",
             $this->miEstado->IdUsuarioLogin,
             $this->miEstado->IdUsuarioSeleccionado,
@@ -663,7 +664,7 @@ Class Controlador{
             $this->miEstado->Estado,
             implode(",", $this->miEstado->EstadosAnteriores),
             implode(",", $arrayDatos)
-        );
+        ); */
     
 
 
