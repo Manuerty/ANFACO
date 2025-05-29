@@ -303,7 +303,9 @@
                 $arraydatos = $_SESSION['Controlador']->miEstado->temperaturas;
             }
 
-            // Lógica de filtrado para almacenes
+            $arraydatosAdiccional = $_SESSION["Controlador"]->miEstado->almacenes;
+
+            /* // Lógica de filtrado para almacenes
             if (!isset($_SESSION["Controlador"]->miEstado->almacenesFiltrados) || 
                 $_SESSION["Controlador"]->miEstado->almacenesFiltrados === null) {
 
@@ -312,7 +314,7 @@
             } else {
                 $arraydatosAdiccional = $_SESSION["Controlador"]->miEstado->almacenesFiltrados;
             }
-
+ */
             // Captura detalle siempre asignado
             $capturaDetalle = $_SESSION['Controlador']->miEstado->capturaDetalle;
         }
@@ -604,24 +606,24 @@
                     $contenido .= "<div class='card p-2 border shadow-sm mb-2' style='$backgroundColor'>";
                     $contenido .= "<table class='table table-borderless mb-0' style='table-layout: fixed; width: 100%;'>";
                     $contenido .= "<tr>";
+                    $contenido .= "<td style='text-align: center; vertical-align: middle;'>
+                        <input type='checkbox' class='checkbox-almacen' name='seleccionado[]' value='$idAlmacen "." $colorTexto'>
+                    </td>";
                     $contenido .= "<td style='text-align: center; vertical-align: middle; color: $colorTexto;'>$ReferenciaAlmacen</td>";
-                    if($Comprador != null || $Comprador != ""){
-                        $NombreComprador = $Comprador;
-                    }
-                    else{
-                        $NombreComprador = "";
-                    }
-                    $contenido .= "<td style='text-align: center; vertical-align: middle; ;'>$NombreComprador</td>";
+
+                    $NombreComprador = ($Comprador != null && $Comprador != "") ? $Comprador : "";
+
+                    $contenido .= "<td style='text-align: center; vertical-align: middle;'>$NombreComprador</td>";
                     $contenido .= "<td style='text-align: center; vertical-align: middle;'>$FechaAlmacen</td>";
-            
+
                     if ($esBodegaDelBarco) {
                         $contenido .= "<td style='text-align: center; vertical-align: middle;'>Bodega</td>";
                     } else {
                         $contenido .= "<td style='text-align: center; vertical-align: middle;'>
-                                        <button onclick='filtrarAlmacen(\"$NombreAlmacen\" + "." \"$idAlmacen\" )' class='btn btn-primary'>Mostrar</button>
-                                    </td>";
+                            <button onclick='filtrarAlmacenSeleccionados()' class='btn btn-primary'>Mostrar</button>
+                        </td>";
                     }
-            
+
                     $contenido .= "</tr>";
                     $contenido .= "</table>";
                     $contenido .= "</div>";

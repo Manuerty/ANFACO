@@ -141,6 +141,7 @@ async function dibuja_pagina(arrayDatos = []) {
                                         // Verificamos si la gráfica ya fue pintada
                                         if (!canvasExiste.hasAttribute('data-pintada') || canvasExiste.getAttribute('data-pintada') !== 'true') {
                                             // Si no ha sido pintada, dibujamos la gráfica
+                                            
                                             dibujaGrafica(respuesta[3]);
 
                                             // Marcamos el canvas como "pintado"
@@ -196,10 +197,12 @@ async function dibuja_pagina(arrayDatos = []) {
     }
 }
 
-function dibujaGrafica(dataset) {
+function dibujaGrafica(arraydatos) {
 
-    console.log("dataset", dataset);
-    // Procesar los datos, convirtiendo el timestamp con luxon
+
+    const dataset = arraydatos.datos;
+    const colores = (arraydatos.color || []).slice().reverse();
+    // Procesar los datos con luxon
     const datos = dataset.graficaTemperatura.map(item => {
         return {
             x: luxon.DateTime.fromMillis(item.x).toJSDate(),
@@ -213,8 +216,13 @@ function dibujaGrafica(dataset) {
         return;
     }
 
-    // === 1. Detectar segmentos por cambio de almacén ===
+    if (!Array.isArray(datos) || datos.length === 0) {
+        console.error("Los datos para la gráfica no son válidos.");
+        return;
+    }
 
+    // === 1. Detectar segmentos por cambio de almacén ===
+    
     const segmentos = [];
     let segmentoActual = 0;
     for (let i = 0; i < datos.length; i++) {
@@ -246,11 +254,20 @@ function dibujaGrafica(dataset) {
     ];
 
     function colorPorIndice(indice) {
-        if (indice < coloresPredefinidos.length) {
-            return coloresPredefinidos[indice];
+        if (colores.length == 0){
+            if (indice < coloresPredefinidos.length) {
+                return coloresPredefinidos[indice];
+            } else {
+                const hue = (indice * 137) % 360;
+                return `hsl(${hue}, 70%, 50%)`;
+            }
         } else {
-            const hue = (indice * 137) % 360;
-            return `hsl(${hue}, 70%, 50%)`;
+            if (indice < colores.length) {
+                return colores[indice];
+            } else {
+                const hue = (indice * 137) % 360;
+                return `hsl(${hue}, 70%, 50%)`;
+            }
         }
     }
 
@@ -460,6 +477,41 @@ function dibujaGrafica(dataset) {
             dibuja_pagina([0, 0, textoBuscado , []]);
         }
         
+    }
+
+
+    function filtrarAlmacenSeleccionados() {
+        const seleccionados = [];
+        const checkboxes = document.querySelectorAll(".checkbox-almacen");
+
+        checkboxes.forEach(checkbox => {
+            if (checkbox.checked) {
+                seleccionados.push(checkbox.value);
+            }
+        });
+
+
+        console.log("IDs seleccionados:", seleccionados);
+        // Llama a la función original con el array de IDs seleccionados
+        filtrarAlmacenes(seleccionados);
+    }
+
+    function filtrarAlmacenes(listaConColor = []) {
+        const listaIds = [];
+        const listaColores = [];
+
+        listaConColor.forEach(item => {
+            const [id, color] = item.split('  ');
+            listaIds.push(id.trim());
+            listaColores.push(color.trim());
+        });
+
+        if (listaIds.length === 0) {
+            dibuja_pagina([0, 0, '', []]);
+        } else {
+            // Aquí pasas ambos arrays si lo necesitas
+            dibuja_pagina([0, 0, listaIds, listaColores]);
+        }
     }
 
     // Función para aplicar filtro genérico

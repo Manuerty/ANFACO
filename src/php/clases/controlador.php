@@ -287,9 +287,11 @@ Class Controlador{
         $this -> miEstado -> dataset = $dataset;
     }  
 
-    function filtrarNombre($filtro, $pestana){
+    function filtrarSimple($filtro, $pestana){
 
-        $filtro = strtolower($filtro);
+        if ($pestana != 4){
+            $filtro = strtolower($filtro);
+        }
 
 
         //filtro de usuarios
@@ -324,8 +326,9 @@ Class Controlador{
         elseif ($pestana == 4){
 
             $almacenes = is_array($this->miEstado->almacenes) ? $this->miEstado->almacenes : [];
-            $arrayFiltrado = array_filter($almacenes, function($item) use($filtro){
-                return trim(strtolower($item["NombreTipo"].$item["IdAlmacen"])) === trim(strtolower($filtro));
+
+            $arrayFiltrado = array_filter($almacenes, function($item) use ($filtro) {
+                return in_array($item["IdAlmacen"], $filtro);
             });
 
             
@@ -497,7 +500,7 @@ Class Controlador{
     function generarContenido($arrayDatos = array()) {
 
 
-       //var_dump($arrayDatos);
+        //var_dump($arrayDatos[2]);
 
 
         $arrayAuxiliarHtml = [];
@@ -506,6 +509,7 @@ Class Controlador{
         $AccionSinRepintar = 0;
         $c = $this->miEstado->Estado;
         $nav = null;
+        $arraycolor = $arrayDatos[3] ?? null;
 
         // Cerrar sesión
         if (isset($arrayDatos[0], $arrayDatos[1]) && $arrayDatos[0] == -1 && $arrayDatos[1] == -1) {
@@ -591,7 +595,8 @@ Class Controlador{
             $this->setNewCaptura($arrayDatos[1]);
             $this->miEstado->TagPez = $arrayDatos[1];
             $this->generarDatosGrafica($this->miEstado->temperaturas, $this->miEstado->almacenes);
-            $arrayAuxiliarHtml = ["graficaTemperatura" => $this->miEstado->dataset];
+            $dataSetGrafica = ["graficaTemperatura" => $this->miEstado->dataset];
+            $arrayAuxiliarHtml = ["datos" => $dataSetGrafica, "color" => $arraycolor];
             $accionJs = 4;
             $this->navegarPestanas(4);
         }
@@ -609,14 +614,16 @@ Class Controlador{
 
                 if ($c == 4){
                     $this -> generarDatosGrafica($this->miEstado->temperaturas, $this->miEstado->almacenes);
-                    $arrayAuxiliarHtml = ["graficaTemperatura" => $this->miEstado->dataset];
+                    $dataSetGrafica = ["graficaTemperatura" => $this->miEstado->dataset];
+                    $arrayAuxiliarHtml = ["datos" => $dataSetGrafica, "color" => $arraycolor];
+                    
                     $accionJs = 4;
                 }
 
             }
             else{
-                $arrayFiltrado = $this->filtrarNombre($arrayDatos[2], $c);
-            
+                $arrayFiltrado = $this->filtrarSimple($arrayDatos[2], $c);
+                
         
                 switch ($c) {
                     case 0.5:
@@ -636,7 +643,9 @@ Class Controlador{
                         else{
                             $this->generarDatosGrafica($this->miEstado->temperaturas, $this->miEstado->almacenes);
                         }
-                        $arrayAuxiliarHtml = ["graficaTemperatura" => $this->miEstado->dataset];
+                        $dataSetGrafica = ["graficaTemperatura" => $this->miEstado->dataset];
+                        $arrayAuxiliarHtml = ["datos" => $dataSetGrafica, "color" => $arraycolor];
+                        /* $arrayAuxiliarHtml= ["graficaTemperatura" => $this->miEstado->dataset]; */
                         $accionJs = 4;
                         break;
                 }
@@ -674,7 +683,7 @@ Class Controlador{
             $msgError,
             $AccionSinRepintar,
             $arrayAuxiliarHtml,
-            $accionJs
+            $accionJs,
         ];
     }
 
