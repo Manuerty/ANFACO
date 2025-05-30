@@ -541,8 +541,8 @@ Class Controlador{
         $msgError = "";
         $AccionSinRepintar = 0;
         $c = $this->miEstado->Estado;
-        $nav = null;
-        $arraycolor = $arrayDatos[3] ?? null;
+        $arraycolor = $arrayDatos[3][0] ?? null;
+        $this ->miEstado -> idBoton = $arrayDatos[3][1] ?? 0;
 
         // Cerrar sesión
         if (isset($arrayDatos[0], $arrayDatos[1]) && $arrayDatos[0] == -1 && $arrayDatos[1] == -1) {
@@ -696,17 +696,18 @@ Class Controlador{
 
         $txtErr = "";
 
-        /* $txtErr = sprintf(
-            "idUsuarioLogIn : %s<br>idUsuarioElegido: %s<br>IdLastUser: %s<br>TagPez: %s<br>LastTagPez: %s<br>Estado: %s<br>EstadosAnteriores: %s<br>ArrayDatos: %s",
+        $txtErr = sprintf(
+            "idUsuarioLogIn : %s<br>idUsuarioElegido: %s<br>IdLastUser: %s<br>TagPez: %s<br>LastTagPez: %s<br>Estado: %s<br>IdBoton: %s<br>EstadosAnteriores: %s<br>ArrayDatos: %s",
             $this->miEstado->IdUsuarioLogin,
             $this->miEstado->IdUsuarioSeleccionado,
             $this->miEstado->IdLastUser,
             $this->miEstado->TagPez,
             $this->miEstado->LastTagPez,
             $this->miEstado->Estado,
+            $this -> miEstado -> idBoton,
             implode(",", $this->miEstado->EstadosAnteriores),
             implode(",", $arrayDatos)
-        ); */
+        );
     
 
 

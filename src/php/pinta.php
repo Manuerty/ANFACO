@@ -579,7 +579,6 @@
                 $contenido .= "<div class='card p-3 border shadow-sm mb-3 d-flex justify-content-between align-items-center' style='flex-shrink: 0; max-width: 950px;' id='contenedor-grafica'>";
                 $contenido .= "<div class='d-flex justify-content-between w-100 align-items-center'>";
                 $contenido .= "<h5 class='card-title mb-0'>Gráfico de Temperatura</h5>";
-                $contenido .= "<button onclick='filtrarAlmacen()' class='btn btn-secondary btn-sm'>Resetear Grafica</button>";
                 $contenido .= "</div>";
                 $contenido .= "<canvas id='graficaTemperatura' width='950' height='300' style='display: block; max-height: 300px;'></canvas>";
                 $contenido .= "</div>";
@@ -589,6 +588,10 @@
                 $contenido .= "<div class='card p-3 border shadow-sm' style='flex-grow: 1; overflow-y: auto;'>";
                 $contenido .= "<h5 class='card-title'>Almacenes Visitados</h5>";
                 $contenido .= "<div style='flex-grow: 1; overflow-y: auto;'>";
+
+                $idBotonAnterior = (int) ($_SESSION["Controlador"]->miEstado->idBoton ?? 0);
+
+                
             
                 foreach ($arraydatosAdiccional as $index => $Almacenes) {
 
@@ -602,15 +605,28 @@
                     $esBodegaDelBarco = ($NombreAlmacen == 'Bodega');
                     $Comprador = $Almacenes['Comprador'] ?? null;
                     $colorTexto = isset($mapaColores[$index]) ? $mapaColores[$index] : '#000';
+
+                    
+
+                    
             
                     $contenido .= "<div class='card p-2 border shadow-sm mb-2' style='$backgroundColor'>";
                     $contenido .= "<table class='table table-borderless mb-0' style='table-layout: fixed; width: 100%;'>";
                     $contenido .= "<tr>";
-                    $contenido .= "<td style='text-align: center; vertical-align: middle;'>";
-                        if (!$esBodegaDelBarco) {
-                        $contenido .= "<input type='checkbox' class='checkbox-almacen' name='seleccionado[]' value='$idAlmacen "." $colorTexto'>";
+                    if ($esBodegaDelBarco) {
+                        $contenido .= "<td style='text-align: center; vertical-align: middle;'>Bodega</td>";
+                    } else {
+                        if($idBotonAnterior == $idAlmacen){
+                            $contenido .= "<td style='text-align: center; vertical-align: middle;'>
+                                            <button onclick='filtrarAlmacen()' class='btn btn-primary btn-sm'>Deselecionar</button>
+                                        </td>";
                         }
-                    $contenido.= "</td>";
+                        else{
+                        $contenido .= "<td style='text-align: center; vertical-align: middle;'>
+                                            <button onclick='filtrarAlmacenSeleccionado(\"$idAlmacen\", \"$colorTexto\")' class='btn btn-primary btn-sm'>Mostrar</button>
+                                        </td>";
+                        }
+                    }
                     $contenido .= "<td style='text-align: center; vertical-align: middle; color: $colorTexto;'>$ReferenciaAlmacen</td>";
 
                     $NombreComprador = ($Comprador != null && $Comprador != "") ? $Comprador : "";
@@ -618,13 +634,6 @@
                     $contenido .= "<td style='text-align: center; vertical-align: middle;'>$NombreComprador</td>";
                     $contenido .= "<td style='text-align: center; vertical-align: middle;'>$FechaAlmacen</td>";
 
-                    if ($esBodegaDelBarco) {
-                        $contenido .= "<td style='text-align: center; vertical-align: middle;'>Bodega</td>";
-                    } else {
-                        $contenido .= "<td style='text-align: center; vertical-align: middle;'>
-                            <button onclick='filtrarAlmacenSeleccionados()' class='btn btn-primary'>Mostrar</button>
-                        </td>";
-                    }
 
                     $contenido .= "</tr>";
                     $contenido .= "</table>";

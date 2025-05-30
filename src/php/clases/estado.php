@@ -45,6 +45,8 @@ class Estado{
 
     public $temperaturasProcesar;
 
+    public $idBoton;
+
 
 
    

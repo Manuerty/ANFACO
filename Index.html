@@ -507,26 +507,20 @@ function dibujaGrafica(arraydatos) {
         
     }
 
-
-    function filtrarAlmacenSeleccionados() {
-        const seleccionados = [];
-        const checkboxes = document.querySelectorAll(".checkbox-almacen");
-
-        checkboxes.forEach(checkbox => {
-            if (checkbox.checked) {
-                seleccionados.push(checkbox.value);
-            }
-        });
-
-
-        console.log("IDs seleccionados:", seleccionados);
-        // Llama a la función original con el array de IDs seleccionados
-        filtrarAlmacenes(seleccionados);
+    function filtrarAlmacenSeleccionado(id = null, color = null) {
+        const seleccionado = [`${id}  ${color}`];
+        const idBoton = id;  // asignar correctamente el valor
+        filtrarAlmacenes(seleccionado, idBoton);
     }
 
-    function filtrarAlmacenes(listaConColor = []) {
+
+
+
+    function filtrarAlmacenes(listaConColor = [], idBoton = 0) {
         const listaIds = [];
         const listaColores = [];
+
+
 
         listaConColor.forEach(item => {
             const [id, color] = item.split('  ');
@@ -538,7 +532,7 @@ function dibujaGrafica(arraydatos) {
             dibuja_pagina([0, 0, '', []]);
         } else {
             // Aquí pasas ambos arrays si lo necesitas
-            dibuja_pagina([0, 0, listaIds, listaColores]);
+            dibuja_pagina([0, 0, listaIds, [listaColores, idBoton]]);
         }
     }
 
