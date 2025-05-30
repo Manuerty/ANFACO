@@ -606,9 +606,11 @@
                     $contenido .= "<div class='card p-2 border shadow-sm mb-2' style='$backgroundColor'>";
                     $contenido .= "<table class='table table-borderless mb-0' style='table-layout: fixed; width: 100%;'>";
                     $contenido .= "<tr>";
-                    $contenido .= "<td style='text-align: center; vertical-align: middle;'>
-                        <input type='checkbox' class='checkbox-almacen' name='seleccionado[]' value='$idAlmacen "." $colorTexto'>
-                    </td>";
+                    $contenido .= "<td style='text-align: center; vertical-align: middle;'>";
+                        if (!$esBodegaDelBarco) {
+                        $contenido .= "<input type='checkbox' class='checkbox-almacen' name='seleccionado[]' value='$idAlmacen "." $colorTexto'>";
+                        }
+                    $contenido.= "</td>";
                     $contenido .= "<td style='text-align: center; vertical-align: middle; color: $colorTexto;'>$ReferenciaAlmacen</td>";
 
                     $NombreComprador = ($Comprador != null && $Comprador != "") ? $Comprador : "";

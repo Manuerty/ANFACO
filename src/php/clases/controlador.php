@@ -261,7 +261,7 @@ Class Controlador{
         return false; // No se encontró la captura
     }
 
-    function generarDatosGrafica($temperaturasVS, $almacenesVS) {
+    function generarDatosGrafica2($temperaturasVS, $almacenesVS) {
 
        
         
@@ -285,7 +285,40 @@ Class Controlador{
             }
         }
         $this -> miEstado -> dataset = $dataset;
-    }  
+    } 
+    
+    function generarDatosGrafica($temperaturasVS, $almacenesVS) {
+        $temperaturas = $temperaturasVS;
+        $almacenes = $almacenesVS;
+
+        $datasetAgrupado = [];
+
+        foreach ($almacenes as $almacen) {
+            $claveAlmacen = $almacen["NombreTipo"] . $almacen["IdTipo"];
+            $datos = [];
+
+            foreach ($temperaturas as $temp) {
+                if ($temp['IdAlmacen'] == $almacen['IdAlmacen']) {
+                    $datos[] = [
+                        "x" => strtotime($temp["FechaTemperatura"]) * 1000,
+                        "y" => $temp["ValorTemperatura"]
+                    ];
+                }
+            }
+
+            if (!empty($datos)) {
+                $datasetAgrupado[] = [
+                    "almacen" => $claveAlmacen,
+                    "datos" => $datos
+                ];
+            }
+        }
+
+        $dataset = array_reverse($datasetAgrupado);
+
+
+        $this->miEstado->dataset = $dataset;
+    }
 
     function filtrarSimple($filtro, $pestana){
 
