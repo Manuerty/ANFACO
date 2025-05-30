@@ -202,35 +202,63 @@ function dibujaGrafica(arraydatos) {
 
     const dataset = arraydatos.datos;
     const colores = (arraydatos.color || []).slice().reverse();
-    // Procesar los datos con luxon
-    const datos = dataset.graficaTemperatura.map(item => {
-        return {
-            x: luxon.DateTime.fromMillis(item.x).toJSDate(),
-            y: item.y,
-            almacen: item.almacen
-        };
-    });
 
-    if (!Array.isArray(datos) || datos.length === 0) {
-        console.error("Los datos para la gráfica no son válidos.");
-        return;
-    }
+    console.log("Datos para la gráfica:", dataset);
 
-    if (!Array.isArray(datos) || datos.length === 0) {
-        console.error("Los datos para la gráfica no son válidos.");
-        return;
-    }
+    console.log("Colores para la gráfica:", colores.length);
 
-    // === 1. Detectar segmentos por cambio de almacén ===
-    
-    const segmentos = [];
+
+    // Aplana los datos originales a la forma esperada
+    /* let datos = []; */
     let segmentoActual = 0;
-    for (let i = 0; i < datos.length; i++) {
-        if (i === 0 || datos[i].almacen !== datos[i - 1].almacen) {
-            segmentoActual++;
-        }
-        datos[i].segmento = segmentoActual - 1;
+    let almacenAnterior = null;
+
+    let datos = [];
+
+    if (colores.length == 0) {
+        let segmentoActual = 0;
+        let almacenAnterior = null;
+
+        datos = (dataset.graficaTemperatura || []).flatMap(item => {
+            if (item.almacen !== almacenAnterior) {
+                segmentoActual++;
+                almacenAnterior = item.almacen;
+            }
+            const segmento = segmentoActual - 1;
+
+            return item.datos.map(punto => ({
+                x: luxon.DateTime.fromMillis(punto.x).toJSDate(),
+                y: punto.y,
+                almacen: item.almacen,
+                segmento: segmento
+            }));
+        });
+    } else {
+        datos = (dataset.graficaTemperatura || []).flatMap((item, segmento) => {
+            return item.datos.map(punto => ({
+                x: luxon.DateTime.fromMillis(punto.x).toJSDate(),
+                y: punto.y,
+                almacen: item.almacen,
+                segmento: segmento
+            }));
+        });
     }
+
+    console.log("Datos procesados para la gráfica:", datos);
+
+
+    /* const datos = (dataset.graficaTemperatura || []).flatMap((item, segmento) => {
+        return item.datos.map(punto => ({
+            x: luxon.DateTime.fromMillis(punto.x).toJSDate(),
+            y: punto.y,
+            almacen: item.almacen,
+            segmento: segmento  // asignas segmento según posición en array original
+        }));
+    }); */
+
+    console.log("Datos procesados para la gráfica:", datos);
+
+    
 
     
 
