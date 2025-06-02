@@ -12,6 +12,16 @@
                 $cabecera = "";
                 $filename = "../html/login.html";
                 break;
+            case 0.125 :
+                $titulo ="Administrador";
+                $filename = "../html/dashboardAdmin.html";
+                $OcultarCabecera = 2;
+                break;
+            case 0.25:
+                $titulo = "Almacenes";
+                $filename = "../html/documentos.html";
+                $OcultarCabecera = 1;
+                break;
             case 0.5:
                 $titulo = "Usuarios";
                 $filename = "../html/documentos.html";
@@ -91,6 +101,10 @@
                 $filetext = str_replace('%FuncionFiltrar%','aplicafiltros()',$filetext);
             }
         }
+        if($_SESSION["Controlador"] -> miEstado -> Estado == 0.25){
+            $filetext = str_replace("%LineasE%", DibujaTablaGenerica(0.25),$filetext);
+        }
+
         if($_SESSION["Controlador"] -> miEstado -> Estado == 0.5){
             $filetext = str_replace("%LineasE%", DibujaTablaGenerica(0),$filetext);
         }
@@ -265,6 +279,8 @@
                 $arraydatos = $_SESSION["Controlador"]->miEstado->usuariosFiltrados;
             }
         }
+
+        // Ventana de Almacenes//
 
         //Ventana de Conservero//
         if ($Pestana == 0.5) {

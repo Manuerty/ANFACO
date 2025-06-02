@@ -540,7 +540,12 @@ Class Controlador{
         $accionJs = null;
         $msgError = "";
         $AccionSinRepintar = 0;
-        $c = $this->miEstado->Estado;
+        if($this->miEstado->Estado < 1 && $this->miEstado->Estado > 0){
+            $c = (float) $this->miEstado->Estado;
+        }
+        else{
+            $c = $this->miEstado->Estado;
+        }
         $arraycolor = $arrayDatos[3][0] ?? null;
         $this ->miEstado -> idBoton = $arrayDatos[3][1] ?? 0;
 
@@ -567,7 +572,7 @@ Class Controlador{
                 $pestana = 1;
 
                 if ($this->miEstado->esAdmin) {
-                    $pestana = 0.5;
+                    $pestana = 0.125;
                 } elseif ($this->miEstado->esConservero) {
                     $this -> miEstado -> capturas = get_pescado(null, $this -> miEstado -> IdUsuarioLogin);
                     $pestana = 3;
@@ -586,6 +591,12 @@ Class Controlador{
             $usuarios = get_usuarios();
             $this -> miEstado -> usuarios = $usuarios ?: [];
 
+        }
+
+
+        // Dashboard de administrador
+        elseif ($c === 0.125 && isset($arrayDatos[0])) {
+            $this->navegarPestanas($arrayDatos[0]);
         }
 
         
@@ -696,7 +707,7 @@ Class Controlador{
 
         $txtErr = "";
 
-        /* $txtErr = sprintf(
+        $txtErr = sprintf(
             "idUsuarioLogIn : %s<br>idUsuarioElegido: %s<br>IdLastUser: %s<br>TagPez: %s<br>LastTagPez: %s<br>Estado: %s<br>IdBoton: %s<br>EstadosAnteriores: %s<br>ArrayDatos: %s",
             $this->miEstado->IdUsuarioLogin,
             $this->miEstado->IdUsuarioSeleccionado,
@@ -707,7 +718,7 @@ Class Controlador{
             $this -> miEstado -> idBoton,
             implode(",", $this->miEstado->EstadosAnteriores),
             implode(",", $arrayDatos)
-        ); */
+        );
     
 
 
