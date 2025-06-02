@@ -333,6 +333,7 @@ use Pdo\Sqlite;
         if ($valor & 0x8000) { // si bit más alto está activo (signo negativo)
             $valor -= 0x10000;
         }
+        $valor = $valor * -1; // Convertir a negativo
         return $valor;
     }
 
