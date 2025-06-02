@@ -122,6 +122,13 @@
             $filetext = str_replace("%LineasE%", DibujaTablaGenerica(3),$filetext);
         }
 
+        /*  if ($_SESSION["Controlador"] -> miEstado -> Estado == 0.5 || $_SESSION["Controlador"] -> miEstado -> Estado == 2 && $_SESSION["Controlador"] -> miEstado -> esAdmin == true){ */
+        if ($_SESSION["Controlador"] -> miEstado -> Estado == 0.25  && $_SESSION["Controlador"] -> miEstado -> esAdmin == true){
+
+            $filetext = str_replace('<button id="BtnAnadir" onclick="" class="btn_acciones mb-4" style="display: none;">', '<button id="BtnAnadir" onclick="mostrarModalFormulario()" class="btn_acciones mb-4">', $filetext);
+            $filetext .= cargaModal();
+        }
+
        /*  if ($_SESSION["Controlador"] -> miEstado -> Estado == 0.5 || $_SESSION["Controlador"] -> miEstado -> Estado == 2 && $_SESSION["Controlador"] -> miEstado -> esAdmin == true){ */
         if ($_SESSION["Controlador"] -> miEstado -> Estado == 0.5  && $_SESSION["Controlador"] -> miEstado -> esAdmin == true){
 
@@ -167,6 +174,8 @@
 
     function cargaModal(){
 
+        $input = "";
+
 
         if(!isset($_SESSION["PlantillaModalForm"])){
             $fileModal = fopen('../html/PlantillaModalFormulario.html', "r");
@@ -175,6 +184,12 @@
             fclose($fileModal);
         }
         $PlantillaModal = $_SESSION["PlantillaModalForm"];
+
+        if ($_SESSION["Controlador"] -> miEstado -> Estado == 0.25){
+            $PlantillaModal = str_replace("%TituloModal%","Creación de Almacén",$PlantillaModal);
+
+            $input .= "<input type='text' class='form-control my-2' id='TxtBoxInputNombreUsuario' placeholder='Nombre del Almacen' required>";
+        }
 
         //Creación de usuario//
         if ($_SESSION["Controlador"] -> miEstado -> Estado == 0.5){
@@ -281,6 +296,10 @@
         }
 
         // Ventana de Almacenes//
+        if ($Pestana == 0.25) {
+            
+            $arraydatos = $_SESSION["Controlador"]->miEstado->tiposalmacen;
+        }
 
         //Ventana de Conservero//
         if ($Pestana == 0.5) {
@@ -400,6 +419,25 @@
                     
                 }
             }
+
+            if ($Pestana == 0.25) {
+
+            if ($arraydatos && is_array($arraydatos)) {
+                foreach ($arraydatos as $index => $tipo) {
+                    $backgroundColor = ($index % 2 == 0) ? 'background-color: whitesmoke;' : 'background-color: white;';
+                    $contenido .= "<div class='card p-3 border shadow-sm' style='$backgroundColor margin-bottom: 0;'>";
+                    $contenido .= "<div class='d-flex justify-content-between align-items-start mb-2'>";
+                    $contenido .= "<h5 class='card-title mb-0'><strong>" 
+                        . htmlspecialchars($tipo["NombreTipo"]) . " " 
+                        . htmlspecialchars($tipo["IdTipoAlmacen"]) . "</strong></h5>";
+                    $contenido .= "</div>";
+                    $contenido .= "</div>";
+                }
+            } else {
+                $contenido .= "<div class='alert alert-warning'>No se pudieron obtener los tipos de almacén.</div>";
+            }
+        }
+
 
             // Lógica para buscador de conserveros
 

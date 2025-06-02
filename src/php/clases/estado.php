@@ -47,6 +47,8 @@ class Estado{
 
     public $idBoton;
 
+    public $tiposalmacen;
+
 
 
    

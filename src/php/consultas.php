@@ -482,12 +482,51 @@ use Pdo\Sqlite;
 
     }
 
+    function get_tiposAlmacen(){
+        try {
+            $conn = obtener_conexion();
+            if (!$conn) return false;
+    
+            $sql = "SELECT * FROM tiposalmacen;";
+
+    
+            $stmt = $conn->prepare($sql);
+    
+            if (!$stmt) {
+                $conn->close();
+                return false;
+            }
+    
+
+    
+            if (!$stmt->execute()) {
+                $stmt->close();
+                $conn->close();
+                return false;
+            }
+    
+            $result = $stmt->get_result();
+            $almacenes = [];
+    
+            while ($row = $result->fetch_assoc()) {
+                $almacenes[] = [
+                    "NombreTipo"        => $row["Nombre"],
+                    "IdTipoAlmacen"     => $row["IdTipoAlmacen"],
+                ];
+            }
+    
+            $stmt->close();
+            $conn->close();
+    
+            return $almacenes;
+    
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
 
     function insertUsuario($usuario){
-
-        
-
-  
 
         $NombreUsuario = $usuario[0];
         $Contrasena = $usuario[1];
@@ -525,5 +564,42 @@ use Pdo\Sqlite;
             return false;
         }
     }
+
+    function insertTipoAlmacen($tipoAlmacen) {
+        
+        $NombreTipo = $tipoAlmacen[0];
+
+        try {
+            $conn = obtener_conexion();
+            if (!$conn) return false;
+
+            $sql = "INSERT INTO tiposalmacen (Nombre) VALUES (?)";
+            $stmt = $conn->prepare($sql);
+
+            if (!$stmt) {
+                $conn->close();
+                return false;
+            }
+
+            // Vincular parámetros
+            $stmt->bind_param("s", $NombreTipo);
+
+            // Ejecutar la consulta
+            if (!$stmt->execute()) {
+                $stmt->close();
+                $conn->close();
+                return false;
+            }
+
+            // Cerrar la declaración y la conexión
+            $stmt->close();
+            $conn->close();
+
+            return true;
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+    
     
 ?>

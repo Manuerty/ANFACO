@@ -130,6 +130,7 @@ Class Controlador{
             // Obtener datos según el tipo de usuario
             if ($this -> miEstado -> esAdmin) {
                 $usuarios = get_usuarios();
+                $tiposAlmacen = get_tiposAlmacen();
                 
                 
             } else {
@@ -144,6 +145,7 @@ Class Controlador{
             $this -> miEstado -> usuarios = $usuarios ?: [];
             $this -> miEstado -> temperaturas = $temperaturas ?: [];
             $this -> miEstado -> almacenes =  $almacenes ?:[];
+            $this -> miEstado -> tiposalmacen = $tiposAlmacen ?: [];
 
 
             return true;
@@ -584,6 +586,16 @@ Class Controlador{
 
         }
 
+        // Creación de tipos de Almacen
+        elseif ($c === 0.25 && isset($arrayDatos[0]) && $arrayDatos[1] == -1 && count($arrayDatos[2]) == 1) {
+
+            insertTipoAlmacen($arrayDatos[2]); 
+            $tiposAlmacen = get_tiposAlmacen();
+            $this -> miEstado -> tiposalmacen = $tiposAlmacen ?: [];
+
+
+        }
+
         // Creación de usuario
         elseif ($c === 0.5 && isset($arrayDatos[0]) && $arrayDatos[1] == -1 && count($arrayDatos[2]) == 5) {
 
@@ -715,10 +727,11 @@ Class Controlador{
             $this->miEstado->TagPez,
             $this->miEstado->LastTagPez,
             $this->miEstado->Estado,
-            $this -> miEstado -> idBoton,
+            $this->miEstado->idBoton,
             implode(",", $this->miEstado->EstadosAnteriores),
-            implode(",", $arrayDatos)
+            json_encode($arrayDatos, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
         );
+
     
 
 
