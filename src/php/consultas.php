@@ -2,6 +2,7 @@
 
 use Pdo\Sqlite;
     require_once 'Conexion.php';
+    require_once "clases/controlador.php";
 
     // Función para obtener la conexión a la base de datos
     function obtener_conexion() {
@@ -323,12 +324,76 @@ use Pdo\Sqlite;
                 ];
             }
         }
-
-    
-        
     
         return $datos;
     }
+
+     function complementoA2($hex) {
+        $valor = hexdec($hex);
+        if ($valor & 0x8000) { // si bit más alto está activo (signo negativo)
+            $valor -= 0x10000;
+        }
+        return $valor;
+    }
+
+    function descomprimirTemperaturas($datosTemp) {
+
+        $datosTemp = base64_decode($datosTemp);
+        $datosTemp = gzuncompress($datosTemp);
+
+        // Separar por ';'
+        $partes = explode(';', $datosTemp);
+
+        // Tiempo de muestreo
+        $tiempoMuestreoHex = trim($partes[0], '-');
+
+
+        $tiempoMuestreoSeg = hexdec($tiempoMuestreoHex);
+
+        // Primer trama completa con timestamp y temperatura
+        $primerTrama = $partes[1];
+
+        $timestampHex = substr($primerTrama, 0, 9);
+
+
+        $tempHex = substr($primerTrama, 9, 4);
+
+
+        $timestamp = hexdec($timestampHex);
+
+
+        $temperaturaRaw = complementoA2($tempHex);
+
+        $temperatura = $temperaturaRaw / 10;
+
+
+        // Fecha inicial
+        $fecha = new DateTime("@$timestamp");
+        $fecha->setTimezone(new DateTimeZone('Europe/Madrid'));
+
+        $resultados = [];
+        $resultados[] = $fecha->format('Y-m-d,H:i') . "," . $temperatura;
+
+        for ($i = 2; $i < count($partes); $i++) {
+            $tempHex = $partes[$i];
+            if (strlen($tempHex) != 4) continue;
+
+            $temperaturaRaw = complementoA2($tempHex);
+            $temperatura = $temperaturaRaw / 10;
+
+            $fecha->add(new DateInterval('PT' . $tiempoMuestreoSeg . 'S'));
+
+            $resultados[] = $fecha->format('Y-m-d,H:i') . "," . $temperatura;
+        }
+
+        $resultadoFinal = "#" . implode(";", $resultados) . ";#";
+
+
+        return $resultadoFinal;
+    }
+
+
+
 
 
     function procesarInformacion() {
@@ -368,7 +433,8 @@ use Pdo\Sqlite;
             // 2. Procesar los datos de cada almacén
             foreach ($almacenesProcesar as $almacen) {
                 // Procesar las temperaturas
-                $datos = procesarTemperaturasString($almacen["DatosTemp"], $almacen["IdAlmacen"]);
+                $procesardatos =  descomprimirTemperaturas($almacen["DatosTemp"]);
+                $datos = procesarTemperaturasString($procesardatos, $almacen["IdAlmacen"]);
     
                 if (empty($datos)) {
                     continue;  // Si no hay datos, saltar al siguiente almacén
@@ -566,7 +632,7 @@ use Pdo\Sqlite;
     }
 
     function insertTipoAlmacen($tipoAlmacen) {
-        
+
         $NombreTipo = $tipoAlmacen[0];
 
         try {

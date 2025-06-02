@@ -52,11 +52,11 @@
     <script src="https://unpkg.com/tippy.js@6"></script>
 
     <!-- librerias de los graficos/chars -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/luxon@3/build/global/luxon.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.4.0/dist/chartjs-plugin-annotation.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.2.0/dist/chartjs-plugin-zoom.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.1.0/dist/chartjs-plugin-annotation.min.js"></script>
 
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -92,6 +92,7 @@ var dibujaPaginaBloqueado = false;
 var datos;
 
 var ctx;
+
 
 //arrayDatos(ElContenidoHtml[0],ElMensajedeError[1],Accion[2],ArrayAuxiliar[3],$accionJs)
 async function dibuja_pagina(arrayDatos = []) {
@@ -141,7 +142,7 @@ async function dibuja_pagina(arrayDatos = []) {
                                         // Verificamos si la gráfica ya fue pintada
                                         if (!canvasExiste.hasAttribute('data-pintada') || canvasExiste.getAttribute('data-pintada') !== 'true') {
                                             // Si no ha sido pintada, dibujamos la gráfica
-                                            
+                                
                                             dibujaGrafica(respuesta[3]);
 
                                             // Marcamos el canvas como "pintado"
@@ -197,15 +198,16 @@ async function dibuja_pagina(arrayDatos = []) {
     }
 }
 
+
+
 function dibujaGrafica(arraydatos) {
+
+
 
 
     const dataset = arraydatos.datos;
     const colores = (arraydatos.color || []).slice().reverse();
 
-    console.log("Datos para la gráfica:", dataset);
-
-    console.log("Colores para la gráfica:", colores.length);
 
 
     // Aplana los datos originales a la forma esperada
@@ -243,24 +245,6 @@ function dibujaGrafica(arraydatos) {
             }));
         });
     }
-
-    console.log("Datos procesados para la gráfica:", datos);
-
-
-    /* const datos = (dataset.graficaTemperatura || []).flatMap((item, segmento) => {
-        return item.datos.map(punto => ({
-            x: luxon.DateTime.fromMillis(punto.x).toJSDate(),
-            y: punto.y,
-            almacen: item.almacen,
-            segmento: segmento  // asignas segmento según posición en array original
-        }));
-    }); */
-
-    console.log("Datos procesados para la gráfica:", datos);
-
-    
-
-    
 
     // === 2. Colores fijos por posición ===
     const coloresPredefinidos = [
@@ -367,41 +351,47 @@ function dibujaGrafica(arraydatos) {
                         }
                     }
                 },
-                zoom: {
                     zoom: {
-                        enabled: true,
-                        mode: 'x',
-                        speed: 0.1,
-                        sensitivity: 3,
-                        wheel: {
-                            enabled: true,
-                            speed: 0.1
+                        zoom: {
+                            wheel: {
+                                enabled: true,
+                                speed: 0.1
+                            },
+                            drag: {
+                                enabled: false // or true if you want drag zoom
+                            },
+                            pinch: {
+                                enabled: false // or true if you want pinch zoom on touch devices
+                            },
+                            mode: 'x',
+                            sensitivity: 3
                         }
                     },
-                },
-                annotation: {
-                    annotations: {
-                        lineaUmbral: {
-                            type: 'line',
-                            yMin: -18,
-                            yMax: -18,
-                            borderColor: 'red',
-                            borderWidth: 1,
-                            label: {
-                                content: '-18°C',
-                                enabled: true,
-                                position: 'start', // al principio de la línea (izquierda)
-                                backgroundColor: 'rgba(255,0,0,0.1)',
-                                color: 'red',
-                                yAdjust: -10, // lo sube por encima de la línea
-                                font: {
-                                    weight: 'bold',
-                                    size: 12,
+                    annotation: {
+                        annotations: {
+                            lineaUmbral: {
+                                type: 'line',
+                                yMin: -18,
+                                yMax: -18,
+                                xMin: minFechaConMargen,
+                                xMax: maxFechaConMargen,
+                                borderColor: 'red',
+                                borderWidth: 1,
+                                label: {
+                                    content: '-18°C',
+                                    enabled: true,
+                                    position: 'start',
+                                    backgroundColor: 'rgba(255,0,0,0.1)',
+                                    color: 'red',
+                                    yAdjust: -10,
+                                    font: {
+                                        weight: 'bold',
+                                        size: 12,
+                                    },
                                 },
-                            },
+                            }
                         }
-                    }
-                },
+                    },
             },
             scales: {
                 x: {
