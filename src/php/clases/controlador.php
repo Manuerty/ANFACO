@@ -544,7 +544,30 @@ Class Controlador{
         }
     }
 
+    function validarForm($arrayDatos) {
+        if ($this->miEstado->Estado == 0.25 && count($arrayDatos) == 1) {
+            $nombretipo = $arrayDatos[0];
 
+            foreach ($this->miEstado->tiposalmacen as $tipo) {
+                if ($nombretipo === $tipo["NombreTipo"]) {
+                    return [
+                        'validado' => false,
+                        'mensaje' => 'El tipo de almacen ya existe'
+                    ];
+                }
+            }
+
+            return [
+                'validado' => true,
+                'mensaje' => ''
+            ];
+        }
+
+        return [
+            'validado' => false,
+            'mensaje' => 'Condiciones de validación no cumplidas'
+        ];
+    }
 
     function generarContenido($arrayDatos = array()) {
 
@@ -602,9 +625,20 @@ Class Controlador{
         // Creación de tipos de Almacen
         elseif ($c === 0.25 && isset($arrayDatos[0]) && $arrayDatos[1] == -1 && count($arrayDatos[2]) == 1) {
 
-            insertTipoAlmacen($arrayDatos[2]); 
-            $tiposAlmacen = get_tiposAlmacen();
-            $this -> miEstado -> tiposalmacen = $tiposAlmacen ?: [];
+            $resultadoValidacion = $this->validarForm($arrayDatos[2]);
+
+            if ($resultadoValidacion['validado']) {
+
+                insertTipoAlmacen($arrayDatos[2]); 
+                $tiposAlmacen = get_tiposAlmacen();
+                $this->miEstado->tiposalmacen = $tiposAlmacen ?: [];
+
+            } else {
+
+                $msgError = $resultadoValidacion['mensaje'];
+
+            }
+
 
 
         }
