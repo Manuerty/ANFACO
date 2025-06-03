@@ -432,15 +432,26 @@
             if ($arraydatos && is_array($arraydatos)) {
                 foreach ($arraydatos as $index => $tipo) {
                     $backgroundColor = ($index % 2 == 0) ? 'background-color: whitesmoke;' : 'background-color: white;';
+
+                    $idTipo = htmlspecialchars($tipo["IdTipoAlmacen"]);
+                    $nombreTipo = htmlspecialchars($tipo["NombreTipo"]);
+
                     $contenido .= "<div class='card p-3 border shadow-sm' style='$backgroundColor margin-bottom: 0;'>";
-                    $contenido .= "<div class='d-flex justify-content-between align-items-start mb-2'>";
-                    $contenido .= "<h5 class='card-title mb-0'> ID: <strong> " 
-                        . htmlspecialchars($tipo["IdTipoAlmacen"])  . "</strong> Nombre: <strong>" 
-                        . htmlspecialchars($tipo["NombreTipo"]) . "</strong></h5>";
+
+                    // Título arriba
+                    $contenido .= "<h5 class='card-title mb-2' style='font-size: 1.125rem;'><strong>$nombreTipo</strong></h5>";
+
+                    // Details debajo del título, con triángulo sin texto
+                    $contenido .= "<details>";
+                    $contenido .= "<summary style='cursor: pointer; width: fit-content; list-style-type: disclosure-closed;'></summary>";
+                    $contenido .= "<div class='pt-2' style='padding: 10px; font-size: 1.1em;'>";
+                    $contenido .= "<p><span class='text-black'>ID Tipo de Almacén: </span> <strong>$idTipo</strong></p>";
                     $contenido .= "</div>";
-                    $contenido .= "</div>";
+                    $contenido .= "</details>";
+
+                    $contenido .= "</div>"; // fin card
                 }
-            } else {
+            }else {
                 $contenido .= "<div class='alert alert-warning'>No se pudieron obtener los tipos de almacén.</div>";
             }
         }
