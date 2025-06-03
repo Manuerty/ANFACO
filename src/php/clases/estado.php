@@ -39,6 +39,10 @@ class Estado{
 
     public $almacenesFiltrados;
 
+    public $tiposalmacen;
+
+    public $tiposalmacenFiltrados;
+
     public $capturaDetalle;
 
     public $temperaturas;
@@ -47,7 +51,7 @@ class Estado{
 
     public $idBoton;
 
-    public $tiposalmacen;
+    
 
 
 

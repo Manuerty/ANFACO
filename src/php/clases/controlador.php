@@ -32,7 +32,10 @@ Class Controlador{
 
 
             //limpiar Filtros antes de cambiar de pagina//
-            if ($this -> miEstado -> Estado == 0.5) {
+            if($this -> miEstado -> Estado == 0.25) {
+                $this -> resetFilter($this -> miEstado -> Estado);
+            }
+            elseif ($this -> miEstado -> Estado == 0.5) {
                 $this -> resetFilter($this -> miEstado -> Estado);
             }
             elseif ($this -> miEstado -> Estado == 2) {
@@ -330,9 +333,15 @@ Class Controlador{
             $filtro = strtolower($filtro);
         }
 
+        if ($pestana == 0.25){
+            $tiposAlmacen = is_array($this->miEstado->tiposalmacen) ? $this->miEstado->tiposalmacen : [];
+            $arrayFiltrado = array_filter($tiposAlmacen, function($item) use($filtro){
+                return trim(strtolower($item["NombreTipo"])) === trim(strtolower($filtro));
+            });
+        }
 
         //filtro de usuarios
-        if ($pestana == 0.5){
+        elseif ($pestana == 0.5){
             $usuarios = is_array($this->miEstado->usuarios) ? $this->miEstado->usuarios : [];
             $arrayFiltrado = array_filter($usuarios, function($item) use($filtro){
                 return trim(strtolower($item["NombreUsuario"])) === trim(strtolower($filtro));
@@ -516,6 +525,9 @@ Class Controlador{
         }
         else{
             switch ($data) {
+                case 0.25:
+                    $this -> miEstado -> tiposalmacenFiltrados = null;
+                    break;
                 case 0.5:
                     $this -> miEstado -> usuariosFiltrados = null;
                     break;
@@ -683,17 +695,20 @@ Class Controlador{
                 
         
                 switch ($c) {
+                    case 0.25:
+                        $this -> miEstado -> tiposalmacenFiltrados = $arrayFiltrado;
+                        break;
                     case 0.5:
-                        $this->miEstado->usuariosFiltrados = $arrayFiltrado;
+                        $this -> miEstado -> usuariosFiltrados = $arrayFiltrado;
                         break;
                     case 2:
-                        $this->miEstado->barcosFiltrados = $arrayFiltrado;
+                        $this -> miEstado -> barcosFiltrados = $arrayFiltrado;
                         break;
                     case 3:
-                        $this->miEstado->capturasFiltradas = $arrayFiltrado;
+                        $this -> miEstado -> capturasFiltradas = $arrayFiltrado;
                         break;
                     case 4:
-                        $this->miEstado->almacenesFiltrados = $arrayFiltrado;
+                        $this -> miEstado -> almacenesFiltrados = $arrayFiltrado;
                         if ($this -> miEstado -> almacenesFiltrados){
                             $this->generarDatosGrafica($this->miEstado->temperaturas, $this->miEstado->almacenesFiltrados);
                         }

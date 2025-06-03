@@ -297,8 +297,15 @@
 
         // Ventana de Almacenes//
         if ($Pestana == 0.25) {
-            
-            $arraydatos = $_SESSION["Controlador"]->miEstado->tiposalmacen;
+
+            if (!isset($_SESSION["Controlador"]->miEstado->tiposalmacenFiltrados) || 
+                $_SESSION["Controlador"]->miEstado->tiposalmacenFiltrados === null) {
+
+                $arraydatos = $_SESSION["Controlador"]->miEstado->tiposalmacen;
+
+            } else {
+                $arraydatos = $_SESSION["Controlador"]->miEstado->tiposalmacenFiltrados;
+            }
         }
 
         //Ventana de Conservero//
@@ -427,9 +434,9 @@
                     $backgroundColor = ($index % 2 == 0) ? 'background-color: whitesmoke;' : 'background-color: white;';
                     $contenido .= "<div class='card p-3 border shadow-sm' style='$backgroundColor margin-bottom: 0;'>";
                     $contenido .= "<div class='d-flex justify-content-between align-items-start mb-2'>";
-                    $contenido .= "<h5 class='card-title mb-0'><strong>" 
-                        . htmlspecialchars($tipo["NombreTipo"]) . " " 
-                        . htmlspecialchars($tipo["IdTipoAlmacen"]) . "</strong></h5>";
+                    $contenido .= "<h5 class='card-title mb-0'> ID: <strong> " 
+                        . htmlspecialchars($tipo["IdTipoAlmacen"])  . "</strong> Nombre: <strong>" 
+                        . htmlspecialchars($tipo["NombreTipo"]) . "</strong></h5>";
                     $contenido .= "</div>";
                     $contenido .= "</div>";
                 }
