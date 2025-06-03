@@ -219,8 +219,6 @@
 
         }
 
-
-
         return str_replace("%BodyModal%",$input,$PlantillaModal);
         
     }
@@ -231,7 +229,6 @@
         $contenido = "";
 
         $arrayDoc = $_SESSION["Controlador"]->miEstado->capturas;
-
 
         if ($tab == 1) {
 
@@ -248,7 +245,6 @@
         
 
         if ($tab == 2) {
-
             
             $arrayDoc = array_values($arrayDoc); // Asegura índices consecutivos
         
@@ -360,17 +356,10 @@
             // Captura detalle siempre asignado
             $capturaDetalle = $_SESSION['Controlador']->miEstado->capturaDetalle;
         }
-        
-
-
 
         $contenido = "";
 
-
-
-    
         if (isset($arraydatos) && !empty($arraydatos)) {
-
 
             if($Pestana == 0){
 
@@ -382,17 +371,13 @@
                 $contenido .= "<table class='table table-striped table-bordered-bottom'>";
             }
     
-    
             if ($Pestana == 0){
                 foreach ($arraydatos as $index => $usuario) {
 
-            
                     $idUsuario = $usuario["IdUsuario"];
                     $NombreUsuario = $usuario["NombreUsuario"];
                     $tipoUsuario = $usuario["Rol"];
                     $backgroundColor = ($index % 2 == 0) ? 'background-color: whitesmoke;' : 'background-color: white;';
-
-                    
 
                     $contenido .= "<div style='width: 70%; margin: 0 auto;'>"; // Contenedor ahora al 70%
                     $contenido .= "<div class='card p-3 border shadow-sm' style='$backgroundColor margin-bottom: 0;'>";
@@ -456,7 +441,6 @@
             }
         }
 
-
             // Lógica para buscador de conserveros
 
             if ($Pestana == 0.5) {
@@ -489,14 +473,11 @@
 
                     $contenido .= "</div>";
                 }
-            }
-
-            
+            } 
     
             // Lógica específica para capturas
             elseif ($Pestana == 2) {
                 foreach ($arraydatos as $index => $captura) {
-
                     
                     $backgroundColor = ($index % 2 == 0) ? 'background-color: whitesmoke;' : 'background-color: white;';
     
@@ -584,7 +565,6 @@
                     '#393b79', '#637939', '#8c6d31', '#843c39', '#7b4173'
                 ];
 
-                
                // 1. Obtener índices de los almacenes que no son "Bodega", en orden invertido
                 $indicesValidos = [];
                 foreach ($arraydatosAdiccional as $i => $almacen) {
@@ -609,8 +589,6 @@
                     $mapaColores[$index] = $coloresPredefinidos[$colorPos % count($coloresPredefinidos)];
                     $prevTipo = $tipoActual;
                 }
-
-
             
                 // Variables de captura
                 $tagPez = htmlspecialchars($capturaDetalle["TagPez"] ?? '');
@@ -662,11 +640,8 @@
                 $contenido .= "<div style='flex-grow: 1; overflow-y: auto;'>";
 
                 $idBotonAnterior = (int) ($_SESSION["Controlador"]->miEstado->idBoton ?? 0);
-
-                
             
                 foreach ($arraydatosAdiccional as $index => $Almacenes) {
-
                 
                     $backgroundColor = ($index % 2 == 0) ? 'background-color: whitesmoke;' : 'background-color: white;';
 
@@ -677,10 +652,6 @@
                     $esBodegaDelBarco = ($NombreAlmacen == 'Bodega');
                     $Comprador = $Almacenes['Comprador'] ?? null;
                     $colorTexto = isset($mapaColores[$index]) ? $mapaColores[$index] : '#000';
-
-                    
-
-                    
             
                     $contenido .= "<div class='card p-2 border shadow-sm mb-2' style='$backgroundColor'>";
                     $contenido .= "<table class='table table-borderless mb-0' style='table-layout: fixed; width: 100%;'>";
@@ -706,7 +677,6 @@
                     $contenido .= "<td style='text-align: center; vertical-align: middle;'>$NombreComprador</td>";
                     $contenido .= "<td style='text-align: center; vertical-align: middle;'>$FechaAlmacen</td>";
 
-
                     $contenido .= "</tr>";
                     $contenido .= "</table>";
                     $contenido .= "</div>";
@@ -727,8 +697,6 @@
         $contenido .= "</section>";
         return $contenido;
     }
-    
-
 
     function safe_html($value) {
         return htmlspecialchars($value ?? '', ENT_QUOTES, 'UTF-8');
