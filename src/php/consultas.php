@@ -348,16 +348,16 @@ use Pdo\Sqlite;
         // Tiempo de muestreo
         $tiempoMuestreoHex = trim($partes[0], '-');
 
-
         $tiempoMuestreoSeg = hexdec($tiempoMuestreoHex);
 
         // Primer trama completa con timestamp y temperatura
-        $primerTrama = $partes[1];
 
-        $timestampHex = substr($primerTrama, 0, 9);
+        $primerTrama = preg_replace('/\s+/', '', $partes[1]);
+
+        $timestampHex = substr($primerTrama, 0, 8);
 
 
-        $tempHex = substr($primerTrama, 9, 4);
+        $tempHex = substr($primerTrama, 8, 4);
 
 
         $timestamp = hexdec($timestampHex);
@@ -388,7 +388,6 @@ use Pdo\Sqlite;
         }
 
         $resultadoFinal = "#" . implode(";", $resultados) . ";#";
-
 
         return $resultadoFinal;
     }
