@@ -225,3 +225,35 @@
   flex-direction: row-reverse !important;
   align-content:start;
 }
+#footer-imagen {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  background-color: white;
+}
+
+.footer-container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.footer-img {
+  width: 50%;
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+
+/* Responsive: en móvil, apilar imágenes */
+@media (max-width: 768px) {
+  .footer-container {
+    flex-direction: column;
+  }
+
+  .footer-img {
+    width: 100%;
+  }
+}

@@ -148,6 +148,9 @@ Class Controlador{
             $this -> miEstado -> usuarios = $usuarios ?: [];
             $this -> miEstado -> temperaturas = $temperaturas ?: [];
             $this -> miEstado -> almacenes =  $almacenes ?:[];
+		if(!isset($tiposAlmacen)){
+		$tiposAlmacen = array();
+}
             $this -> miEstado -> tiposalmacen = $tiposAlmacen ?: [];
 
 

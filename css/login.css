@@ -106,6 +106,22 @@
     border: 1px black;
 }
 
+#footer-imagen {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 150;
+    margin: 0;
+    padding: 0;
+    border-top: none;
+    background: none;
+}
 
-
+#footer-imagen img {
+    width: 100%;
+    display: block;
+    margin: 0;
+    padding: 0;
+}
 
