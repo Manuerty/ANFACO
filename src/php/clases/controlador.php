@@ -142,7 +142,7 @@ Class Controlador{
 
             // Asignar a sesión, usando operador ternario o directamente el valor
             $this -> miEstado -> capturas = $capturas ?: [];
-            $this -> miEstado -> barcosFiltrados = $barcos ?: [];
+            $this -> miEstado -> barcos = $barcos ?: [];
             $this -> miEstado -> usuarios = $usuarios ?: [];
             $this -> miEstado -> temperaturas = $temperaturas ?: [];
             $this -> miEstado -> almacenes =  $almacenes ?:[];
