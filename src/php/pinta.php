@@ -13,12 +13,12 @@
                 $filename = "../html/login.html";
                 break;
             case 0.125 :
-                $titulo ="Administrador";
-                $filename = "../html/dashboardAdmin.html";
+                $titulo = $_SESSION["Controlador"] -> miEstado -> nombreUsuario;
+                $filename = "../html/dashboardComercial.html";
                 $OcultarCabecera = 2;
                 break;
             case 0.25:
-                $titulo = "Almacenes";
+                $titulo = "Almacenes de " . $_SESSION["Controlador"] -> miEstado -> nombreUsuario;
                 $filename = "../html/documentos.html";
                 $OcultarCabecera = 1;
                 break;
@@ -29,7 +29,7 @@
                 break;
             case 1:
                 $titulo = $_SESSION["Controlador"] -> miEstado -> nombreUsuario;
-                $filename = "../html/dashboard.html";
+                $filename = "../html/dashboardArmador.html";
                 $OcultarCabecera = 2;
                 break;
             case 1.5:
@@ -396,10 +396,10 @@
             
                     // Botón
                     $contenido .= "<div class='col-3 text-end'>";
-                    if ($tipoUsuario == "Conservero") {
-                        $contenido .= "<button type='submit' class='btn btn-primary btn-sm' onclick='dibuja_pagina([1.5, $idUsuario,".'"'.$NombreUsuario.'"'."  ])'>Entrar</button>";
+                    if ($tipoUsuario == "Armador") {
+                        $contenido .= "<button type='submit' class='btn btn-primary btn-sm' onclick='dibuja_pagina([1, $idUsuario,".'"'.$NombreUsuario.'"'."  ])'>Entrar</button>";
                     } else {
-                        $contenido .= "<button type='submit' class='btn btn-primary btn-sm' onclick='dibuja_pagina([1, $idUsuario,".'"'.$NombreUsuario.'"'." ])'>Entrar</button>";
+                        $contenido .= "<button type='submit' class='btn btn-primary btn-sm' onclick='dibuja_pagina([1.5, $idUsuario,".'"'.$NombreUsuario.'"'." ])'>Entrar</button>";
                     }
 
                     $contenido .= "</div>";
@@ -519,9 +519,9 @@
     
                     $contenido .= "<div class='col'>";
                     $contenido .= "<p><span class='text-black'>Almacenes visitados: </span> <span class='font-weight-bold'><strong>$TotalAlmacenes</strong></span></p>";
-                    $contenido .= "<p><span class='text-black'>Almacén actual: </span> <span class='font-weight-bold'><strong>$tipoUltimoAlmacen </strong></span></p>";
+                    $contenido .= "<p><span class='text-black'>Último Almacén: </span> <span class='font-weight-bold'><strong>$tipoUltimoAlmacen </strong></span></p>";
                     if($NombreComprador != null){   
-                        $contenido .= "<p><span class='text-black'>Comprador: </span> <span class='font-weight-bold'><strong>$NombreComprador</strong></span></p>";
+                        $contenido .= "<p><span class='text-black'>Propietario: </span> <span class='font-weight-bold'><strong>$NombreComprador</strong></span></p>";
                     }
                     $contenido .= "</div>";
     
@@ -614,13 +614,17 @@
                 $contenido .= "<h5><strong> $tagPez - $EspecieCapturada</strong></h5>";
                 $contenido .= "<p>Fecha de Captura: <strong>" . date('d/m/Y H:i', strtotime($FechaCaptura)) . "</strong></p>";
                 $contenido .= "<p>Barco:<strong> $NombreBarcoCaptura</strong></p>";
-                $contenido .= "<p>Zona:<strong> $ZonaCaptura</strong></p>";
-                $contenido .= "<p><span class='text-black'>Temp: </span> <span class='$claseTemperaturaMinima'><strong>" . $temperaturaMinimaCaptura . "°C</strong></span><span> / </span> <span class='$claseTemperaturaMaxima'><strong>" . $temperaturaMaximaCaptura . "°C</strong></span></p>";
-                $contenido .= "<p><span class='text-black'>Almacén Actual: </span> <strong>$tipoUltimoAlmacenCaptura</strong></p>";
                 $contenido .= "<p><span class='text-black'>Armador del Barco: </span> <strong>$Armador</strong></p>";
+                $contenido .= "<p>Zona:<strong> $ZonaCaptura</strong></p>";
+                $contenido .= "<p><span class='text-black'>Almacén Actual: </span> <strong>$tipoUltimoAlmacenCaptura</strong></p>";
+
                 if($NombreComprador != null){
-                    $contenido .= "<p><span class='text-black'>Conservero: </span> <strong>$NombreComprador</strong></p>";
+                    $contenido .= "<p><span class='text-black'>Propietario: </span> <strong>$NombreComprador</strong></p>";
                 }
+
+                $contenido .= "<p><span class='text-black'>Temp: </span> <span class='$claseTemperaturaMinima'><strong>" . $temperaturaMinimaCaptura . "°C</strong></span><span> / </span> <span class='$claseTemperaturaMaxima'><strong>" . $temperaturaMaximaCaptura . "°C</strong></span></p>";
+
+                
                 $contenido .= "</div>";
                 $contenido .= "</div>";
             

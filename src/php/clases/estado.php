@@ -12,7 +12,7 @@ class Estado{
 
     public $esAdmin;
 
-    public $esConservero;
+    public $esArmador;
     
     public $IdLastUser;
 

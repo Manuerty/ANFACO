@@ -109,18 +109,15 @@ Class Controlador{
         procesarInformacion();
     
         if ($datosSesion != false && $datosSesion != 0) {
-
             
             $this->miEstado->IdUsuarioLogin = $datosSesion[0];
             $this -> miEstado -> nombreUsuario = $datosSesion[1];
 
-
-    
             // Determinar si es administrador
             $this -> miEstado -> esAdmin = ($datosSesion[3] === "Administrador");
 
             // Determinar si es conservero
-            $this  -> miEstado -> esConservero = ($datosSesion[3] === "Conservero");
+            $this  -> miEstado -> esArmador = ($datosSesion[3] === "Armador");
 
 
             // Inicializar variables
@@ -129,15 +126,16 @@ Class Controlador{
             $barcos = [];
             $temperaturas = [];
             $almacenes = [];
+            $tiposAlmacen = [];
 
             // Obtener datos según el tipo de usuario
             if ($this -> miEstado -> esAdmin) {
+
                 $usuarios = get_usuarios();
-                $tiposAlmacen = get_tiposAlmacen();
-                
-                
+        
             } else {
-                $capturas = get_pescado($datosSesion[0], null);
+                $capturas = get_pescado( $datosSesion[0]);
+                $tiposAlmacen = get_tiposAlmacen($datosSesion[0]);
                 $barcos = get_Barcos($datosSesion[0]);
                 
             }
@@ -148,11 +146,7 @@ Class Controlador{
             $this -> miEstado -> usuarios = $usuarios ?: [];
             $this -> miEstado -> temperaturas = $temperaturas ?: [];
             $this -> miEstado -> almacenes =  $almacenes ?:[];
-		if(!isset($tiposAlmacen)){
-		$tiposAlmacen = array();
-}
             $this -> miEstado -> tiposalmacen = $tiposAlmacen ?: [];
-
 
             return true;
 
@@ -200,52 +194,71 @@ Class Controlador{
         else{
             $this -> miEstado -> IdUsuarioSeleccionado = $IdUser;
             $this -> miEstado -> nombreUsuario = $UserName;
-            $this -> miEstado -> capturas = get_pescado($IdUser, null);
+            $this -> miEstado -> capturas = get_pescado( $IdUser);
+            $this -> miEstado -> tiposalmacen = get_tiposAlmacen($IdUser);
             $this -> miEstado -> barcos = get_Barcos($IdUser);
+            $this -> miEstado -> LastTagPez = null; // Reiniciar LastTagPez al cambiar de usuario
         }
     }
 
 
-    function setNewCaptura($tagPez){
-        if($tagPez == $this -> miEstado -> LastTagPez){
+    function setNewCaptura($tagPez) {
+        // Buscar la captura por TagPez (en ambos casos se necesita)
+        $capturaEncontrada = null;
+
+        foreach ($this->miEstado->capturas as $captura) {
+            if (isset($captura["TagPez"]) && $captura["TagPez"] === $tagPez) {
+                $capturaEncontrada = $captura;
+                break;
+            }
+        }
+
+        if ($capturaEncontrada === null) {
+            echo "No se encontró el tag '$tagPez' en capturas.";
             return;
-        } else {
-            $this -> miEstado -> TagPez = $tagPez;
+        }
 
-           
+        // Obtener la fecha límite desde la captura encontrada
+        $fechaLimite = $capturaEncontrada["FechaUltimoAlmacen"];
 
-            // Obtener los datos adicionales de la captura
-            
-            $this -> miEstado -> almacenes = get_Almacenes($tagPez);
-            $temperaturasProcesar = getTemperaturasProcesar($tagPez);
-            
-            $tempProcesada = [];
-            foreach ($temperaturasProcesar as $temp) {
-                $datosTemp = $temp['DatosTempProcesar'] ?? null;
-                $idAlmacen = $temp['IdAlmacenProcesar'] ?? null;
-        
-            
-                if ($datosTemp !== null && $idAlmacen !== null) {
-                    $datosformateados = descomprimirTemperaturas($datosTemp);
-                    $resultado = procesarTemperaturasString($datosformateados, $idAlmacen);
-                    if (is_array($resultado)) {
-                        $tempProcesada = array_merge($tempProcesada, $resultado);
-                    }
+        if ($tagPez == $this->miEstado->LastTagPez) {
+            // Ya se ha procesado este tag, no repetir trabajo
+            return;
+        }
+
+        // Guardar el nuevo tag
+        $this->miEstado->TagPez = $tagPez;
+
+        // Mostrar los datos de la captura
+        //var_dump($fechaLimite, $capturaEncontrada);
+
+        // Obtener almacenes
+
+        $this->miEstado->almacenes = get_Almacenes($tagPez, $fechaLimite);
+
+        // Obtener y procesar temperaturas
+        $temperaturasProcesar = getTemperaturasProcesar($tagPez, $fechaLimite);
+        $tempProcesada = [];
+
+        foreach ($temperaturasProcesar as $temp) {
+            $datosTemp = $temp['DatosTempProcesar'] ?? null;
+            $idAlmacen = $temp['IdAlmacenProcesar'] ?? null;
+
+            if ($datosTemp !== null && $idAlmacen !== null) {
+                $datosformateados = descomprimirTemperaturas($datosTemp);
+                $resultado = procesarTemperaturasString($datosformateados, $idAlmacen);
+                if (is_array($resultado)) {
+                    $tempProcesada = array_merge($tempProcesada, $resultado);
                 }
             }
-
-            //$this -> miEstado -> temperaturas = getTemperaturas($tagPez);
-            $this -> miEstado -> temperaturas = $tempProcesada;
-            
-            
-    
-            // Llamar a details_Captura para llenar la variable de sesión con los detalles de la captura
-            $this->details_Captura($tagPez);
-    
-            // Ahora $this -> miEstado -> capturaDetalle debería tener los datos si la captura fue encontrada
-            
         }
+
+        $this->miEstado->temperaturas = $tempProcesada;
+
+        // Llamar a details_Captura para completar detalles
+        $this->details_Captura($tagPez);
     }
+
     
 
     function details_Captura($tagPez){
@@ -256,6 +269,8 @@ Class Controlador{
             $captura = array_filter($this -> miEstado -> capturas, function($item) use ($tagPez) {
                 return $item['TagPez'] == $tagPez;
             });
+
+            //var_dump($this -> miEstado -> capturas);
     
             // Si encontramos la captura, almacenamos el primer resultado en la sesión
             if (!empty($captura)) {
@@ -574,7 +589,8 @@ Class Controlador{
 
     function generarContenido($arrayDatos = array()) {
 
-        //var_dump($arrayDatos[2]);
+        //var_dump($arrayDatos);
+        
 
 
         $arrayAuxiliarHtml = [];
@@ -585,8 +601,10 @@ Class Controlador{
             $c = (float) $this->miEstado->Estado;
         }
         else{
-            $c = $this->miEstado->Estado;
+            $c = intval($this->miEstado->Estado);
         }
+        
+
         $arraycolor = $arrayDatos[3][0] ?? null;
         $this ->miEstado -> idBoton = $arrayDatos[3][1] ?? 0;
 
@@ -613,13 +631,18 @@ Class Controlador{
                 $pestana = 1;
 
                 if ($this->miEstado->esAdmin) {
+                    $pestana = 0.5;
+                } elseif (!$this->miEstado->esArmador) {
+
+                    $this -> miEstado -> capturas = get_pescado( $this -> miEstado -> IdUsuarioLogin);
+                    $this -> miEstado -> tiposalmacen = get_tiposAlmacen($this -> miEstado -> IdUsuarioLogin);
+
                     $pestana = 0.125;
-                } elseif ($this->miEstado->esConservero) {
-                    $this -> miEstado -> capturas = get_pescado(null, $this -> miEstado -> IdUsuarioLogin);
-                    $pestana = 3;
                 }
 
                 $this->navegarPestanas($pestana);
+
+                
                 
             }
 
@@ -633,7 +656,7 @@ Class Controlador{
             if ($resultadoValidacion['validado']) {
 
                 insertTipoAlmacen($arrayDatos[2]); 
-                $tiposAlmacen = get_tiposAlmacen();
+                $tiposAlmacen = get_tiposAlmacen($this->miEstado->IdUsuarioLogin);
                 $this->miEstado->tiposalmacen = $tiposAlmacen ?: [];
 
             } else {
@@ -656,8 +679,8 @@ Class Controlador{
         }
 
 
-        // Dashboard de administrador
-        elseif ($c === 0.125 && isset($arrayDatos[0])) {
+        // Dashboard de comercial
+        elseif ($c === 0.125 || $c === 1 && isset($arrayDatos[0])) {
             $this->navegarPestanas($arrayDatos[0]);
         }
 
@@ -670,16 +693,9 @@ Class Controlador{
             if ($arrayDatos[0] == 1) {
                 $this->navegarPestanas(1);
             } elseif ($arrayDatos[0] == 1.5) {
-                $this -> miEstado -> capturas = get_pescado(null, $this->miEstado->IdUsuarioSeleccionado);
-                $this->navegarPestanas(3);
-            }
-        }
-    
-        // Navegación dashboard
-        elseif ($c === 1 && isset($arrayDatos[0])) {
-            $navMap = [3 => 2, 4 => 3];
-            if (array_key_exists($arrayDatos[0], $navMap)) {
-                $this->navegarPestanas($navMap[$arrayDatos[0]]);
+                $this -> miEstado -> capturas = get_pescado( $this->miEstado->IdUsuarioSeleccionado);
+                $this -> miEstado -> tiposalmacen = get_tiposAlmacen($this->miEstado->IdUsuarioSeleccionado);
+                $this->navegarPestanas(0.125);
             }
         }
 
@@ -697,7 +713,6 @@ Class Controlador{
     
         // Detalles de captura
         elseif ($c === 3 && isset($arrayDatos[0]) && $arrayDatos[0] == 3) {
-
             $this->setNewCaptura($arrayDatos[1]);
             $this->miEstado->TagPez = $arrayDatos[1];
             $this->generarDatosGrafica($this->miEstado->temperaturas, $this->miEstado->almacenes);
@@ -772,7 +787,7 @@ Class Controlador{
 
         $txtErr = "";
 
-        /* $txtErr = sprintf(
+         $txtErr = sprintf(
             "idUsuarioLogIn : %s<br>idUsuarioElegido: %s<br>IdLastUser: %s<br>TagPez: %s<br>LastTagPez: %s<br>Estado: %s<br>IdBoton: %s<br>EstadosAnteriores: %s<br>ArrayDatos: %s",
             $this->miEstado->IdUsuarioLogin,
             $this->miEstado->IdUsuarioSeleccionado,
@@ -783,7 +798,7 @@ Class Controlador{
             $this->miEstado->idBoton,
             implode(",", $this->miEstado->EstadosAnteriores),
             json_encode($arrayDatos, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
-        ); */
+        ); 
 
     
 
