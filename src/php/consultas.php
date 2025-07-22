@@ -566,12 +566,19 @@ use Pdo\Sqlite;
 
     }
 
-    function get_tiposAlmacen($IdPropietario){
+    function get_tiposAlmacen($IdPropietario = null){
         try {
             $conn = obtener_conexion();
             if (!$conn) return false;
 
-            $sql = "SELECT * FROM tiposalmacen WHERE IdUsuario = ?;";
+            if ($IdPropietario === null) {
+                // Si no se proporciona IdPropietario, obtenemos todos los tipos de almacén
+                $sql = "SELECT * FROM tiposalmacen;";
+            } else {
+                // Si se proporciona IdPropietario, filtramos por él
+                $sql = "SELECT * FROM tiposalmacen WHERE IdUsuario = ?;";
+            }
+
             $stmt = $conn->prepare($sql);
     
             if (!$stmt) {
@@ -580,7 +587,9 @@ use Pdo\Sqlite;
             }
 
             // Vincular parámetros
-            $stmt->bind_param("i", $IdPropietario);
+            if ($IdPropietario !== null) {
+                $stmt->bind_param("i", $IdPropietario);
+            }
 
             if (!$stmt->execute()) {
                 $stmt->close();

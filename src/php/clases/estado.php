@@ -43,6 +43,8 @@ class Estado{
 
     public $tiposalmacenFiltrados;
 
+    public $tiposalmacenAdmin;
+
     public $capturaDetalle;
 
     public $temperaturas;

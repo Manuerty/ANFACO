@@ -31,7 +31,9 @@ Class Controlador{
         if($ps == -1){
 
 
+
             //limpiar Filtros antes de cambiar de pagina//
+
             if($this -> miEstado -> Estado == 0.25) {
                 $this -> resetFilter($this -> miEstado -> Estado);
             }
@@ -543,10 +545,12 @@ Class Controlador{
         }
         else{
             switch ($data) {
+
                 case 0.25:
                     $this -> miEstado -> tiposalmacenFiltrados = null;
                     break;
                 case 0.5:
+                    $this -> miEstado -> tiposalmacen = $this -> miEstado -> tiposalmacenAdmin;
                     $this -> miEstado -> usuariosFiltrados = null;
                     break;
                 case 2:
@@ -631,7 +635,13 @@ Class Controlador{
                 $pestana = 1;
 
                 if ($this->miEstado->esAdmin) {
-                    $pestana = 0.5;
+
+                    $pestana = 0.0625;
+
+                    $this -> miEstado -> tiposalmacen = get_tiposAlmacen();
+                    $this -> miEstado -> tiposalmacenAdmin = get_tiposAlmacen();
+
+                    
                 } elseif (!$this->miEstado->esArmador) {
 
                     $this -> miEstado -> capturas = get_pescado( $this -> miEstado -> IdUsuarioLogin);
@@ -676,6 +686,11 @@ Class Controlador{
             $usuarios = get_usuarios();
             $this -> miEstado -> usuarios = $usuarios ?: [];
 
+        }
+
+        // Dashboard de administrador
+        elseif ($c === 0.0625 && isset($arrayDatos[0])) {
+                $this->navegarPestanas($arrayDatos[0]);
         }
 
 

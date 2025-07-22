@@ -12,10 +12,15 @@
                 $cabecera = "";
                 $filename = "../html/login.html";
                 break;
+            case 0.0625:
+                $titulo = "Dashboard de Admin";
+                $filename = "../html/dashboardAdmin.html";
+                $OcultarCabecera = 1;
+                break;
             case 0.125 :
                 $titulo = $_SESSION["Controlador"] -> miEstado -> nombreUsuario;
                 $filename = "../html/dashboardComercial.html";
-                $OcultarCabecera = 2;
+                $OcultarCabecera = 1;
                 break;
             case 0.25:
                 $titulo = "Almacenes de " . $_SESSION["Controlador"] -> miEstado -> nombreUsuario;
