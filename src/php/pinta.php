@@ -190,15 +190,58 @@
         }
         $PlantillaModal = $_SESSION["PlantillaModalForm"];
 
-        if ($_SESSION["Controlador"] -> miEstado -> Estado == 0.25){
-            $PlantillaModal = str_replace("%TituloModal%","Creación de Almacén",$PlantillaModal);
 
-            $input .= "<input type='text' class='form-control my-2' id='TxtBoxInputNombreUsuario' placeholder='Nombre del Almacen' required>";
+        // Modal para creación de almacén
+        if ($_SESSION["Controlador"] -> miEstado -> Estado == 0.25){
+
+            $PlantillaModal = str_replace("%TituloModal%","Creación de Almacén",$PlantillaModal);
+            $PlantillaModal = str_replace("%TipoFormulario%", "crear_almacen", $PlantillaModal);
+            
+
+            $input .= "<input type='text' class='form-control my-2' id='TxtBoxInputNombreAlmacen' placeholder='Nombre del Almacen' required>";
+
+            $input .= "<select class='form-control my-2' id='SelectNombreUsuario' required>";
+           
+
+
+            if ($_SESSION["Controlador"] -> miEstado -> EstadosAnteriores[0] == 0.0625){
+                 $input .= "<option value='' disabled selected>Seleccione el Usuario</option>";
+                foreach ($_SESSION["Controlador"] -> miEstado -> usuarios as $usuario) {
+                $input .= "<option value='" . htmlspecialchars($usuario["IdUsuario"]) . "'>" . htmlspecialchars($usuario["NombreUsuario"]) . "</option>";
+            }
+            }
+            else {
+                // Si no es admin, solo mostrar el usuario actual
+                $input .= "<option value='" . htmlspecialchars($_SESSION["Controlador"] -> miEstado -> IdUsuarioSeleccionado) . "'>" . htmlspecialchars($_SESSION["Controlador"] -> miEstado -> nombreUsuario) . "</option>";
+            }
+            
+            $input .= "</select>";
+
+            if ($_SESSION["Controlador"] -> miEstado -> barcos && count($_SESSION["Controlador"] -> miEstado -> barcos) > 0){
+                // Si hay barcos, mostrar el select
+
+                $input .= "<select class='form-control my-2' id='SelectNombreBarco' ;'>";
+                $input .= "<option value='' disabled selected>Seleccione el Barco</option>";
+                foreach ($_SESSION["Controlador"] -> miEstado -> barcos as $barco) {
+                    $input .= "<option value='" . htmlspecialchars($barco["IdBarco"]) . "'>" . htmlspecialchars($barco["Nombre"]) . "</option>";
+                }
+                $input .= "</select>";
+            }
+            else{
+                $input .= "<select class='form-control my-2' id='SelectNombreBarco' style='display: none;'>";
+                    $input .= "<option value='' disabled selected>Seleccione el Barco</option>";
+                    foreach ($_SESSION["Controlador"] -> miEstado -> barcos as $barco) {
+                        $input .= "<option value='" . htmlspecialchars($barco["IdBarco"]) . "'>" . htmlspecialchars($barco["Nombre"]) . "</option>";
+                    }
+                    $input .= "</select>";
+            }
+
         }
 
         //Creación de usuario//
         if ($_SESSION["Controlador"] -> miEstado -> Estado == 0.5){
             $PlantillaModal = str_replace("%TituloModal%","Creación de Usuario",$PlantillaModal);
+            $PlantillaModal = str_replace("%TipoFormulario%", "crear_usuario", $PlantillaModal);
 
             $input = "<label for='TxtBoxInputNombreUsuario'>Nombre de usuario</label>";
             $input .= "<input type='text' class='form-control my-2' id='TxtBoxInputNombreUsuario' placeholder='Nombre de usuario' required>";

@@ -867,6 +867,10 @@ function dibujaGrafica(arraydatos) {
         $('.modal-backdrop').hide();
         let valArray = [];
 
+        // Detectar tipo de formulario
+        const formulario = document.getElementById("FormularioDinamico");
+        const tipoFormulario = formulario?.dataset.formtipo;
+
         
 
         $(".formulario_modal :input").each(function(){
@@ -896,24 +900,29 @@ function dibujaGrafica(arraydatos) {
             'overflow': 'auto',
             'padding-right': '0'
         });
-        if(campoRequeridoVacio == 1){
-            alert("Complete todos los campos");    
-        }else{
+        // Validación general
+        if (campoRequeridoVacio == 1) {
+            alert("Complete todos los campos");
+            return;
+        }
 
-            console.log("valArray",valArray);
-
-            if(valArray[1] != valArray[2]){
-                alert("Las contraseñas no coinciden")
+        // Validaciones específicas según tipo de formulario
+        if (tipoFormulario === "crear_usuario") {
+            // Contraseñas no coinciden
+            if (valArray[1] != valArray[2]) {
+                alert("Las contraseñas no coinciden");
                 erroresEnv = 1;
             }
-            else{
-
-            }
-
-            dibuja_pagina([0,-1,valArray]);
-
+        } else if (tipoFormulario === "crear_almacen") {
+            alert("Almacén creado correctamente");
         }
-            
+      
+
+        if (erroresEnv === 0) {
+            console.log("valArray", valArray);
+            dibuja_pagina([0, -1, valArray]);
+        }
+                
     }
         
         

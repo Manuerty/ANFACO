@@ -657,15 +657,20 @@ use Pdo\Sqlite;
         }
     }
 
-    function insertTipoAlmacen($tipoAlmacen) {
+    function insertTipoAlmacen($tipoAlmacen, $IdPropietario = 2, $IdBarco = null) {
 
-        $NombreTipo = $tipoAlmacen[0];
+        $NombreTipo = $tipoAlmacen;
 
         try {
             $conn = obtener_conexion();
             if (!$conn) return false;
 
-            $sql = "INSERT INTO tiposalmacen (Nombre) VALUES (?)";
+            if ($IdBarco !== null) {
+                $sql = "INSERT INTO tiposalmacen (Nombre, IdUsuario, IdBarco) VALUES (?, ?, ?)";
+            }
+            else {
+                $sql = "INSERT INTO tiposalmacen (Nombre, IdUsuario) VALUES (?, ?)";
+            }
             $stmt = $conn->prepare($sql);
 
             if (!$stmt) {
@@ -674,7 +679,11 @@ use Pdo\Sqlite;
             }
 
             // Vincular parámetros
-            $stmt->bind_param("s", $NombreTipo);
+            if ($IdBarco !== null) {
+                $stmt->bind_param("sii", $NombreTipo, $IdPropietario, $IdBarco);
+            } else {
+                $stmt->bind_param("si", $NombreTipo, $IdPropietario);
+            }
 
             // Ejecutar la consulta
             if (!$stmt->execute()) {

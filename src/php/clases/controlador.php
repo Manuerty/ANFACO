@@ -134,6 +134,7 @@ Class Controlador{
             if ($this -> miEstado -> esAdmin) {
 
                 $usuarios = get_usuarios();
+                $barcos = get_Barcos();
         
             } else {
                 $capturas = get_pescado( $datosSesion[0]);
@@ -550,7 +551,9 @@ Class Controlador{
                     $this -> miEstado -> tiposalmacenFiltrados = null;
                     break;
                 case 0.5:
+                    $this -> miEstado -> IdLastUser = null;
                     $this -> miEstado -> tiposalmacen = $this -> miEstado -> tiposalmacenAdmin;
+                    $this -> miEstado -> barcos = $this -> miEstado -> barcosAdmin;
                     $this -> miEstado -> usuariosFiltrados = null;
                     break;
                 case 2:
@@ -567,8 +570,9 @@ Class Controlador{
     }
 
     function validarForm($arrayDatos) {
-        if ($this->miEstado->Estado == 0.25 && count($arrayDatos) == 1) {
+        if ($this->miEstado->Estado == 0.25 && count($arrayDatos) == 3) {
             $nombretipo = $arrayDatos[0];
+
 
             foreach ($this->miEstado->tiposalmacen as $tipo) {
                 if ($nombretipo === $tipo["NombreTipo"]) {
@@ -639,9 +643,11 @@ Class Controlador{
                     $pestana = 0.0625;
 
                     $this -> miEstado -> tiposalmacen = get_tiposAlmacen();
-                    $this -> miEstado -> tiposalmacenAdmin = get_tiposAlmacen();
+                    $this -> miEstado -> tiposalmacenAdmin = $this -> miEstado -> tiposalmacen ?: [];
+                    $this -> miEstado -> usuarios = get_usuarios();
+                    $this -> miEstado -> barcos = get_Barcos();
+                    $this -> miEstado -> barcosAdmin = $this -> miEstado -> barcos ?: [];
 
-                    
                 } elseif (!$this->miEstado->esArmador) {
 
                     $this -> miEstado -> capturas = get_pescado( $this -> miEstado -> IdUsuarioLogin);
@@ -659,25 +665,73 @@ Class Controlador{
         }
 
         // Creación de tipos de Almacen
-        elseif ($c === 0.25 && isset($arrayDatos[0]) && $arrayDatos[1] == -1 && count($arrayDatos[2]) == 1) {
+        elseif ($c === 0.25 && isset($arrayDatos[0]) && $arrayDatos[1] == -1 && count($arrayDatos[2]) == 3) {
 
-            $resultadoValidacion = $this->validarForm($arrayDatos[2]);
 
-            if ($resultadoValidacion['validado']) {
+            
+        // Formulario si no vienes desde la ventan de administrador
+           if ($this -> miEstado -> EstadosAnteriores[0] != 0.0625) {
 
-                insertTipoAlmacen($arrayDatos[2]); 
-                $tiposAlmacen = get_tiposAlmacen($this->miEstado->IdUsuarioLogin);
-                $this->miEstado->tiposalmacen = $tiposAlmacen ?: [];
 
-            } else {
 
-                $msgError = $resultadoValidacion['mensaje'];
+                $resultadoValidacion = $this->validarForm($arrayDatos[2]);
 
+                if ($resultadoValidacion['validado']) {
+
+                    $nombreTipo = $arrayDatos[2][0];
+                    $idUsuario = $arrayDatos[2][1];
+                    $idBarco = $arrayDatos[2][2];
+
+                    if ($idBarco != null && $idUsuario != null && $idBarco != 0 && $idBarco != ""){
+                        insertTipoAlmacen($nombreTipo, $idUsuario, $idBarco); 
+                    } elseif ($idUsuario != null) {
+                        insertTipoAlmacen($nombreTipo, $idUsuario); 
+                    } 
+
+                    $tiposAlmacen = get_tiposAlmacen($this -> miEstado -> IdUsuarioSeleccionado);
+                    $this->miEstado->tiposalmacen = $tiposAlmacen ?: [];
+
+                } else {
+
+                    $msgError = $resultadoValidacion['mensaje'];
+
+                } 
             }
 
+            // Formulario si vienes desde la ventana de administrador
 
+            else {
+
+                $resultadoValidacion = $this->validarForm($arrayDatos[2]);
+
+                if ($resultadoValidacion['validado']) {
+
+                    $nombreTipo = $arrayDatos[2][0];
+                    $idUsuario = $arrayDatos[2][1];
+                    $idBarco = $arrayDatos[2][2];
+
+                    if ($idBarco != null && $idUsuario != null){
+                        insertTipoAlmacen($nombreTipo, $idUsuario, $idBarco); 
+                    } elseif ($idUsuario != null) {
+                        insertTipoAlmacen($nombreTipo, $idUsuario); 
+                    } 
+
+                    
+                    $tiposAlmacen = get_tiposAlmacen();
+                    $this->miEstado->tiposalmacen = $tiposAlmacen ?: [];
+
+                } else {
+
+                    $msgError = $resultadoValidacion['mensaje'];
+
+                }
+            }
 
         }
+
+
+
+        
 
         // Creación de usuario
         elseif ($c === 0.5 && isset($arrayDatos[0]) && $arrayDatos[1] == -1 && count($arrayDatos[2]) == 5) {

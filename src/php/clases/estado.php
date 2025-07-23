@@ -29,6 +29,8 @@ class Estado{
 
     public $barcos;
 
+    public $barcosAdmin;
+
     public $barcosFiltrados;
 
     public $usuarios;
