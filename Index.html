@@ -1423,17 +1423,30 @@ calendar.render();
         // Listener: seleccionar usuario ⇒ filtra barcos
         if (userSelect) {
             userSelect.addEventListener('change', () => {
-                if (actualizandoDesdeBarco) return; // evitar bucle al venir del cambio inverso
+            if (actualizandoDesdeBarco) return; // evitar bucle al venir del cambio inverso
 
-                const usuarioIdSeleccionado = userSelect.value;
-                const barcosFiltrados = barcos.filter(barco => barco.IdUsuario == usuarioIdSeleccionado);
+            const usuarioIdSeleccionado = userSelect.value;
+            const barcosFiltrados = barcos.filter(barco => barco.IdUsuario == usuarioIdSeleccionado);
 
-                barcoSelect.innerHTML = '';
-                const opcionDefault = document.createElement('option');
-                opcionDefault.value = '';
-                opcionDefault.text = 'Seleccione el Barco';
-                opcionDefault.disabled = true;
-                opcionDefault.selected = true;
+            barcoSelect.innerHTML = '';
+            const opcionDefault = document.createElement('option');
+            opcionDefault.value = '';
+            opcionDefault.text = 'Seleccione el Barco';
+            opcionDefault.disabled = true;
+            opcionDefault.selected = true;
+
+            // Si solo hay un barco, lo seleccionamos automáticamente
+            if (barcosFiltrados.length === 1) {
+                const barcoUnico = barcosFiltrados[0];
+                const option = document.createElement('option');
+                option.value = barcoUnico.IdBarco;
+                option.textContent = barcoUnico.Nombre;
+                option.selected = true;
+
+                barcoSelect.appendChild(option);
+                barcoSelect.disabled = true; // deshabilitamos para evitar cambios
+                barcoSelect.style.display = 'block';
+            } else {
                 barcoSelect.appendChild(opcionDefault);
 
                 barcosFiltrados.forEach(barco => {
@@ -1445,7 +1458,8 @@ calendar.render();
 
                 barcoSelect.disabled = barcosFiltrados.length === 0;
                 barcoSelect.style.display = barcosFiltrados.length === 0 ? 'none' : 'block';
-            });
+            }
+        });
         }
 
         // Listener: seleccionar barco ⇒ selecciona usuario
