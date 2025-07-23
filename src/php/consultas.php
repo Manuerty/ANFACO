@@ -201,7 +201,7 @@ use Pdo\Sqlite;
             $conn = obtener_conexion();
             if (!$conn) return false;
 
-            $sql = "SELECT IdBarco, Nombre, Codigo FROM barcos";
+            $sql = "SELECT IdBarco, Nombre, Codigo, IdUsuario  FROM barcos";
             
             // Si se pasó un IdUsuario, filtramos los datos por ese IdUsuario
             if ($idUsuario) {
@@ -235,6 +235,7 @@ use Pdo\Sqlite;
                     "IdBarco" => $row['IdBarco'],
                     "Nombre" => $row['Nombre'],
                     "CodigoBarco" => $row['Codigo'],
+                    "IdUsuario" => $row['IdUsuario'],
                 ];
             }
     

@@ -667,6 +667,8 @@ Class Controlador{
         // Creación de tipos de Almacen
         elseif ($c === 0.25 && isset($arrayDatos[0]) && $arrayDatos[1] == -1 && count($arrayDatos[2]) == 3) {
 
+            
+
 
             
         // Formulario si no vienes desde la ventan de administrador
@@ -744,6 +746,15 @@ Class Controlador{
 
         // Dashboard de administrador
         elseif ($c === 0.0625 && isset($arrayDatos[0])) {
+                
+
+                $barcos = is_array($this -> miEstado -> barcos) ? $this -> miEstado -> barcos : [];
+                $usuarios = is_array($this -> miEstado -> usuarios) ? $this -> miEstado -> usuarios : [];
+
+                $arrayAuxiliarHtml = ["barcos" => $barcos, "usuarios" => $usuarios];
+                $accionJs = 5;
+
+
                 $this->navegarPestanas($arrayDatos[0]);
         }
 

@@ -119,21 +119,33 @@ async function dibuja_pagina(arrayDatos = []) {
                 type: 'POST',
                 success: function(response) {
                     try {
+
+                        
                         
                         let respuesta = JSON.parse(response);
                         /***************************************/
                         // Si el elemento 2 es 0 pinta la pestaña y luego realiza las acciones correspondientes
                         /***************************************/
+
+                        console.log("Respuesta del servidor:", respuesta);
                         if (respuesta[2] == 0) {
                             let seccionBody = document.getElementById("cuerpo");
-                            if(respuesta[0] != 0 && respuesta[0] != null ){
+                            if (respuesta[0] != 0 && respuesta[0] != null) {
                                 seccionBody.innerHTML = respuesta[0];
-                                enlazarEventosFiltros(); // <-- Añade esto aquí
+
+                                if (respuesta[4] == 5) {
+                                    var barcos = respuesta[3].barcos || [];
+                                    var usuarios = respuesta[3].usuarios || [];
+
+                                    enlazarEventosFiltros(barcos, usuarios); // ✅ solo esta
+                                } else {
+                                    enlazarEventosFiltros(); // ✅ solo si NO tienes datos (por compatibilidad)
+                                }
                             }
                             /***************************************/
                             // Usar Accion s que viene de php para elegir la accion que realizar
                             /***************************************/                   
-                            if (respuesta[4] == 4) {
+                            if (respuesta[4] == 4 ) {
                                 // Esperar a que el DOM se actualice
                                 setTimeout(() => {
                                     const canvasExiste = document.getElementById('graficaTemperatura');
@@ -155,9 +167,6 @@ async function dibuja_pagina(arrayDatos = []) {
                                         console.warn("No se encontró el canvas o los datos están vacíos");
                                     }
                                 }, 100); // Esperar un poco para asegurar que el DOM esté actualizado
-                            }
-                            if (repuesta[4] = 5){
-
                             }
                             CargarMapaFichaje();
                             /***************************************/
@@ -1385,59 +1394,41 @@ calendar.render();
         });
     });
 
-    function enlazarEventosFiltros() {
+    function enlazarEventosFiltros(barcos = [], usuarios = []) {
         const toggleBtn = document.getElementById('toggleAllFilters');
         const secciones = document.querySelectorAll('.seccion-panelDeslizable');
         const detallesCapturas = document.querySelectorAll('#cuerpo details');
 
         if (!toggleBtn) return;
 
-        let estadoExpandido = false; // Sabemos que al inicio están colapsados
+        let estadoExpandido = false;
 
         toggleBtn.addEventListener('click', function () {
             estadoExpandido = !estadoExpandido;
-
-            // Cambiar visibilidad de secciones
             secciones.forEach(section => {
                 section.style.display = estadoExpandido ? 'block' : 'none';
             });
-
-            // Cambiar estado de los <details>
             detallesCapturas.forEach(detail => {
                 detail.open = estadoExpandido;
             });
-
-            // Cambiar texto del botón
             toggleBtn.textContent = estadoExpandido ? 'Contraer Tarjetas' : 'Expandir Tarjetas';
         });
 
-        // --- Aquí agregas el listener para el select de usuarios ---
-        // Listener para el select de usuario en el modal
         const userSelect = document.getElementById('SelectNombreUsuario');
         const barcoSelect = document.getElementById('SelectNombreBarco');
 
-        // Ejemplo: lista de barcos con su usuario asociado (debes adaptarla a tus datos reales)
-        const todosLosBarcos = [
-        { id: 10, nombre: "Barco A", usuarioId: 1 },
-        { id: 11, nombre: "Barco B", usuarioId: 1 },
-        { id: 12, nombre: "Barco C", usuarioId: 2 },
-        { id: 13, nombre: "Barco D", usuarioId: 4 },
-        { id: 14, nombre: "Barco E", usuarioId: 4 },
-        ];
+        // 🔒 Flag de control para evitar loops infinitos
+        let actualizandoDesdeBarco = false;
 
+        // Listener: seleccionar usuario ⇒ filtra barcos
         if (userSelect) {
             userSelect.addEventListener('change', () => {
-                console.log('Usuario seleccionado:', userSelect.value);
+                if (actualizandoDesdeBarco) return; // evitar bucle al venir del cambio inverso
 
                 const usuarioIdSeleccionado = userSelect.value;
+                const barcosFiltrados = barcos.filter(barco => barco.IdUsuario == usuarioIdSeleccionado);
 
-                // Filtrar barcos que correspondan al usuario seleccionado
-                const barcosFiltrados = todosLosBarcos.filter(barco => barco.usuarioId == usuarioIdSeleccionado);
-
-                // Limpiar opciones actuales en barcoSelect
                 barcoSelect.innerHTML = '';
-
-                // Opción por defecto
                 const opcionDefault = document.createElement('option');
                 opcionDefault.value = '';
                 opcionDefault.text = 'Seleccione el Barco';
@@ -1445,28 +1436,42 @@ calendar.render();
                 opcionDefault.selected = true;
                 barcoSelect.appendChild(opcionDefault);
 
-                // Añadir opciones filtradas
                 barcosFiltrados.forEach(barco => {
-                const opcion = document.createElement('option');
-                opcion.value = barco.id;
-                opcion.text = barco.nombre;
-                barcoSelect.appendChild(opcion);
+                    const option = document.createElement('option');
+                    option.value = barco.IdBarco;
+                    option.textContent = barco.Nombre;
+                    barcoSelect.appendChild(option);
                 });
 
-                // Deshabilitar select si no hay barcos para ese usuario
                 barcoSelect.disabled = barcosFiltrados.length === 0;
+                barcoSelect.style.display = barcosFiltrados.length === 0 ? 'none' : 'block';
+            });
+        }
+
+        // Listener: seleccionar barco ⇒ selecciona usuario
+        if (barcoSelect) {
+            barcoSelect.addEventListener('change', () => {
+                const barcoIdSeleccionado = barcoSelect.value;
+                const barcoSeleccionado = barcos.find(barco => barco.IdBarco == barcoIdSeleccionado);
+                if (!barcoSeleccionado) return;
+
+                const usuarioIdPropietario = barcoSeleccionado.IdUsuario;
+
+                // ⚠️ Activamos flag para evitar que el cambio dispare el otro listener
+                actualizandoDesdeBarco = true;
+                userSelect.value = usuarioIdPropietario;
+
+                // Activar el filtro manualmente si hace falta
+                userSelect.dispatchEvent(new Event('change'));
+
+                // 🔓 Quitamos la flag después de un pequeño delay
+                setTimeout(() => { actualizandoDesdeBarco = false; }, 50);
             });
         }
 
 
-        // Listener para el select de barco
-        /* const barcoSelect = document.getElementById('SelectNombreBarco');
-        if (barcoSelect) {
-            barcoSelect.addEventListener('change', () => {
-                console.log('Barco seleccionado:', barcoSelect.value);
-            });
-        } */
     }
+
 
     
 </script>
