@@ -156,6 +156,9 @@ async function dibuja_pagina(arrayDatos = []) {
                                     }
                                 }, 100); // Esperar un poco para asegurar que el DOM esté actualizado
                             }
+                            if (repuesta[4] = 5){
+
+                            }
                             CargarMapaFichaje();
                             /***************************************/
                             // Mostrar mensaje por pantalla
@@ -1407,6 +1410,62 @@ calendar.render();
             // Cambiar texto del botón
             toggleBtn.textContent = estadoExpandido ? 'Contraer Tarjetas' : 'Expandir Tarjetas';
         });
+
+        // --- Aquí agregas el listener para el select de usuarios ---
+        // Listener para el select de usuario en el modal
+        const userSelect = document.getElementById('SelectNombreUsuario');
+        const barcoSelect = document.getElementById('SelectNombreBarco');
+
+        // Ejemplo: lista de barcos con su usuario asociado (debes adaptarla a tus datos reales)
+        const todosLosBarcos = [
+        { id: 10, nombre: "Barco A", usuarioId: 1 },
+        { id: 11, nombre: "Barco B", usuarioId: 1 },
+        { id: 12, nombre: "Barco C", usuarioId: 2 },
+        { id: 13, nombre: "Barco D", usuarioId: 4 },
+        { id: 14, nombre: "Barco E", usuarioId: 4 },
+        ];
+
+        if (userSelect) {
+            userSelect.addEventListener('change', () => {
+                console.log('Usuario seleccionado:', userSelect.value);
+
+                const usuarioIdSeleccionado = userSelect.value;
+
+                // Filtrar barcos que correspondan al usuario seleccionado
+                const barcosFiltrados = todosLosBarcos.filter(barco => barco.usuarioId == usuarioIdSeleccionado);
+
+                // Limpiar opciones actuales en barcoSelect
+                barcoSelect.innerHTML = '';
+
+                // Opción por defecto
+                const opcionDefault = document.createElement('option');
+                opcionDefault.value = '';
+                opcionDefault.text = 'Seleccione el Barco';
+                opcionDefault.disabled = true;
+                opcionDefault.selected = true;
+                barcoSelect.appendChild(opcionDefault);
+
+                // Añadir opciones filtradas
+                barcosFiltrados.forEach(barco => {
+                const opcion = document.createElement('option');
+                opcion.value = barco.id;
+                opcion.text = barco.nombre;
+                barcoSelect.appendChild(opcion);
+                });
+
+                // Deshabilitar select si no hay barcos para ese usuario
+                barcoSelect.disabled = barcosFiltrados.length === 0;
+            });
+        }
+
+
+        // Listener para el select de barco
+        /* const barcoSelect = document.getElementById('SelectNombreBarco');
+        if (barcoSelect) {
+            barcoSelect.addEventListener('change', () => {
+                console.log('Barco seleccionado:', barcoSelect.value);
+            });
+        } */
     }
 
     
