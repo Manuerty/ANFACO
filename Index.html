@@ -89,6 +89,8 @@ var map2;
 var datosAuxiliares = [];
 var cadenaAuxiliar = "";
 var dibujaPaginaBloqueado = false;
+var glb_barcos = [];
+var glb_usuarios = [];
 
 var datos;
 
@@ -134,11 +136,17 @@ async function dibuja_pagina(arrayDatos = []) {
                                 seccionBody.innerHTML = respuesta[0];
 
                                 if (respuesta[4] == 5) {
-                                    var barcos = respuesta[3].barcos || [];
-                                    var usuarios = respuesta[3].usuarios || [];
 
-                                    enlazarEventosFiltros(barcos, usuarios); // ✅ solo esta
+                                    glb_barcos = respuesta[3].barcos || [];
+                                    glb_usuarios = respuesta[3].usuarios || [];
+
+                                    enlazarEventosFiltros(glb_barcos, glb_usuarios); // ✅ solo esta
+                                }
+                                else if(glb_usuarios.length > 0 || glb_barcos.length > 0) {
+                                    // Si hay barcos o usuarios, enlazamos los eventos de los filtros
+                                    enlazarEventosFiltros(glb_barcos, glb_usuarios);  
                                 } else {
+                                    console.log("No se encontraron barcos o usuarios en la respuesta.");
                                     enlazarEventosFiltros(); // ✅ solo si NO tienes datos (por compatibilidad)
                                 }
                             }
@@ -1395,6 +1403,8 @@ calendar.render();
     });
 
     function enlazarEventosFiltros(barcos = [], usuarios = []) {
+        
+
         const toggleBtn = document.getElementById('toggleAllFilters');
         const secciones = document.querySelectorAll('.seccion-panelDeslizable');
         const detallesCapturas = document.querySelectorAll('#cuerpo details');
@@ -1455,7 +1465,8 @@ calendar.render();
                     option.textContent = barco.Nombre;
                     barcoSelect.appendChild(option);
                 });
-
+                console.log("barcosFiltrados", barcosFiltrados);
+                console.log("barcos", barcos);
                 barcoSelect.disabled = barcosFiltrados.length === 0;
                 barcoSelect.style.display = barcosFiltrados.length === 0 ? 'none' : 'block';
             }
