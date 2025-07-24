@@ -595,6 +595,25 @@ Class Controlador{
         ];
     }
 
+    function mergeSinDuplicadosPorIdTipoAlmacen(array $viejos, array $nuevos): array{
+        $index = [];
+
+        foreach ($viejos as $row) {
+            if (isset($row['IdTipoAlmacen'])) {
+                $index[$row['IdTipoAlmacen']] = $row;
+            }
+        }
+
+        foreach ($nuevos as $row) {
+            if (isset($row['IdTipoAlmacen'])) {
+                $index[$row['IdTipoAlmacen']] = $row; // Reemplaza si ya existe
+            }
+        }
+
+        return array_values($index); // Reindexa numéricamente
+    }
+
+
     function generarContenido($arrayDatos = array()) {
 
         //var_dump($arrayDatos);
@@ -679,19 +698,26 @@ Class Controlador{
                 $resultadoValidacion = $this->validarForm($arrayDatos[2]);
 
                 if ($resultadoValidacion['validado']) {
+                    $tiposAlmacenAntiguos = $this->miEstado->tiposalmacenAdmin ?? [];
 
                     $nombreTipo = $arrayDatos[2][0];
-                    $idUsuario = $arrayDatos[2][1];
-                    $idBarco = $arrayDatos[2][2];
+                    $idUsuario  = $arrayDatos[2][1];
+                    $idBarco    = $arrayDatos[2][2];
 
-                    if ($idBarco != null && $idUsuario != null && $idBarco != 0 && $idBarco != ""){
+                    if ($idBarco != null && $idUsuario != null && $idBarco != 0 && $idBarco != "") {
                         insertTipoAlmacen($nombreTipo, $idUsuario, $idBarco); 
                     } elseif ($idUsuario != null) {
                         insertTipoAlmacen($nombreTipo, $idUsuario); 
-                    } 
+                    }
 
-                    $tiposAlmacen = get_tiposAlmacen($this -> miEstado -> IdUsuarioSeleccionado);
-                    $this->miEstado->tiposalmacen = $tiposAlmacen ?: [];
+                    $nuevosTiposAlmacen = get_tiposAlmacen($this->miEstado->IdUsuarioSeleccionado);
+
+                    $this->miEstado->tiposalmacenAdmin = $this->mergeSinDuplicadosPorIdTipoAlmacen(
+                        $tiposAlmacenAntiguos,
+                        $nuevosTiposAlmacen ?: []
+                    );
+
+                    $this->miEstado->tiposalmacen = $nuevosTiposAlmacen ?: [];
 
                 } else {
 

@@ -199,20 +199,24 @@
             
 
             $input .= "<input type='text' class='form-control my-2' id='TxtBoxInputNombreAlmacen' placeholder='Nombre del Almacen' required>";
-
-            $input .= "<select class='form-control my-2' id='SelectNombreUsuario' required>";
-           
-
-
-            if ($_SESSION["Controlador"] -> miEstado -> EstadosAnteriores[0] == 0.0625){
-                 $input .= "<option value='' disabled selected>Seleccione el Usuario</option>";
+        
+            // Si es admin, mostrar todos los usuarios
+            if ($_SESSION["Controlador"] -> miEstado -> EstadosAnteriores[0] == 0.0625 && $_SESSION["Controlador"] -> miEstado -> esAdmin == true){
+                $input .= "<select class='form-control my-2' id='SelectNombreUsuario' required>";
+                $input .= "<option value='' disabled selected>Seleccione el Usuario</option>";
                 foreach ($_SESSION["Controlador"] -> miEstado -> usuarios as $usuario) {
-                $input .= "<option value='" . htmlspecialchars($usuario["IdUsuario"]) . "'>" . htmlspecialchars($usuario["NombreUsuario"]) . "</option>";
+                    $input .= "<option value='" . htmlspecialchars($usuario["IdUsuario"]) . "'>" . htmlspecialchars($usuario["NombreUsuario"]) . "</option>";
+                }
             }
+            elseif ($_SESSION["Controlador"] -> miEstado -> esAdmin == true) {
+                // Si es Admin, pero no es la pantalla de almacenes de admin, mostrar el usuario seleccionado
+                $input .= "<select class='form-control my-2' id='SelectNombreUsuario' disabled required>";
+                $input .= "<option selected value='" . htmlspecialchars($_SESSION["Controlador"] -> miEstado -> IdUsuarioSeleccionado) . "'>" . htmlspecialchars($_SESSION["Controlador"] -> miEstado -> nombreUsuario) . "</option>";
             }
             else {
-                // Si no es admin, solo mostrar el usuario actual
-                $input .= "<option value='" . htmlspecialchars($_SESSION["Controlador"] -> miEstado -> IdUsuarioSeleccionado) . "'>" . htmlspecialchars($_SESSION["Controlador"] -> miEstado -> nombreUsuario) . "</option>";
+                // Si no es admin, mostrar el usuario actual
+                $input .= "<select class='form-control my-2' id='SelectNombreUsuario' disabled required>";
+                $input .= "<option value='" . htmlspecialchars($_SESSION["Controlador"] -> miEstado -> IdUsuarioLogin) . "'>" . htmlspecialchars($_SESSION["Controlador"] -> miEstado -> nombreUsuario) . "</option>";
             }
             
             $input .= "</select>";
