@@ -282,6 +282,8 @@
 
         $arrayDoc = $_SESSION["Controlador"]->miEstado->capturas;
 
+        //var_dump($arrayDoc);
+
         if ($tab == 1) {
 
             $arrayDoc = array_values($arrayDoc); // Asegura índices consecutivos

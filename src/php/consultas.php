@@ -97,14 +97,14 @@ use Pdo\Sqlite;
             if (!$conn) return false;
 
             $sql = "SELECT 
-                        bodegas.IdBodega, bodegas.Zona, bodegas.Especie, bodegas.FechaCaptura, bodegas.TagPez, 
+                        capturas.IdCaptura, capturas.Zona, capturas.Especie, capturas.FechaCaptura, capturas.TagPez, 
                         barcos.Nombre AS Barco, barcos.IdBarco, 
                         UltimaFecha.FechaUltimoAlmacen, UltimaFecha.CuentaAlmacen, UltimaFecha.Fecha_ultimo_comprador,
                         AlmacenUltimoComprador.IdPropietario, UltimoComprador.Usuario AS Comprador,
                         MaxTemperatura.temperaturaMaxima, MaxTemperatura.temperaturaMinima, 
                         AlmacenUltimo.IdTipoAlmacen, tiposalmacen.Nombre, barcos.Codigo, 
                         usuarios.Usuario, Armador.Usuario AS Armador 
-                    FROM bodegas 
+                    FROM capturas 
 
                     LEFT JOIN (
                         SELECT 
@@ -120,7 +120,7 @@ use Pdo\Sqlite;
                             GROUP BY TagPez
                         ) filtro ON a1.TagPez = filtro.TagPez AND a1.Fecha <= filtro.UltimaFechaPropietario
                         GROUP BY a1.TagPez
-                    ) UltimaFecha ON bodegas.TagPez = UltimaFecha.TagPez
+                    ) UltimaFecha ON capturas.TagPez = UltimaFecha.TagPez
 
                     LEFT JOIN (
                         SELECT 
@@ -135,21 +135,21 @@ use Pdo\Sqlite;
                             GROUP BY TagPez
                         ) filtro ON a1.TagPez = filtro.TagPez AND a1.Fecha <= filtro.UltimaFechaPropietario
                         GROUP BY a1.TagPez
-                    ) MaxTemperatura ON MaxTemperatura.TagPez = bodegas.TagPez
+                    ) MaxTemperatura ON MaxTemperatura.TagPez = capturas.TagPez
 
-                    LEFT JOIN barcos ON barcos.IdBarco = bodegas.IdBarco 
+                    LEFT JOIN barcos ON barcos.IdBarco = capturas.IdBarco 
                     LEFT JOIN usuarios ON barcos.IdUsuario = usuarios.IdUsuario
                     LEFT JOIN almacen AlmacenUltimo 
-                        ON AlmacenUltimo.TagPez = bodegas.TagPez AND AlmacenUltimo.Fecha = UltimaFecha.FechaUltimoAlmacen
+                        ON AlmacenUltimo.TagPez = capturas.TagPez AND AlmacenUltimo.Fecha = UltimaFecha.FechaUltimoAlmacen
                     LEFT JOIN almacen AlmacenUltimoComprador 
-                        ON AlmacenUltimoComprador.TagPez = bodegas.TagPez AND AlmacenUltimoComprador.Fecha = UltimaFecha.Fecha_ultimo_comprador
+                        ON AlmacenUltimoComprador.TagPez = capturas.TagPez AND AlmacenUltimoComprador.Fecha = UltimaFecha.Fecha_ultimo_comprador
                     LEFT JOIN tiposalmacen ON tiposalmacen.IdTipoAlmacen = AlmacenUltimo.IdTipoAlmacen
                     LEFT JOIN usuarios UltimoComprador ON UltimoComprador.IdUsuario = AlmacenUltimoComprador.IdPropietario
                     LEFT JOIN usuarios Armador ON Armador.IdUsuario = barcos.IdUsuario
 
                     WHERE EXISTS (
                         SELECT 1 FROM almacen a 
-                        WHERE a.TagPez = bodegas.TagPez AND a.IdPropietario = ?
+                        WHERE a.TagPez = capturas.TagPez AND a.IdPropietario = ?
                     )
 
                     ORDER BY FechaCaptura DESC";
@@ -165,7 +165,7 @@ use Pdo\Sqlite;
 
             while ($row = $result->fetch_assoc()) {
                 $capturas[] = [
-                    'IdBodega'           => $row['IdBodega'],
+                    'IdCaptura'           => $row['IdCaptura'],
                     'Zona'               => $row['Zona'],
                     'Especie'            => $row['Especie'],
                     'FechaCaptura'       => $row['FechaCaptura'],
@@ -516,8 +516,8 @@ use Pdo\Sqlite;
             }
             $sql .= "UNION
                     SELECT FechaCaptura as Fecha, 'Bodega' as LectorRFID, 'Bodega'as Nombre, 0 as IdTipoAlmacen, 0 as Id, NULL as Comprador
-                                            FROM bodegas
-                                            WHERE bodegas.TagPez = ?
+                                            FROM capturas
+                                            WHERE capturas.TagPez = ?
                                             ORDER BY FECHA DESC;";
 
     
