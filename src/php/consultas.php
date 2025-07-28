@@ -506,7 +506,7 @@ use Pdo\Sqlite;
             $conn = obtener_conexion();
             if (!$conn) return false;
     
-            $sql = "SELECT  Fecha, LectorRFID, tiposalmacen.Nombre, tiposalmacen.IdTipoAlmacen, Id, Comprador.Usuario as Comprador
+            $sql = "SELECT  Fecha, tiposalmacen.Nombre, tiposalmacen.IdTipoAlmacen, Id, Comprador.Usuario as Comprador
                             FROM almacen 
                             LEFT JOIN tiposalmacen ON tiposalmacen.IdTipoAlmacen = almacen.IdTipoAlmacen
                             LEFT JOIN usuarios Comprador ON Comprador.IdUsuario = almacen.IdPropietario
@@ -515,7 +515,7 @@ use Pdo\Sqlite;
                 $sql .= " AND almacen.Fecha <= ? ";
             }
             $sql .= "UNION
-                    SELECT FechaCaptura as Fecha, 'Bodega' as LectorRFID, 'Bodega'as Nombre, 0 as IdTipoAlmacen, 0 as Id, NULL as Comprador
+                    SELECT FechaCaptura as Fecha, 'Bodega'as Nombre, 0 as IdTipoAlmacen, 0 as Id, NULL as Comprador
                                             FROM capturas
                                             WHERE capturas.TagPez = ?
                                             ORDER BY FECHA DESC;";
@@ -548,7 +548,6 @@ use Pdo\Sqlite;
             while ($row = $result->fetch_assoc()) {
                 $almacenes[] = [
                     "FechaAlmacen"      => $row["Fecha"],
-                    "Lector"            => $row["LectorRFID"],
                     "NombreTipo"        => $row["Nombre"],
                     "IdTipo"            => $row["IdTipoAlmacen"],
                     "IdAlmacen"         => $row["Id"],
