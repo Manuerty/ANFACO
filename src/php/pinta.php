@@ -472,8 +472,10 @@
                 foreach ($arraydatos as $index => $tipo) {
                     $backgroundColor = ($index % 2 == 0) ? 'background-color: whitesmoke;' : 'background-color: white;';
 
-                    $idTipo = htmlspecialchars($tipo["IdTipoAlmacen"]);
                     $nombreTipo = htmlspecialchars($tipo["NombreTipo"]);
+
+                    
+                    
 
                     $contenido .= "<div class='card p-3 border shadow-sm' style='$backgroundColor margin-bottom: 0;'>";
 
@@ -484,7 +486,24 @@
                     $contenido .= "<details>";
                     $contenido .= "<summary style='cursor: pointer; width: fit-content; list-style-type: disclosure-closed;'></summary>";
                     $contenido .= "<div class='pt-2' style='padding: 10px; font-size: 1.1em;'>";
-                    $contenido .= "<p><span class='text-black'>ID Tipo de Almacén: </span> <strong>$idTipo</strong></p>";
+
+                    if ( $_SESSION["Controlador"] -> miEstado -> esAdmin == true && $_SESSION["Controlador"] -> miEstado -> EstadosAnteriores[0] == 0.0625) {
+
+                        if (isset($tipo["Usuario"]) && $tipo["Usuario"] !== null) {
+                            $contenido .= "<p><span class='text-black'>Propietario: </span> <strong>" . htmlspecialchars($tipo["Usuario"]) . "</strong></p>";
+                        } else {
+                            $contenido .= "<p><span class='text-black'>Propietario: </span> <strong>No asignado</strong></p>";
+                        }
+
+                    }
+                    if (isset($tipo["Barco"]) && $tipo["Barco"] !== null) {
+                        $contenido .= "<p><span class='text-black'>Barco: </span> <strong>" . htmlspecialchars($tipo["Barco"]) . "</strong></p>";
+                    }
+
+                    if (isset($tipo["Tipo"]) && $tipo["Tipo"] !== null) {
+                        $contenido .= "<p><span class='text-black'>Tipo: </span> <strong>" . htmlspecialchars($tipo["Tipo"]) . "</strong></p>";
+                    }
+
                     $contenido .= "</div>";
                     $contenido .= "</details>";
 

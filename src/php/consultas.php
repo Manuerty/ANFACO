@@ -571,13 +571,18 @@ use Pdo\Sqlite;
             $conn = obtener_conexion();
             if (!$conn) return false;
 
-            if ($IdPropietario === null) {
+            
                 // Si no se proporciona IdPropietario, obtenemos todos los tipos de almacén
-                $sql = "SELECT * FROM tiposalmacen;";
-            } else {
+                $sql = "SELECT tiposalmacen.Nombre, usuarios.Usuario, barcos.Nombre as NombreBarco, tiposalmacen.Tipo
+                            FROM tiposalmacen
+                            left join usuarios on tiposalmacen.IdUsuario = usuarios.IdUsuario
+                            left join barcos on tiposalmacen.IdBarco = barcos.IdBarco";
+                            
+            if ($IdPropietario !== null) {
                 // Si se proporciona IdPropietario, filtramos por él
-                $sql = "SELECT * FROM tiposalmacen WHERE IdUsuario = ?;";
+                $sql .= " WHERE tiposalmacen.IdUsuario = ?";
             }
+            
 
             $stmt = $conn->prepare($sql);
     
@@ -603,7 +608,9 @@ use Pdo\Sqlite;
             while ($row = $result->fetch_assoc()) {
                 $almacenes[] = [
                     "NombreTipo"        => $row["Nombre"],
-                    "IdTipoAlmacen"     => $row["IdTipoAlmacen"],
+                    "Usuario"           => $row["Usuario"],
+                    "Barco"             => $row["NombreBarco"],
+                    "Tipo"              => $row["Tipo"],
                 ];
             }
     
