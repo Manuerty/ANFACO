@@ -108,6 +108,7 @@
         }
         if($_SESSION["Controlador"] -> miEstado -> Estado == 0.25){
             $filetext = str_replace("%LineasE%", DibujaTablaGenerica(0.25),$filetext);
+            $filetext = str_replace('<button id="toggleAllFilters" class="btn btn-outline-info btn-sm" style="display: none;">','<button id="toggleAllFilters" class="btn btn-outline-info btn-sm">', $filetext);
         }
 
         if($_SESSION["Controlador"] -> miEstado -> Estado == 0.5){
@@ -197,49 +198,54 @@
             $PlantillaModal = str_replace("%TituloModal%","Creación de Almacén",$PlantillaModal);
             $PlantillaModal = str_replace("%TipoFormulario%", "crear_almacen", $PlantillaModal);
             
-
             $input .= "<input type='text' class='form-control my-2' id='TxtBoxInputNombreAlmacen' placeholder='Nombre del Almacen' required>";
-        
-            // Si es admin, mostrar todos los usuarios
-            if ($_SESSION["Controlador"] -> miEstado -> EstadosAnteriores[0] == 0.0625 && $_SESSION["Controlador"] -> miEstado -> esAdmin == true){
-                $input .= "<select class='form-control my-2' id='SelectNombreUsuario' required>";
-                $input .= "<option value='' disabled selected>Seleccione el Usuario</option>";
-                foreach ($_SESSION["Controlador"] -> miEstado -> usuarios as $usuario) {
-                    $input .= "<option value='" . htmlspecialchars($usuario["IdUsuario"]) . "'>" . htmlspecialchars($usuario["NombreUsuario"]) . "</option>";
+
+            // Si es admin y está en pantalla de almacenes de admin
+            if ($_SESSION["Controlador"] -> miEstado -> EstadosAnteriores[0] == 0.0625 && $_SESSION["Controlador"] -> miEstado -> esAdmin == true) {
+                $input .= "<div class='input-group my-2'>";
+                $input .= "  <select class='form-select border-end-0' id='SelectNombreUsuario' required>";
+                $input .= "    <option value='' disabled selected>Seleccione el Usuario</option>";
+                foreach ($_SESSION["Controlador"]->miEstado->usuarios as $usuario) {
+                    $input .= "    <option value='" . htmlspecialchars($usuario["IdUsuario"]) . "'>" . htmlspecialchars($usuario["NombreUsuario"]) . "</option>";
                 }
+                $input .= "  </select>";
+                $input .= "  <button class='btn btn-outline-secondary border border-start-0' type='button' id='btnClearUsuario'>&times;</button>";
+                $input .= "</div>";
             }
             elseif ($_SESSION["Controlador"] -> miEstado -> esAdmin == true) {
-                // Si es Admin, pero no es la pantalla de almacenes de admin, mostrar el usuario seleccionado
+                // Admin pero fuera de la pantalla de admin de almacenes
                 $input .= "<select class='form-control my-2' id='SelectNombreUsuario' disabled required>";
                 $input .= "<option selected value='" . htmlspecialchars($_SESSION["Controlador"] -> miEstado -> IdUsuarioSeleccionado) . "'>" . htmlspecialchars($_SESSION["Controlador"] -> miEstado -> nombreUsuario) . "</option>";
+                $input .= "</select>";
             }
             else {
-                // Si no es admin, mostrar el usuario actual
+                // No admin
                 $input .= "<select class='form-control my-2' id='SelectNombreUsuario' disabled required>";
                 $input .= "<option value='" . htmlspecialchars($_SESSION["Controlador"] -> miEstado -> IdUsuarioLogin) . "'>" . htmlspecialchars($_SESSION["Controlador"] -> miEstado -> nombreUsuario) . "</option>";
+                $input .= "</select>";
             }
-            
-            $input .= "</select>";
 
-            if ($_SESSION["Controlador"] -> miEstado -> barcos && count($_SESSION["Controlador"] -> miEstado -> barcos) > 0){
-                // Si hay barcos, mostrar el select
-
-                $input .= "<select class='form-control my-2' id='SelectNombreBarco' ;'>";
+            // Si hay barcos, mostrar select + botón X
+            if ($_SESSION["Controlador"] -> miEstado -> barcos && count($_SESSION["Controlador"] -> miEstado -> barcos) > 0) {
+                $input .= "<div class='input-group my-2'>";
+                $input .= "<select class='form-select border-end-0' id='SelectNombreBarco'>";
+                $input .= "<option value='' disabled selected>Seleccione el Barco</option>";
+                foreach ($_SESSION["Controlador"] -> miEstado -> barcos as $barco) {
+                    $input .= "<option value='" . htmlspecialchars($barco["IdBarco"]) . "'>" . htmlspecialchars($barco["Nombre"]) . "</option>";
+                }
+                $input .= "</select>";
+                $input .= "  <button class='btn btn-outline-secondary border border-start-0' type='button' id='btnClearBarco'>&times;</button>";
+                $input .= "</div>";
+            }
+            else {
+                // No hay barcos
+                $input .= "<select class='form-control my-2' id='SelectNombreBarco' style='display: none;'>";
                 $input .= "<option value='' disabled selected>Seleccione el Barco</option>";
                 foreach ($_SESSION["Controlador"] -> miEstado -> barcos as $barco) {
                     $input .= "<option value='" . htmlspecialchars($barco["IdBarco"]) . "'>" . htmlspecialchars($barco["Nombre"]) . "</option>";
                 }
                 $input .= "</select>";
             }
-            else{
-                $input .= "<select class='form-control my-2' id='SelectNombreBarco' style='display: none;'>";
-                    $input .= "<option value='' disabled selected>Seleccione el Barco</option>";
-                    foreach ($_SESSION["Controlador"] -> miEstado -> barcos as $barco) {
-                        $input .= "<option value='" . htmlspecialchars($barco["IdBarco"]) . "'>" . htmlspecialchars($barco["Nombre"]) . "</option>";
-                    }
-                    $input .= "</select>";
-            }
-
         }
 
         //Creación de usuario//
@@ -498,6 +504,9 @@
                     }
                     if (isset($tipo["Barco"]) && $tipo["Barco"] !== null) {
                         $contenido .= "<p><span class='text-black'>Barco: </span> <strong>" . htmlspecialchars($tipo["Barco"]) . "</strong></p>";
+                    }
+                    else {
+                        $contenido .= "<p><span class='text-black'>Ubicación: </span> <strong>Almacen de tierra</strong></p>";
                     }
 
                     if (isset($tipo["Tipo"]) && $tipo["Tipo"] !== null) {

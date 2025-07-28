@@ -1403,8 +1403,6 @@ calendar.render();
     });
 
     function enlazarEventosFiltros(barcos = [], usuarios = []) {
-        
-
         const toggleBtn = document.getElementById('toggleAllFilters');
         const secciones = document.querySelectorAll('.seccion-panelDeslizable');
         const detallesCapturas = document.querySelectorAll('#cuerpo details');
@@ -1426,51 +1424,57 @@ calendar.render();
 
         const userSelect = document.getElementById('SelectNombreUsuario');
         const barcoSelect = document.getElementById('SelectNombreBarco');
+        const btnClearUsuario = document.getElementById('btnClearUsuario'); // ← Añade este botón en tu HTML
+        const btnClearBarco = document.getElementById('btnClearBarco'); // ← Añade este botón en tu HTML
 
-        // 🔒 Flag de control para evitar loops infinitos
         let actualizandoDesdeBarco = false;
 
         // Listener: seleccionar usuario ⇒ filtra barcos
         if (userSelect) {
             userSelect.addEventListener('change', () => {
-            if (actualizandoDesdeBarco) return; // evitar bucle al venir del cambio inverso
+                if (actualizandoDesdeBarco) return;
 
-            const usuarioIdSeleccionado = userSelect.value;
-            const barcosFiltrados = barcos.filter(barco => barco.IdUsuario == usuarioIdSeleccionado);
+                const usuarioIdSeleccionado = userSelect.value;
 
-            barcoSelect.innerHTML = '';
-            const opcionDefault = document.createElement('option');
-            opcionDefault.value = '';
-            opcionDefault.text = 'Seleccione el Barco';
-            opcionDefault.disabled = true;
-            opcionDefault.selected = true;
+                // Filtrar barcos
+                const barcosFiltrados = usuarioIdSeleccionado
+                    ? barcos.filter(barco => barco.IdUsuario == usuarioIdSeleccionado)
+                    : barcos;
 
-            // Si solo hay un barco, lo seleccionamos automáticamente
-            if (barcosFiltrados.length === 1) {
-                const barcoUnico = barcosFiltrados[0];
-                const option = document.createElement('option');
-                option.value = barcoUnico.IdBarco;
-                option.textContent = barcoUnico.Nombre;
-                option.selected = true;
+                barcoSelect.innerHTML = '';
 
-                barcoSelect.appendChild(option);
-                barcoSelect.disabled = true; // deshabilitamos para evitar cambios
-                barcoSelect.style.display = 'block';
-            } else {
-                barcoSelect.appendChild(opcionDefault);
+                const opcionDefault = document.createElement('option');
+                opcionDefault.value = '';
+                opcionDefault.text = 'Seleccione el Barco';
+                opcionDefault.disabled = true;
+                opcionDefault.selected = true;
 
-                barcosFiltrados.forEach(barco => {
+                if (barcosFiltrados.length === 1) {
+                    const barcoUnico = barcosFiltrados[0];
                     const option = document.createElement('option');
-                    option.value = barco.IdBarco;
-                    option.textContent = barco.Nombre;
+                    option.value = barcoUnico.IdBarco;
+                    option.textContent = barcoUnico.Nombre;
+                    option.selected = true;
+
                     barcoSelect.appendChild(option);
-                });
-                console.log("barcosFiltrados", barcosFiltrados);
-                console.log("barcos", barcos);
-                barcoSelect.disabled = barcosFiltrados.length === 0;
-                barcoSelect.style.display = barcosFiltrados.length === 0 ? 'none' : 'block';
-            }
-        });
+                    barcoSelect.disabled = true;
+                    barcoSelect.style.display = 'block';
+                    btnClearBarco.style.display = 'inline-block';  // Mostrar botón
+                } else {
+                    barcoSelect.appendChild(opcionDefault);
+
+                    barcosFiltrados.forEach(barco => {
+                        const option = document.createElement('option');
+                        option.value = barco.IdBarco;
+                        option.textContent = barco.Nombre;
+                        barcoSelect.appendChild(option);
+                    });
+
+                    barcoSelect.disabled = barcosFiltrados.length === 0;
+                    barcoSelect.style.display = barcosFiltrados.length === 0 ? 'none' : 'block';
+                    btnClearBarco.style.display = barcosFiltrados.length === 0 ? 'none' : 'inline-block';  // Mostrar u ocultar
+                }
+            });
         }
 
         // Listener: seleccionar barco ⇒ selecciona usuario
@@ -1482,18 +1486,28 @@ calendar.render();
 
                 const usuarioIdPropietario = barcoSeleccionado.IdUsuario;
 
-                // ⚠️ Activamos flag para evitar que el cambio dispare el otro listener
                 actualizandoDesdeBarco = true;
                 userSelect.value = usuarioIdPropietario;
-
-                // Activar el filtro manualmente si hace falta
                 userSelect.dispatchEvent(new Event('change'));
-
-                // 🔓 Quitamos la flag después de un pequeño delay
                 setTimeout(() => { actualizandoDesdeBarco = false; }, 50);
             });
         }
 
+        // 🎯 Botón X para limpiar usuario
+        if (btnClearUsuario && userSelect) {
+            btnClearUsuario.addEventListener('click', () => {
+                userSelect.selectedIndex = 0;
+                userSelect.dispatchEvent(new Event('change'));
+            });
+        }
+
+        // 🎯 Botón X para limpiar barco
+        if (btnClearBarco && barcoSelect) {
+            btnClearBarco.addEventListener('click', () => {
+                barcoSelect.selectedIndex = 0;
+                barcoSelect.dispatchEvent(new Event('change'));
+            });
+        }
 
     }
 
