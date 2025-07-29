@@ -23,7 +23,11 @@
                 $OcultarCabecera = 2;
                 break;
             case 0.25:
-                $titulo = "Almacenes de " . $_SESSION["Controlador"] -> miEstado -> nombreUsuario;
+                if ($_SESSION["Controlador"] -> miEstado -> EstadosAnteriores[0] == 0.0625){
+                    $titulo = "Lista de Almacenes";
+                } else {
+                    $titulo = "Almacenes de " . $_SESSION["Controlador"] -> miEstado -> nombreUsuario;
+                }
                 $filename = "../html/documentos.html";
                 $OcultarCabecera = 1;
                 break;
@@ -142,6 +146,15 @@
             $filetext .= cargaModal();
         }
 
+        /*  if ($_SESSION["Controlador"] -> miEstado -> Estado == 0.5 || $_SESSION["Controlador"] -> miEstado -> Estado == 2 && $_SESSION["Controlador"] -> miEstado -> esAdmin == true){ */
+        if ($_SESSION["Controlador"] -> miEstado -> Estado == 2  && $_SESSION["Controlador"] -> miEstado -> esAdmin == true){
+
+            $filetext = str_replace('<button id="BtnAnadir" onclick="" class="btn_acciones mb-4" style="display: none;">', '<button id="BtnAnadir" onclick="mostrarModalFormulario()" class="btn_acciones mb-4">', $filetext);
+            $filetext .= cargaModal();
+        }
+
+
+
         return $filetext;
     }
 
@@ -209,7 +222,7 @@
                     $input .= "    <option value='" . htmlspecialchars($usuario["IdUsuario"]) . "'>" . htmlspecialchars($usuario["NombreUsuario"]) . "</option>";
                 }
                 $input .= "  </select>";
-                $input .= "  <button class='btn btn-outline-secondary border border-start-0' type='button' id='btnClearUsuario'>&times;</button>";
+                $input .= "<button type='button' id='btnClearUsuario' class='btn btn-outline-secondary border border-start-0 reset-button'>&times;</button>";
                 $input .= "</div>";
             }
             elseif ($_SESSION["Controlador"] -> miEstado -> esAdmin == true) {
@@ -234,7 +247,7 @@
                     $input .= "<option value='" . htmlspecialchars($barco["IdBarco"]) . "'>" . htmlspecialchars($barco["Nombre"]) . "</option>";
                 }
                 $input .= "</select>";
-                $input .= "  <button class='btn btn-outline-secondary border border-start-0' type='button' id='btnClearBarco'>&times;</button>";
+                $input .= "<button type='button' id='btnClearBarco' class='btn btn-outline-secondary border border-start-0 reset-button'>&times;</button>";
                 $input .= "</div>";
             }
             else {
@@ -274,6 +287,17 @@
                         <option value='Conservero'>Conservero</option>
                     </select>";
 
+
+        }
+
+        //Modal para creación de barco//
+        if ($_SESSION["Controlador"] -> miEstado -> Estado == 2){
+
+            $PlantillaModal = str_replace("%TituloModal%","Creación de Barco",$PlantillaModal);
+            $PlantillaModal = str_replace("%TipoFormulario%", "crear_barco", $PlantillaModal);
+
+            $input .= "<input type='text' class='form-control my-2' id='TxtBoxInputNombreBarco' placeholder='Nombre del Barco' required>";
+            $input .= "<input type='text' class='form-control my-2' id='TxtBoxInputCodigoBarco' placeholder='Código del Barco' required>";
 
         }
 
@@ -736,7 +760,7 @@
                     $ReferenciaAlmacen = $NombreAlmacen;
                     $FechaAlmacen = $Almacenes['FechaAlmacen'] ?? '';
                     $esBodegaDelBarco = ($NombreAlmacen == 'Bodega');
-                    $Comprador = $Almacenes['Comprador'] ?? null;
+                    $Propietario = $Almacenes['Comprador'] ?? null;
                     $colorTexto = isset($mapaColores[$index]) ? $mapaColores[$index] : '#000';
             
                     $contenido .= "<div class='card p-2 border shadow-sm mb-2' style='$backgroundColor'>";
@@ -758,9 +782,9 @@
                     }
                     $contenido .= "<td style='text-align: center; vertical-align: middle; color: $colorTexto;'>$ReferenciaAlmacen</td>";
 
-                    $NombreComprador = ($Comprador != null && $Comprador != "") ? $Comprador : "";
+                    $NombrePropietario = ($Propietario != null && $Propietario != "") ? $Propietario : "";
 
-                    $contenido .= "<td style='text-align: center; vertical-align: middle;'>$NombreComprador</td>";
+                    $contenido .= "<td style='text-align: center; vertical-align: middle;'>$NombrePropietario</td>";
                     $contenido .= "<td style='text-align: center; vertical-align: middle;'>$FechaAlmacen</td>";
 
                     $contenido .= "</tr>";

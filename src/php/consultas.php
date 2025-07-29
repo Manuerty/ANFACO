@@ -708,6 +708,40 @@ use Pdo\Sqlite;
             return false;
         }
     }
+
+    function insertBarco($nombreBarco, $codigoBarco, $IdUsuario) {
+
+        try {
+            $conn = obtener_conexion();
+            if (!$conn) return false;
+
+            $sql = "INSERT INTO barcos (Nombre, Codigo, IdUsuario) VALUES (?, ?, ?)";
+            $stmt = $conn->prepare($sql);
+
+            if (!$stmt) {
+                $conn->close();
+                return false;
+            }
+
+            // Vincular parámetros
+            $stmt->bind_param("ssi", $nombreBarco, $codigoBarco, $IdUsuario);
+
+            // Ejecutar la consulta
+            if (!$stmt->execute()) {
+                $stmt->close();
+                $conn->close();
+                return false;
+            }
+
+            // Cerrar la declaración y la conexión
+            $stmt->close();
+            $conn->close();
+
+            return true;
+        } catch (Exception $e) {
+            return false;
+        }
+    }
     
     
 ?>

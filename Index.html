@@ -893,7 +893,7 @@ function dibujaGrafica(arraydatos) {
 
         
 
-        $(".formulario_modal :input").each(function(){
+        $(".formulario_modal :input").not('.reset-button').each(function() {
             
             let classComprobacion = '#'+ $(this).prop('id') +'_condiciones'; 
             let comprobacion = $(classComprobacion).text();

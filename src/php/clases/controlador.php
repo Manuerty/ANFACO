@@ -490,28 +490,21 @@ Class Controlador{
 
             //BARCOS//
 
-
-
             if(!empty($nombreBarco) && $item['NombreBarco'] != $nombreBarco ){
                     return false;
             }
-
     
-
             //ZONA DE CAPTURA//
 
             if($zonaCaptura != 0 && $item['Zona'] != $zonaCaptura ){
                 return false;
             }
 
-
             //ESPECIE//
 
             if($especieCaptura != 0 && $item['Especie'] != $especieCaptura ){
                 return false;
             }
-
- 
 
             //TAG PEZ//
 
@@ -595,30 +588,28 @@ Class Controlador{
         ];
     }
 
-    function mergeSinDuplicadosPorIdTipoAlmacen(array $viejos, array $nuevos): array{
+    function mergeSinDuplicadosPorNombreTipo(array $viejos, array $nuevos): array {
         $index = [];
 
         foreach ($viejos as $row) {
-            if (isset($row['IdTipoAlmacen'])) {
-                $index[$row['IdTipoAlmacen']] = $row;
+            if (isset($row['NombreTipo'])) {
+                $index[$row['NombreTipo']] = $row;
             }
         }
 
         foreach ($nuevos as $row) {
-            if (isset($row['IdTipoAlmacen'])) {
-                $index[$row['IdTipoAlmacen']] = $row; // Reemplaza si ya existe
+            if (isset($row['NombreTipo'])) {
+                $index[$row['NombreTipo']] = $row; // Reemplaza si ya existe
             }
         }
 
-        return array_values($index); // Reindexa numéricamente
+        return array_values($index);
     }
 
 
     function generarContenido($arrayDatos = array()) {
 
         //var_dump($arrayDatos);
-        
-
 
         $arrayAuxiliarHtml = [];
         $accionJs = null;
@@ -685,20 +676,16 @@ Class Controlador{
 
         // Creación de tipos de Almacen
         elseif ($c === 0.25 && isset($arrayDatos[0]) && $arrayDatos[1] == -1 && count($arrayDatos[2]) == 3) {
-
-            
-
-
             
         // Formulario si no vienes desde la ventan de administrador
            if ($this -> miEstado -> EstadosAnteriores[0] != 0.0625) {
-
-
 
                 $resultadoValidacion = $this->validarForm($arrayDatos[2]);
 
                 if ($resultadoValidacion['validado']) {
                     $tiposAlmacenAntiguos = $this->miEstado->tiposalmacenAdmin ?? [];
+
+
 
                     $nombreTipo = $arrayDatos[2][0];
                     $idUsuario  = $arrayDatos[2][1];
@@ -712,10 +699,12 @@ Class Controlador{
 
                     $nuevosTiposAlmacen = get_tiposAlmacen($this->miEstado->IdUsuarioSeleccionado);
 
-                    $this->miEstado->tiposalmacenAdmin = $this->mergeSinDuplicadosPorIdTipoAlmacen(
-                        $tiposAlmacenAntiguos,
+
+                    $this->miEstado->tiposalmacenAdmin = $this->mergeSinDuplicadosPorNombreTipo(
+                        $tiposAlmacenAntiguos ?: [],
                         $nuevosTiposAlmacen ?: []
                     );
+
 
                     $this->miEstado->tiposalmacen = $nuevosTiposAlmacen ?: [];
 
@@ -727,7 +716,6 @@ Class Controlador{
             }
 
             // Formulario si vienes desde la ventana de administrador
-
             else {
 
                 $resultadoValidacion = $this->validarForm($arrayDatos[2]);
@@ -755,11 +743,7 @@ Class Controlador{
                 }
             }
 
-        }
-
-
-
-        
+        }   
 
         // Creación de usuario
         elseif ($c === 0.5 && isset($arrayDatos[0]) && $arrayDatos[1] == -1 && count($arrayDatos[2]) == 5) {
@@ -767,6 +751,23 @@ Class Controlador{
             insertUsuario($arrayDatos[2]); 
             $usuarios = get_usuarios();
             $this -> miEstado -> usuarios = $usuarios ?: [];
+
+        }
+
+        // Creación de barco
+        elseif ($c === 2 && isset($arrayDatos[0]) && $arrayDatos[1] == -1 && count($arrayDatos[2]) == 2) {
+
+            $nombreBarco = $arrayDatos[2][0];
+            $codigoBarco = $arrayDatos[2][1];
+
+            if ($codigoBarco != null && $nombreBarco != null && $codigoBarco != 0 && $codigoBarco != "") {
+                insertBarco($nombreBarco, $codigoBarco, $this->miEstado->IdUsuarioSeleccionado);
+            } else {
+                $msgError = "El nombre del barco y el código son obligatorios.";
+            }
+
+            $barcos = get_Barcos($this->miEstado->IdUsuarioSeleccionado);
+            $this -> miEstado -> barcos = $barcos ?: [];
 
         }
 
