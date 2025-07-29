@@ -742,6 +742,38 @@ use Pdo\Sqlite;
             return false;
         }
     }
+
+    function get_last_codigo_barco(){
+
+        try {
+            $conn = obtener_conexion();
+            if (!$conn) return false;
+
+            $sql = "SELECT Codigo FROM anfaco.barcos ORDER BY Codigo DESC LIMIT 1;";
+            $stmt = $conn->prepare($sql);
+
+            if (!$stmt) {
+                $conn->close();
+                return false;
+            }
+
+            if (!$stmt->execute()) {
+                $stmt->close();
+                $conn->close();
+                return false;
+            }
+
+            $result = $stmt->get_result();
+            $row = $result->fetch_assoc();
+
+            $stmt->close();
+            $conn->close();
+
+            return isset($row['Codigo']) ? $row['Codigo'] : null;
+        } catch (Exception $e) {
+            return false;
+        }
+    }
     
     
 ?>

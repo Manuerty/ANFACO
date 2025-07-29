@@ -288,6 +288,60 @@ Class Controlador{
         return false; // No se encontró la captura
     }
 
+    function incrementarCodigo($codigo) {
+        // Extrae el signo, el número y la letra
+        preg_match('/^(-?)(\d{8})([A-Z]+)$/i', $codigo, $partes);
+        
+        if (!$partes) {
+            return "Formato inválido";
+        }
+
+        $signo = $partes[1];       // Puede ser "-" o vacío
+        $numero = (int)$partes[2]; // Convertimos a entero para sumar
+        $letra = strtoupper($partes[3]);
+
+        // Incrementamos el número
+        $numero++;
+
+        // Si el número supera 99999999, reiniciamos y avanzamos letra
+        if ($numero > 99999999) {
+            $numero = 0;
+            $letra = $this -> incrementarLetra($letra);
+        }
+
+        // Formateamos de nuevo a 8 dígitos
+        $numeroFormateado = str_pad($numero, 8, '0', STR_PAD_LEFT);
+
+        return $signo . $numeroFormateado . $letra;
+    }
+
+    function incrementarLetra($letra) {
+        $letra = strtoupper($letra);
+        $long = strlen($letra);
+        $abc = range('A', 'Z');
+        $max = count($abc) - 1;
+
+        // Convertimos la letra a un número base 26
+        $num = 0;
+        for ($i = 0; $i < $long; $i++) {
+            $num *= 26;
+            $num += ord($letra[$i]) - ord('A');
+        }
+
+        // Incrementamos
+        $num++;
+
+        // Convertimos de nuevo a base 26 con letras
+        $nuevaLetra = '';
+        do {
+            $resto = $num % 26;
+            $nuevaLetra = chr(ord('A') + $resto) . $nuevaLetra;
+            $num = intdiv($num, 26);
+        } while ($num > 0);
+
+        return $nuevaLetra;
+    }
+
 
     function generarDatosGrafica2($temperaturasVS, $almacenesVS) {
 
@@ -755,10 +809,11 @@ Class Controlador{
         }
 
         // Creación de barco
-        elseif ($c === 2 && isset($arrayDatos[0]) && $arrayDatos[1] == -1 && count($arrayDatos[2]) == 2) {
+        elseif ($c === 2 && isset($arrayDatos[0]) && $arrayDatos[1] == -1 && count($arrayDatos[2]) == 1) {
 
             $nombreBarco = $arrayDatos[2][0];
-            $codigoBarco = $arrayDatos[2][1];
+            $codigoAntiguo = get_last_codigo_barco();
+            $codigoBarco = $this -> incrementarCodigo($codigoAntiguo);
 
             if ($codigoBarco != null && $nombreBarco != null && $codigoBarco != 0 && $codigoBarco != "") {
                 insertBarco($nombreBarco, $codigoBarco, $this->miEstado->IdUsuarioSeleccionado);

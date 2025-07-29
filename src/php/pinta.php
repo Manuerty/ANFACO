@@ -297,7 +297,6 @@
             $PlantillaModal = str_replace("%TipoFormulario%", "crear_barco", $PlantillaModal);
 
             $input .= "<input type='text' class='form-control my-2' id='TxtBoxInputNombreBarco' placeholder='Nombre del Barco' required>";
-            $input .= "<input type='text' class='form-control my-2' id='TxtBoxInputCodigoBarco' placeholder='Código del Barco' required>";
 
         }
 
