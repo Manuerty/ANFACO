@@ -135,21 +135,21 @@
         /*  if ($_SESSION["Controlador"] -> miEstado -> Estado == 0.5 || $_SESSION["Controlador"] -> miEstado -> Estado == 2 && $_SESSION["Controlador"] -> miEstado -> esAdmin == true){ */
         if ($_SESSION["Controlador"] -> miEstado -> Estado == 0.25  && $_SESSION["Controlador"] -> miEstado -> esAdmin == true){
 
-            $filetext = str_replace('<button id="BtnAnadir" onclick="" class="btn_acciones mb-4" style="display: none;">', '<button id="BtnAnadir" onclick="mostrarModalFormulario()" class="btn_acciones mb-4">', $filetext);
+            $filetext = str_replace('<button id="BtnAnadir" onclick="" class="btn_acciones mb-4" style="display: none;">', '<button id="BtnAnadir" onclick="cargarModalFormularioDinamico()" class="btn_acciones mb-4">', $filetext);
             $filetext .= cargaModal();
         }
 
        /*  if ($_SESSION["Controlador"] -> miEstado -> Estado == 0.5 || $_SESSION["Controlador"] -> miEstado -> Estado == 2 && $_SESSION["Controlador"] -> miEstado -> esAdmin == true){ */
         if ($_SESSION["Controlador"] -> miEstado -> Estado == 0.5  && $_SESSION["Controlador"] -> miEstado -> esAdmin == true){
 
-            $filetext = str_replace('<button id="BtnAnadir" onclick="" class="btn_acciones mb-4" style="display: none;">', '<button id="BtnAnadir" onclick="mostrarModalFormulario()" class="btn_acciones mb-4">', $filetext);
+            $filetext = str_replace('<button id="BtnAnadir" onclick="" class="btn_acciones mb-4" style="display: none;">', '<button id="BtnAnadir" onclick="cargarModalFormularioDinamico()" class="btn_acciones mb-4">', $filetext);
             $filetext .= cargaModal();
         }
 
         /*  if ($_SESSION["Controlador"] -> miEstado -> Estado == 0.5 || $_SESSION["Controlador"] -> miEstado -> Estado == 2 && $_SESSION["Controlador"] -> miEstado -> esAdmin == true){ */
         if ($_SESSION["Controlador"] -> miEstado -> Estado == 2  && $_SESSION["Controlador"] -> miEstado -> esAdmin == true){
 
-            $filetext = str_replace('<button id="BtnAnadir" onclick="" class="btn_acciones mb-4" style="display: none;">', '<button id="BtnAnadir" onclick="mostrarModalFormulario()" class="btn_acciones mb-4">', $filetext);
+            $filetext = str_replace('<button id="BtnAnadir" onclick="" class="btn_acciones mb-4" style="display: none;">', '<button id="BtnAnadir" onclick="cargarModalFormularioDinamico()" class="btn_acciones mb-4">', $filetext);
             $filetext .= cargaModal();
         }
 
@@ -491,7 +491,7 @@
                     : "dibuja_pagina([1.5, $idUsuario, " . '"' . $NombreUsuario . '"' . "])";
 
                 $contenido .= "<button type='button' class='btn btn-primary btn-sm' onclick='$onclickEntrar'>Entrar</button>";
-                $contenido .= "<button type='button' class='btn btn-warning btn-sm text-white ms-2' title='Editar' onclick='mostrarModalFormulario(" . '"' . $NombreUsuario . '","' . $ContraseñaUsuario . '","' . $tipoUsuario . '"' . ")'><i class='bi bi-gear'></i></button>";
+                $contenido .= "<button type='button' class='btn btn-warning btn-sm text-white ms-2' title='Editar' onclick='cargarModalFormularioDinamico()'><i class='bi bi-gear'></i></button>";
                 $contenido .= "</div>"; // cierre botones
 
                 $contenido .= "</div>"; // cierre row
