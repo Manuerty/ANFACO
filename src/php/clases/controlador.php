@@ -799,12 +799,31 @@ Class Controlador{
 
         }   
 
-        // Creación de usuario
-        elseif ($c === 0.5 && isset($arrayDatos[0]) && $arrayDatos[1] == -1 && count($arrayDatos[2]) == 5) {
+        // Acciones de usuario
+        elseif ($c === 0.5 && isset($arrayDatos[0]) && $arrayDatos[1] == -1 ) {
 
-            insertUsuario($arrayDatos[2]); 
-            $usuarios = get_usuarios();
-            $this -> miEstado -> usuarios = $usuarios ?: [];
+            // Creación de usuario
+            if (is_array($arrayDatos[2]) && count($arrayDatos[2]) == 5){
+                insertUsuario($arrayDatos[2]); 
+                $usuarios = get_usuarios();
+                $this -> miEstado -> usuarios = $usuarios ?: [];
+            }
+
+            //Eliminación de usuario
+            if (isset($arrayDatos[2]) && is_numeric($arrayDatos[2])) {
+
+                delete_User($arrayDatos[2]); 
+                $usuarios = get_usuarios();
+                $this->miEstado->usuarios = $usuarios ?: [];
+
+            }
+
+            // Actualización de usuario
+            if (is_array($arrayDatos[2]) && count($arrayDatos[2]) == 5) {
+                updateUsuario($arrayDatos[2]);
+                $usuarios = get_usuarios();
+                $this->miEstado->usuarios = $usuarios ?: [];
+            }
 
         }
 

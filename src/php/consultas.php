@@ -774,6 +774,67 @@ use Pdo\Sqlite;
             return false;
         }
     }
+
+    function delete_User($IdUsuario) {
+        try {
+            $conn = obtener_conexion();
+            if (!$conn) return false;
+
+            $sql = "DELETE FROM usuarios WHERE IdUsuario = ?";
+            $stmt = $conn->prepare($sql);
+
+            if (!$stmt) {
+                $conn->close();
+                return false;
+            }
+
+            $stmt->bind_param("i", $IdUsuario);
+
+            if (!$stmt->execute()) {
+                $stmt->close();
+                $conn->close();
+                return false;
+            }
+
+            $stmt->close();
+            $conn->close();
+
+            return true;
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
+    function updateUsuario($usuario) {
+        try {
+            $conn = obtener_conexion();
+            if (!$conn) return false;
+
+            $sql = "UPDATE usuarios SET Usuario = ?, Contrasena = ?, Rol = ? WHERE IdUsuario = ?";
+            $stmt = $conn->prepare($sql);
+
+            if (!$stmt) {
+                $conn->close();
+                return false;
+            }
+
+            // Vincular parámetros
+            $stmt->bind_param("sssi", $usuario[0], $usuario[1], $usuario[4], $usuario[3]);
+
+            if (!$stmt->execute()) {
+                $stmt->close();
+                $conn->close();
+                return false;
+            }
+
+            $stmt->close();
+            $conn->close();
+
+            return true;
+        } catch (Exception $e) {
+            return false;
+        }
+    }
     
     
 ?>

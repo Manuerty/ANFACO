@@ -460,34 +460,41 @@
                     $idUsuario = $usuario["IdUsuario"];
                     $NombreUsuario = $usuario["NombreUsuario"];
                     $tipoUsuario = $usuario["Rol"];
+                    $ContraseñaUsuario = $usuario["Contrasena"];
+
                     $backgroundColor = ($index % 2 == 0) ? 'background-color: whitesmoke;' : 'background-color: white;';
 
                     $contenido .= "<div style='width: 70%; margin: 0 auto;'>"; // Contenedor ahora al 70%
                     $contenido .= "<div class='card p-3 border shadow-sm' style='$backgroundColor margin-bottom: 0;'>";
             
-                    $contenido .= "<div class='row align-items-center'>"; // Usamos row de Bootstrap
-            
-                    // Nombre de usuario
-                    $contenido .= "<div class='col-5'>";
-                    $contenido .= "<p class='card-title mb-0'>" . ($tituloAlternativo ?? "<strong>" . htmlspecialchars($usuario["NombreUsuario"]) . "</strong>") . "</p>";
-                    $contenido .= "</div>";
-            
-                    // Rol de usuario
-                    $contenido .= "<div class='col-4'>";
-                    $contenido .= "<p class='card-text mb-0' style='font-size: 0.825rem;'>" . htmlspecialchars($tipoUsuario) . "</p>";
-                    $contenido .= "</div>";
-            
-                    // Botón
-                    $contenido .= "<div class='col-3 text-end'>";
-                    if ($tipoUsuario == "Armador") {
-                        $contenido .= "<button type='submit' class='btn btn-primary btn-sm' onclick='dibuja_pagina([1, $idUsuario,".'"'.$NombreUsuario.'"'."  ])'>Entrar</button>";
-                    } else {
-                        $contenido .= "<button type='submit' class='btn btn-primary btn-sm' onclick='dibuja_pagina([1.5, $idUsuario,".'"'.$NombreUsuario.'"'." ])'>Entrar</button>";
-                    }
+                    $contenido .= "<div class='row align-items-center'>";
 
-                    $contenido .= "</div>";
-            
-                    $contenido .= "</div>"; // cierre row
+                // Botón Eliminar
+                $contenido .= "<div class='col-auto'>";
+                $contenido .= "<button type='button' class='text-danger border-0 bg-transparent p-0 m-0' title='Eliminar' onclick='if(confirm(\"¿Eliminar este usuario?\")) { dibuja_pagina([1, -1, $idUsuario]); }'>&times;</button>";
+                $contenido .= "</div>";
+
+                // Nombre en su propia columna (col)
+                $contenido .= "<div class='col'>"; 
+                $contenido .= "<strong>" . htmlspecialchars($usuario["NombreUsuario"]) . "</strong>";
+                $contenido .= "</div>";
+
+                // Rol en su propia columna (col)
+                $contenido .= "<div class='col'>";
+                $contenido .= "<span style='font-size: 0.825rem;'>" . htmlspecialchars($tipoUsuario) . "</span>";
+                $contenido .= "</div>";
+
+                // Botones Entrar y Editar alineados a la derecha
+                $contenido .= "<div class='col-auto d-flex justify-content-end'>";
+                $onclickEntrar = ($tipoUsuario == "Armador")
+                    ? "dibuja_pagina([1, $idUsuario, " . '"' . $NombreUsuario . '"' . "])"
+                    : "dibuja_pagina([1.5, $idUsuario, " . '"' . $NombreUsuario . '"' . "])";
+
+                $contenido .= "<button type='button' class='btn btn-primary btn-sm' onclick='$onclickEntrar'>Entrar</button>";
+                $contenido .= "<button type='button' class='btn btn-warning btn-sm text-white ms-2' title='Editar' onclick='mostrarModalFormulario(" . '"' . $NombreUsuario . '","' . $ContraseñaUsuario . '","' . $tipoUsuario . '"' . ")'><i class='bi bi-gear'></i></button>";
+                $contenido .= "</div>"; // cierre botones
+
+                $contenido .= "</div>"; // cierre row
                     
                     $contenido .= "</div>"; // cierre card
                     $contenido .= "</div>"; // cierre contenedor ancho limitado
