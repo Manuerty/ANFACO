@@ -819,10 +819,12 @@ Class Controlador{
             }
 
             // Actualización de usuario
-            if (is_array($arrayDatos[2]) && count($arrayDatos[2]) == 5) {
+            if (is_array($arrayDatos[2]) && count($arrayDatos[2]) == 6) {
+                
                 updateUsuario($arrayDatos[2]);
                 $usuarios = get_usuarios();
                 $this->miEstado->usuarios = $usuarios ?: [];
+
             }
 
         }

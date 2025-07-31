@@ -299,6 +299,7 @@
                         <option value='Administrador'>Administrador</option>
                         <option value='Armador'>Armador</option>
                         <option value='Conservero'>Conservero</option>
+                        <option value='Comercializador'>Comercializador</option>
                     </select>";
 
 
@@ -308,24 +309,25 @@
             $PlantillaModalAux = str_replace("%TipoFormulario%", "editar_usuario", $PlantillaModalAux);
 
             $inputAux = "<label for='TxtBoxInputNombreUsuario'>Nombre de usuario</label>";
-            $inputAux .= "<input type='text' class='form-control my-2' id='TxtBoxInputNombreUsuario' placeholder='Nombre de usuario' required>";
+            $inputAux .= "<input type='text' class='form-control my-2' id='TxtBoxInputNombreUsuarioAux' placeholder='Nombre de usuario' required>";
 
             $inputAux .= "<label for='TxtBoxContraseña'>Contraseña</label>";
-            $inputAux .= "<input type='password' class='form-control my-2' id='TxtBoxContraseña' placeholder='Contraseña' required>";
-            $inputAux .= "<input type='password' class='form-control my-2' id='TxtBoxConfirmarContraseña' placeholder='Confirmar contraseña' required>";
+            $inputAux .= "<input type='password' class='form-control my-2' id='TxtBoxContraseñaAux' placeholder='Contraseña' required>";
+            $inputAux .= "<input type='password' class='form-control my-2' id='TxtBoxConfirmarContraseñaAux' placeholder='Confirmar contraseña' required>";
 
             // Checkbox para mostrar/ocultar contraseña
             $inputAux .= "<div class='form-check my-2'>";
-            $inputAux .= "<input type='checkbox' class='form-check-input' id='MostrarContraseñas'  onclick=\"document.getElementById('TxtBoxContraseña').type = this.checked ? 'text' : 'password'; document.getElementById('TxtBoxConfirmarContraseña').type = this.checked ? 'text' : 'password';\">";
+            $inputAux .= "<input type='checkbox' class='form-check-input' id='MostrarContraseñasAux'  onclick=\"document.getElementById('TxtBoxContraseñaAux').type = this.checked ? 'text' : 'password'; document.getElementById('TxtBoxConfirmarContraseñaAux').type = this.checked ? 'text' : 'password';\">";
             $inputAux .= "<label class='form-check-label' for='MostrarContraseñas'>Mostrar contraseñas</label>";
             $inputAux .= "</div>";
 
-            $inputAux .= "<label for='SelectRol'>Rol</label>";
-            $inputAux .= "<select class='form-control my-2' id='SelectRol' required>
+            $inputAux .= "<label for='SelectRolAux'>Rol</label>";
+            $inputAux .= "<select class='form-control my-2' id='SelectRolAux' required>
                         <option value='' disabled selected>Seleccione un rol</option>
                         <option value='Administrador'>Administrador</option>
                         <option value='Armador'>Armador</option>
                         <option value='Conservero'>Conservero</option>
+                        <option value='Comercializador'>Comercializador</option>
                     </select>";
 
 
@@ -433,12 +435,6 @@
             }
         }
 
-        //Ventana de Conservero//
-        if ($Pestana == 0.5) {
-
-            $arraydatos = ["conservero", "tipo"];
-        }
-
         //Ventana de barcos//
         elseif ($Pestana == 1) {
             if (empty($_SESSION["Controlador"]->miEstado->barcosFiltrados)) {
@@ -493,7 +489,7 @@
             if($Pestana == 0){
 
                 $contenido = "<section style='border: none; box-shadow: none;'>"; // Elimina bordes y sombra
-                $contenido .= "<div style='max-width: 700px; margin: auto;'>"; // Contenedor centrado y limitado
+                $contenido .= "<div style='max-width: 700px; margin: auto; padding-bottom: 100px;'>"; // Contenedor centrado y limitado
                 $contenido .= "<table class='table table-borderless' style='width: 50%; margin: 0 auto;'>"; // Sin bordes y ancho del 50%
             }else{
                 $contenido = "<section>";
@@ -506,7 +502,6 @@
                     $idUsuario = $usuario["IdUsuario"];
                     $NombreUsuario = $usuario["NombreUsuario"];
                     $tipoUsuario = $usuario["Rol"];
-                    $ContraseñaUsuario = $usuario["Contrasena"];
 
                     $backgroundColor = ($index % 2 == 0) ? 'background-color: whitesmoke;' : 'background-color: white;';
 
@@ -515,33 +510,33 @@
             
                     $contenido .= "<div class='row align-items-center'>";
 
-                // Botón Eliminar
-                $contenido .= "<div class='col-auto'>";
-                $contenido .= "<button type='button' class='text-danger border-0 bg-transparent p-0 m-0' title='Eliminar' onclick='if(confirm(\"¿Eliminar este usuario?\")) { dibuja_pagina([1, -1, $idUsuario]); }'>&times;</button>";
-                $contenido .= "</div>";
+                    // Botón Eliminar
+                    $contenido .= "<div class='col-auto'>";
+                    $contenido .= "<button type='button' class='text-danger border-0 bg-transparent p-0 m-0' title='Eliminar' onclick='if(confirm(\"¿Eliminar este usuario?\")) { dibuja_pagina([1, -1, $idUsuario]); }'>&times;</button>";
+                    $contenido .= "</div>";
 
-                // Nombre en su propia columna (col)
-                $contenido .= "<div class='col'>"; 
-                $contenido .= "<strong>" . htmlspecialchars($usuario["NombreUsuario"]) . "</strong>";
-                $contenido .= "</div>";
+                    // Nombre en su propia columna (col)
+                    $contenido .= "<div class='col'>"; 
+                    $contenido .= "<strong>" . htmlspecialchars($usuario["NombreUsuario"]) . "</strong>";
+                    $contenido .= "</div>";
 
-                // Rol en su propia columna (col)
-                $contenido .= "<div class='col'>";
-                $contenido .= "<span style='font-size: 0.825rem;'>" . htmlspecialchars($tipoUsuario) . "</span>";
-                $contenido .= "</div>";
+                    // Rol en su propia columna (col)
+                    $contenido .= "<div class='col'>";
+                    $contenido .= "<span style='font-size: 0.825rem;'>" . htmlspecialchars($tipoUsuario) . "</span>";
+                    $contenido .= "</div>";
 
-                // Botones Entrar y Editar alineados a la derecha
-                $contenido .= "<div class='col-auto d-flex justify-content-end'>";
-                $onclickEntrar = ($tipoUsuario == "Armador")
-                    ? "dibuja_pagina([1, $idUsuario, " . '"' . $NombreUsuario . '"' . "])"
-                    : "dibuja_pagina([1.5, $idUsuario, " . '"' . $NombreUsuario . '"' . "])";
+                    // Botones Entrar y Editar alineados a la derecha
+                    $contenido .= "<div class='col-auto d-flex justify-content-end'>";
+                    $onclickEntrar = ($tipoUsuario == "Armador")
+                        ? "dibuja_pagina([1, $idUsuario, " . '"' . $NombreUsuario . '"' . "])"
+                        : "dibuja_pagina([1.5, $idUsuario, " . '"' . $NombreUsuario . '"' . "])";
 
-                $contenido .= "<button type='button' class='btn btn-primary btn-sm' onclick='$onclickEntrar'>Entrar</button>";
-                $contenido .= "<button type='button' class='btn btn-warning btn-sm text-white ms-2' title='Editar' onclick='cargarModalFormularioDinamico(\"modalFormularioDinamicoAuxiliar\")'><i class='bi bi-gear'></i></button>";
-                $contenido .= "</div>"; // cierre botones
+                    $contenido .= "<button type='button' class='btn btn-primary btn-sm' onclick='$onclickEntrar'>Entrar</button>";
+                    $contenido .= "<button type='button' class='btn btn-warning btn-sm text-white ms-2' data-id='$idUsuario' data-nombre='$NombreUsuario' data-rol='$tipoUsuario' onclick='abrirModalEdicion(this)'><i class='bi bi-gear'></i></button>";
+                    $contenido .= "</div>"; // cierre botones
 
-                $contenido .= "</div>"; // cierre row
-                    
+                    $contenido .= "</div>"; // cierre row
+                        
                     $contenido .= "</div>"; // cierre card
                     $contenido .= "</div>"; // cierre contenedor ancho limitado
                     

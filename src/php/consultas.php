@@ -806,6 +806,10 @@ use Pdo\Sqlite;
     }
 
     function updateUsuario($usuario) {
+        $idUsuario = $usuario[0];
+        $NombreUsuario = $usuario[1];
+        $Contrasena = $usuario[2];
+        $Rol = $usuario[5];   
         try {
             $conn = obtener_conexion();
             if (!$conn) return false;
@@ -819,7 +823,7 @@ use Pdo\Sqlite;
             }
 
             // Vincular parámetros
-            $stmt->bind_param("sssi", $usuario[0], $usuario[1], $usuario[4], $usuario[3]);
+            $stmt->bind_param("sssi", $NombreUsuario, $Contrasena, $Rol, $idUsuario);
 
             if (!$stmt->execute()) {
                 $stmt->close();
