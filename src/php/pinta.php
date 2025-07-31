@@ -194,6 +194,7 @@
     function cargaModal(){
 
         $input = "";
+        $inputAux = "";
 
 
         if(!isset($_SESSION["PlantillaModalForm"])){
@@ -203,6 +204,17 @@
             fclose($fileModal);
         }
         $PlantillaModal = $_SESSION["PlantillaModalForm"];
+
+        
+        if(!isset($_SESSION["PlantillaModalFormAuxiliar"])){
+            $fileModal = fopen('../html/PlantilaModalFormAuxiliar.html', "r");
+            $filesizeModal = filesize('../html/PlantilaModalFormAuxiliar.html');
+            $_SESSION["PlantillaModalFormAuxiliar"] = fread($fileModal, $filesizeModal);
+            fclose($fileModal);
+        }
+
+        $PlantillaModalAux = $_SESSION["PlantillaModalFormAuxiliar"];
+        
 
 
         // Modal para creación de almacén
@@ -263,6 +275,8 @@
 
         //Creación de usuario//
         if ($_SESSION["Controlador"] -> miEstado -> Estado == 0.5){
+
+            //Usar PlatillaModal paraa creación de usuario
             $PlantillaModal = str_replace("%TituloModal%","Creación de Usuario",$PlantillaModal);
             $PlantillaModal = str_replace("%TipoFormulario%", "crear_usuario", $PlantillaModal);
 
@@ -288,6 +302,33 @@
                     </select>";
 
 
+            // Usar PlantillaModalAux para la modificación de usuario
+
+            $PlantillaModalAux = str_replace("%TituloModal%","Edicion de Usuario",$PlantillaModalAux);
+            $PlantillaModalAux = str_replace("%TipoFormulario%", "editar_usuario", $PlantillaModalAux);
+
+            $inputAux = "<label for='TxtBoxInputNombreUsuario'>Nombre de usuario</label>";
+            $inputAux .= "<input type='text' class='form-control my-2' id='TxtBoxInputNombreUsuario' placeholder='Nombre de usuario' required>";
+
+            $inputAux .= "<label for='TxtBoxContraseña'>Contraseña</label>";
+            $inputAux .= "<input type='password' class='form-control my-2' id='TxtBoxContraseña' placeholder='Contraseña' required>";
+            $inputAux .= "<input type='password' class='form-control my-2' id='TxtBoxConfirmarContraseña' placeholder='Confirmar contraseña' required>";
+
+            // Checkbox para mostrar/ocultar contraseña
+            $inputAux .= "<div class='form-check my-2'>";
+            $inputAux .= "<input type='checkbox' class='form-check-input' id='MostrarContraseñas'  onclick=\"document.getElementById('TxtBoxContraseña').type = this.checked ? 'text' : 'password'; document.getElementById('TxtBoxConfirmarContraseña').type = this.checked ? 'text' : 'password';\">";
+            $inputAux .= "<label class='form-check-label' for='MostrarContraseñas'>Mostrar contraseñas</label>";
+            $inputAux .= "</div>";
+
+            $inputAux .= "<label for='SelectRol'>Rol</label>";
+            $inputAux .= "<select class='form-control my-2' id='SelectRol' required>
+                        <option value='' disabled selected>Seleccione un rol</option>
+                        <option value='Administrador'>Administrador</option>
+                        <option value='Armador'>Armador</option>
+                        <option value='Conservero'>Conservero</option>
+                    </select>";
+
+
         }
 
         //Modal para creación de barco//
@@ -300,7 +341,12 @@
 
         }
 
-        return str_replace("%BodyModal%",$input,$PlantillaModal);
+
+        $modalPrincipal = str_replace("%BodyModal%", $input, $PlantillaModal);
+        $modalAuxiliar = str_replace("%BodyModal%", $inputAux ?? '', $PlantillaModalAux ?? '');
+
+        
+        return $modalPrincipal . $modalAuxiliar;
         
     }
 
@@ -491,7 +537,7 @@
                     : "dibuja_pagina([1.5, $idUsuario, " . '"' . $NombreUsuario . '"' . "])";
 
                 $contenido .= "<button type='button' class='btn btn-primary btn-sm' onclick='$onclickEntrar'>Entrar</button>";
-                $contenido .= "<button type='button' class='btn btn-warning btn-sm text-white ms-2' title='Editar' onclick='cargarModalFormularioDinamico()'><i class='bi bi-gear'></i></button>";
+                $contenido .= "<button type='button' class='btn btn-warning btn-sm text-white ms-2' title='Editar' onclick='cargarModalFormularioDinamico(\"modalFormularioDinamicoAuxiliar\")'><i class='bi bi-gear'></i></button>";
                 $contenido .= "</div>"; // cierre botones
 
                 $contenido .= "</div>"; // cierre row

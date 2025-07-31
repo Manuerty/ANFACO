@@ -881,9 +881,10 @@ function dibujaGrafica(arraydatos) {
 
         // Detectar tipo de formulario
         const formulario = document.getElementById("FormularioDinamico");
+        const formularioAuxiliar = document.getElementById("FormularioDinamicoAux");
         const tipoFormulario = formulario?.dataset.formtipo;
+        const tipoFormularioAuxiliar = formularioAuxiliar?.dataset.formtipo;
 
-        
 
         $(".formulario_modal :input").not('.reset-button').each(function() {
             
@@ -925,8 +926,14 @@ function dibujaGrafica(arraydatos) {
                 alert("Las contraseñas no coinciden");
                 erroresEnv = 1;
             }
-        } else if (tipoFormulario === "crear_almacen") {
+        }else if (tipoFormulario === "crear_almacen") {
             alert("Almacén creado correctamente");
+        }
+
+        if (tipoFormularioAuxiliar === "editar_usuario"){
+
+            console.log("Editar usuario con datos:", valArray);
+            
         }
       
 
@@ -1187,10 +1194,11 @@ calendar.render();
         
     }
     
-    function cargarModalFormularioDinamico(nombreFormulario = null,idRegistro = null) {
+    function cargarModalFormularioDinamico(nombreFormulario = null) {
         if (nombreFormulario == null ) {
             $('#modalFormularioDinamico').modal('show');
         }  else {
+            console.log("Cargar modal formulario dinamico: " + nombreFormulario);
             $('#'+nombreFormulario).modal('show');
             
         }
