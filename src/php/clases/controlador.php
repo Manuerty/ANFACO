@@ -499,7 +499,11 @@ Class Controlador{
 
         $tagPezCaptura = $arrayFiltros[7];
 
-        $resultado = array_filter($data, function($item) use ($diaInicio, $diaFin, $temperaturaMin, $temperaturaMax, $fechaInicioLimpia, $fechaFinLimpia, $nombreBarco, $zonaCaptura, $especieCaptura, $tagPezCaptura) {
+        //ALMACEN//
+
+        $almacenCaptura = $arrayFiltros[8];
+
+        $resultado = array_filter($data, function($item) use ($diaInicio, $diaFin, $temperaturaMin, $temperaturaMax, $fechaInicioLimpia, $fechaFinLimpia, $nombreBarco, $zonaCaptura, $especieCaptura, $tagPezCaptura, $almacenCaptura) {
 
             //FECHAS//
 
@@ -563,6 +567,11 @@ Class Controlador{
             //TAG PEZ//
 
             if(!empty($tagPezCaptura) && $tagPezCaptura != $item['TagPez'] ){
+                return false;
+            }
+
+            // ALMACEN //
+            if (!empty($almacenCaptura) && $item['TipoAlmacen'] != $almacenCaptura) {
                 return false;
             }
 
@@ -970,7 +979,7 @@ Class Controlador{
 
         $txtErr = "";
 
-        /* $txtErr = sprintf(
+        $txtErr = sprintf(
             "idUsuarioLogIn : %s<br>idUsuarioElegido: %s<br>IdLastUser: %s<br>TagPez: %s<br>LastTagPez: %s<br>Estado: %s<br>IdBoton: %s<br>EstadosAnteriores: %s<br>ArrayDatos: %s",
             $this->miEstado->IdUsuarioLogin,
             $this->miEstado->IdUsuarioSeleccionado,
@@ -981,7 +990,7 @@ Class Controlador{
             $this->miEstado->idBoton,
             implode(",", $this->miEstado->EstadosAnteriores),
             json_encode($arrayDatos, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
-        );  */
+        ); 
 
     
 

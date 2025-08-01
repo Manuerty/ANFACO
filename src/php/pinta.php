@@ -125,7 +125,7 @@
             $filetext = str_replace("%LineasE%", DibujaTablaGenerica(1),$filetext);
         }
         elseif($_SESSION["Controlador"] -> miEstado -> Estado == 3){
-            $filetext = str_replace(["%LineasE%","%DropdownBarcos%", "%DropdownEspecie%", "%DropdownZonas%"], [DibujaTablaGenerica(2), dibujaOpciones(1), dibujaOpciones(2), dibujaOpciones(3)],$filetext);
+            $filetext = str_replace(["%LineasE%","%DropdownBarcos%", "%DropdownEspecie%", "%DropdownZonas%", "%DropdownAlmacenes%"], [DibujaTablaGenerica(2), dibujaOpciones(1), dibujaOpciones(2), dibujaOpciones(3), dibujaOpciones(4)],$filetext);
             $filetext = str_replace('<button id="toggleAllFilters" class="btn btn-outline-info btn-sm" style="display: none;">','<button id="toggleAllFilters" class="btn btn-outline-info btn-sm">', $filetext);
         }
         elseif($_SESSION["Controlador"] -> miEstado -> Estado == 4){
@@ -353,7 +353,7 @@
     }
 
 
-     function dibujaOpciones($tab = 0){
+    function dibujaOpciones($tab = 0){
 
         $contenido = "";
 
@@ -401,6 +401,18 @@
             }
 
 
+        }
+
+        if ($tab == 4){
+            $arrayDoc = array_values($arrayDoc); // Asegura índices consecutivos
+
+            // Extraer especies únicas
+            $especiesUnicas = array_unique(array_column($arrayDoc, 'TipoAlmacen'));
+            sort($especiesUnicas); // Ordenar alfabéticamente
+
+            foreach ($especiesUnicas as $especie) {
+                $contenido .= '<option value="' . htmlspecialchars($especie) . '">' . htmlspecialchars($especie) . '</option>';
+            }
         }
 
         return $contenido;

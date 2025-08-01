@@ -641,6 +641,9 @@ function dibujaGrafica(arraydatos) {
 
         var IdBarco = document.getElementById("BarcoCaptura").value;
 
+        //ALMACENES//
+        var AlmacenCaptura = document.getElementById("AlmacenCaptura").value;
+
         //ZONA DE CAPTURA//
 
         var ZonaDeCaptura = document.getElementById("ZonaCaptura").value;
@@ -655,9 +658,13 @@ function dibujaGrafica(arraydatos) {
 
 
 
+
+
         //DEVOLUCION DE FILTROS//
 
-        arrayFiltros = [fechaInicioObj, fechaFinObj, tempMin, tempMax, IdBarco, ZonaDeCaptura, Especie, TagPez];
+
+
+        arrayFiltros = [fechaInicioObj, fechaFinObj, tempMin, tempMax, IdBarco, ZonaDeCaptura, Especie, TagPez , AlmacenCaptura];
         console.log("Filtros aplicados:", arrayFiltros);
         // arrayFiltros = [null, null, null, null, $nombreBarco, '0', '0', '']
          //dibuja_pagina([0, 1, arrayFiltros, []]);
