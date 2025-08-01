@@ -568,18 +568,21 @@
 
                     $contenido .= "<div class='card p-3 border shadow-sm' style='$backgroundColor margin-bottom: 0;'>";
 
-                    // Título arriba
-                    $contenido .= "<h5 class='card-title mb-2' style='font-size: 1.125rem;'><strong>$nombreTipo</strong></h5>";
+                    // 🔁 Contenedor flex para título + botón
+                    $contenido .= "<div class='d-flex justify-content-between align-items-center mb-2'>";
 
-                    $contenido .= "<div class='position-relative' style='min-height: 2.5rem;'> 
-                                        <button class='btn btn-outline-primary btn-sm position-absolute top-0 end-0' style='z-index: 10;' onclick='capturasDelAlmacen(\"$nombreTipo\")'>Capturas</button>
-                                    </div>";
+                    // 📍 Nombre del almacén
+                    $contenido .= "<h5 class='card-title mb-0' style='font-size: 1.125rem;'><strong>$nombreTipo</strong></h5>";
 
+                    // 🔘 Botón capturas alineado a la derecha
+                    $contenido .= "<button class='btn btn-outline-primary btn-sm' onclick='capturasDelAlmacen(\"$nombreTipo\")'>Capturas</button>";
 
-                    // Details debajo del título, con triángulo sin texto
+                    $contenido .= "</div>"; // fin d-flex
+
+                    // ⬇️ Resto del contenido (details)
                     $contenido .= "<details>";
                     $contenido .= "<summary style='cursor: pointer; width: fit-content; list-style-type: disclosure-closed;'></summary>";
-                    
+
                     $contenido .= "<div class='pt-2' style='padding: 10px; font-size: 1.1em;'>";
 
                     if ( $_SESSION["Controlador"] -> miEstado -> esAdmin == true && $_SESSION["Controlador"] -> miEstado -> EstadosAnteriores[0] == 0.0625) {
