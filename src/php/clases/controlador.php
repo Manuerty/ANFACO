@@ -360,7 +360,7 @@ Class Controlador{
                     $dataset[] = [
                         "x" => strtotime($temp["FechaTemperatura"]) * 1000,
                         "y" => $temp["ValorTemperatura"],
-                        "almacen" =>  $almacen["NombreTipo"] . $almacen["IdTipo"],
+                        "almacen" =>  $almacen["NombreTipo"],
                     ];
                     break;
                 }
@@ -376,7 +376,7 @@ Class Controlador{
         $datasetAgrupado = [];
 
         foreach ($almacenes as $almacen) {
-            $claveAlmacen = $almacen["NombreTipo"] . $almacen["IdTipo"];
+            $claveAlmacen = $almacen["NombreTipo"];
             $datos = [];
 
             foreach ($temperaturas as $temp) {

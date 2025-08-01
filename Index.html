@@ -264,6 +264,8 @@ function dibujaGrafica(arraydatos) {
         });
     }
 
+    console.log("Datos para la gráfica:", datos);
+
     // === 2. Colores fijos por posición ===
     const coloresPredefinidos = [
         '#1f77b4', // azul
@@ -364,7 +366,7 @@ function dibujaGrafica(arraydatos) {
                             return [
                                 'Fecha: ' + fecha,
                                 'Temperatura: ' + temp + ' °C',
-                                'Almacén: ' + almacen.slice(0,-1)
+                                'Almacén: ' + almacen
                             ];
                         }
                     }
