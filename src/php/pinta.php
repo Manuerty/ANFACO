@@ -575,7 +575,9 @@
                     $contenido .= "<h5 class='card-title mb-0' style='font-size: 1.125rem;'><strong>$nombreTipo</strong></h5>";
 
                     // 🔘 Botón capturas alineado a la derecha
-                    $contenido .= "<button class='btn btn-outline-primary btn-sm' onclick='capturasDelAlmacen(\"$nombreTipo\")'>Capturas</button>";
+                    if ($_SESSION["Controlador"]-> miEstado ->EstadosAnteriores[0] != 0.0625){
+                        $contenido .= "<button class='btn btn-outline-primary btn-sm' onclick='capturasDelAlmacen(\"$nombreTipo\")'>Capturas</button>";
+                    }
 
                     $contenido .= "</div>"; // fin d-flex
 
