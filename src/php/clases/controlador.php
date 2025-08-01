@@ -876,6 +876,17 @@ Class Controlador{
             $this->navegarPestanas($arrayDatos[0]);
         }
 
+        //Vista de almacenes
+        elseif ($c === 0.25 && isset($arrayDatos[0]) && $arrayDatos[0] == 2) {
+            
+            if (!empty($arrayDatos) && $arrayDatos[0] == 2 && $arrayDatos[1] == 1 && isset($arrayDatos[2])) {
+                $arrayFiltrado = $this-> filtrarDesplegable($this -> miEstado -> capturas, $arrayDatos[2]);            
+                $this->miEstado->capturasFiltradas = $arrayFiltrado;
+            }
+
+            $this->navegarPestanas(3);
+        }  
+
         
         // Selección de usuario
         elseif ($c === 0.5 && isset($arrayDatos[0]) && ($arrayDatos[0] == 1 || $arrayDatos[0] == 1.5)) {

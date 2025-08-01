@@ -571,9 +571,15 @@
                     // Título arriba
                     $contenido .= "<h5 class='card-title mb-2' style='font-size: 1.125rem;'><strong>$nombreTipo</strong></h5>";
 
+                    $contenido .= "<div class='position-relative' style='min-height: 2.5rem;'> 
+                                        <button class='btn btn-outline-primary btn-sm position-absolute top-0 end-0' style='z-index: 10;' onclick='capturasDelAlmacen(\"$nombreTipo\")'>Capturas</button>
+                                    </div>";
+
+
                     // Details debajo del título, con triángulo sin texto
                     $contenido .= "<details>";
                     $contenido .= "<summary style='cursor: pointer; width: fit-content; list-style-type: disclosure-closed;'></summary>";
+                    
                     $contenido .= "<div class='pt-2' style='padding: 10px; font-size: 1.1em;'>";
 
                     if ( $_SESSION["Controlador"] -> miEstado -> esAdmin == true && $_SESSION["Controlador"] -> miEstado -> EstadosAnteriores[0] == 0.0625) {
@@ -598,7 +604,7 @@
 
                     $contenido .= "</div>";
                     $contenido .= "</details>";
-
+                    
                     $contenido .= "</div>"; // fin card
                 }
             }else {

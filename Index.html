@@ -676,8 +676,15 @@ function dibujaGrafica(arraydatos) {
     }
 
     function capturasDelBarco(nombreBarco) {
-        arrayFiltros = [null, null, null, null, nombreBarco, '0', '0', '']
+        arrayFiltros = [null, null, null, null, nombreBarco, '0', '0', '', ''];
         console.log("Capturas del barco:", arrayFiltros);
+        dibuja_pagina([2, 1, arrayFiltros, []]);
+    }
+
+
+    function capturasDelAlmacen(nombreAlmacen) {
+        arrayFiltros = [null, null, null, null, '0', '0', '0', '', nombreAlmacen];
+        console.log("Capturas del almacen:", arrayFiltros);
         dibuja_pagina([2, 1, arrayFiltros, []]);
     }
 
