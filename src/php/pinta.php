@@ -522,10 +522,7 @@
             
                     $contenido .= "<div class='row align-items-center'>";
 
-                    // Botón Eliminar
-                    $contenido .= "<div class='col-auto'>";
-                    $contenido .= "<button type='button' class='text-danger border-0 bg-transparent p-0 m-0' title='Eliminar' onclick='if(confirm(\"¿Eliminar este usuario?\")) { dibuja_pagina([1, -1, $idUsuario]); }'>&times;</button>";
-                    $contenido .= "</div>";
+                    
 
                     // Nombre en su propia columna (col)
                     $contenido .= "<div class='col'>"; 
@@ -545,6 +542,10 @@
 
                     $contenido .= "<button type='button' class='btn btn-primary btn-sm' onclick='$onclickEntrar'>Entrar</button>";
                     $contenido .= "<button type='button' class='btn btn-warning btn-sm text-white ms-2' data-id='$idUsuario' data-nombre='$NombreUsuario' data-rol='$tipoUsuario' onclick='abrirModalEdicion(this)'><i class='bi bi-gear'></i></button>";
+                    // Botón Eliminar
+
+                    $contenido .= "<button type='button' class='btn btn-danger btn-sm text-white ms-2' title='Eliminar' onclick='if(confirm(\"¿Eliminar este usuario?\")) { dibuja_pagina([1, -1, $idUsuario]); }'><i class='bi bi-trash'></i></button>";
+
                     $contenido .= "</div>"; // cierre botones
 
                     $contenido .= "</div>"; // cierre row
