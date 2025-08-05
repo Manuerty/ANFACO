@@ -540,12 +540,18 @@
                         ? "dibuja_pagina([1, $idUsuario, " . '"' . $NombreUsuario . '"' . "])"
                         : "dibuja_pagina([1.5, $idUsuario, " . '"' . $NombreUsuario . '"' . "])";
 
-                    $contenido .= "<button type='button' class='btn btn-primary btn-sm' onclick='$onclickEntrar'>Entrar</button>";
-                    $contenido .= "<button type='button' class='btn btn-warning btn-sm text-white ms-2' data-id='$idUsuario' data-nombre='$NombreUsuario' data-rol='$tipoUsuario' onclick='abrirModalEdicion(this)'><i class='bi bi-gear'></i></button>";
+                    $contenido .= "<button type='button' class='btn btn-sm' onclick='$onclickEntrar'>
+                        <img src='img\IconosAcciones\boton_entrar.png' alt='Entrar' style='width: 32px; height: 32px;'>
+                    </button>";
+                    // Botón Editar
+                    $contenido .= "<button type='button' class='btn btn-sm text-white ms-2' data-id='$idUsuario' data-nombre='$NombreUsuario' data-rol='$tipoUsuario' onclick='abrirModalEdicion(this)'>
+                        <img src='img\IconosAcciones\boton_editar.png' alt='Editar' style='width: 32px; height: 32px;'>
+                    </button>";
+
                     // Botón Eliminar
-
-                    $contenido .= "<button type='button' class='btn btn-danger btn-sm text-white ms-2' title='Eliminar' onclick='if(confirm(\"¿Eliminar este usuario?\")) { dibuja_pagina([1, -1, $idUsuario]); }'><i class='bi bi-trash'></i></button>";
-
+                    $contenido .= "<button type='button' class='btn btn-sm text-white ms-2' title='Eliminar' onclick='if(confirm(\"¿Eliminar este usuario?\")) { dibuja_pagina([1, -1, $idUsuario]); }'>
+                        <img src='img\IconosAcciones\boton_eliminar.png' alt='Eliminar' style='width: 32px; height: 32px;'>
+                    </button>";
                     $contenido .= "</div>"; // cierre botones
 
                     $contenido .= "</div>"; // cierre row
