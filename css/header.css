@@ -64,7 +64,7 @@
   all: initial;
   position: fixed;
   right: 13%;
-  bottom: 10px;
+  bottom: 20px;
   cursor: pointer;
   z-index: 999; 
 }

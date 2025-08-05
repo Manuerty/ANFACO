@@ -135,21 +135,21 @@
         /*  if ($_SESSION["Controlador"] -> miEstado -> Estado == 0.5 || $_SESSION["Controlador"] -> miEstado -> Estado == 2 && $_SESSION["Controlador"] -> miEstado -> esAdmin == true){ */
         if ($_SESSION["Controlador"] -> miEstado -> Estado == 0.25  && $_SESSION["Controlador"] -> miEstado -> esAdmin == true){
 
-            $filetext = str_replace('<button id="BtnAnadir" onclick="" class="btn_acciones mb-4" style="display: none;">', '<button id="BtnAnadir" onclick="cargarModalFormularioDinamico()" class="btn_acciones mb-4">', $filetext);
+            $filetext = str_replace('<button id="BtnAnadir" onclick="" class="btn_acciones mb-4" style="display: none;">', '<button id="BtnAnadir" onclick="cargarModalFormularioDinamico()" class="btn_acciones mb-5">', $filetext);
             $filetext .= cargaModal();
         }
 
        /*  if ($_SESSION["Controlador"] -> miEstado -> Estado == 0.5 || $_SESSION["Controlador"] -> miEstado -> Estado == 2 && $_SESSION["Controlador"] -> miEstado -> esAdmin == true){ */
         if ($_SESSION["Controlador"] -> miEstado -> Estado == 0.5  && $_SESSION["Controlador"] -> miEstado -> esAdmin == true){
 
-            $filetext = str_replace('<button id="BtnAnadir" onclick="" class="btn_acciones mb-4" style="display: none;">', '<button id="BtnAnadir" onclick="cargarModalFormularioDinamico()" class="btn_acciones mb-4">', $filetext);
+            $filetext = str_replace('<button id="BtnAnadir" onclick="" class="btn_acciones mb-4" style="display: none;">', '<button id="BtnAnadir" onclick="cargarModalFormularioDinamico()" class="btn_acciones mb-5">', $filetext);
             $filetext .= cargaModal();
         }
 
         /*  if ($_SESSION["Controlador"] -> miEstado -> Estado == 0.5 || $_SESSION["Controlador"] -> miEstado -> Estado == 2 && $_SESSION["Controlador"] -> miEstado -> esAdmin == true){ */
         if ($_SESSION["Controlador"] -> miEstado -> Estado == 2  && $_SESSION["Controlador"] -> miEstado -> esAdmin == true){
 
-            $filetext = str_replace('<button id="BtnAnadir" onclick="" class="btn_acciones mb-4" style="display: none;">', '<button id="BtnAnadir" onclick="cargarModalFormularioDinamico()" class="btn_acciones mb-4">', $filetext);
+            $filetext = str_replace('<button id="BtnAnadir" onclick="" class="btn_acciones mb-4" style="display: none;">', '<button id="BtnAnadir" onclick="cargarModalFormularioDinamico()" class="btn_acciones mb-5">', $filetext);
             $filetext .= cargaModal();
         }
 
