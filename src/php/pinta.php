@@ -517,7 +517,7 @@
 
                     $backgroundColor = ($index % 2 == 0) ? 'background-color: whitesmoke;' : 'background-color: white;';
 
-                    $contenido .= "<div style='width: 70%; margin: 0 auto;'>"; // Contenedor ahora al 70%
+                    $contenido .= "<div class='col-12 col-lg-9 mx-auto'>";
                     $contenido .= "<div class='card p-3 border shadow-sm' style='$backgroundColor margin-bottom: 0;'>";
             
                     $contenido .= "<div class='row align-items-center'>";
@@ -525,17 +525,17 @@
                     
 
                     // Nombre en su propia columna (col)
-                    $contenido .= "<div class='col'>"; 
+                    $contenido .= "<div class='col-4'>"; 
                     $contenido .= "<strong>" . htmlspecialchars($usuario["NombreUsuario"]) . "</strong>";
                     $contenido .= "</div>";
 
                     // Rol en su propia columna (col)
-                    $contenido .= "<div class='col'>";
+                    $contenido .= "<div class='col-3'>";
                     $contenido .= "<span style='font-size: 0.825rem;'>" . htmlspecialchars($tipoUsuario) . "</span>";
                     $contenido .= "</div>";
 
                     // Botones Entrar y Editar alineados a la derecha
-                    $contenido .= "<div class='col-auto d-flex justify-content-end'>";
+                    $contenido .= "<div class='col-5 d-flex justify-content-end'>";
                     $onclickEntrar = ($tipoUsuario == "Armador")
                         ? "dibuja_pagina([1, $idUsuario, " . '"' . $NombreUsuario . '"' . "])"
                         : "dibuja_pagina([1.5, $idUsuario, " . '"' . $NombreUsuario . '"' . "])";
