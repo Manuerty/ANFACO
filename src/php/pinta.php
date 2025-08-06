@@ -686,50 +686,71 @@
     
                     $contenido .= "<div class='d-flex mb-1' style='font-size: 0.825rem;'>";
     
-                    $contenido .= "<div style='flex: 0 0 90%;'>";
+                    $contenido .= "<div class='w-100'>";
+
+                    // Contenedor responsive
+                    $contenido .= "<div class='d-flex flex-column flex-md-row justify-content-between align-items-start'>";
+
+                    // Título (siempre primero)
+                    $contenido .= "<div class='order-1 w-100'>";
                     $contenido .= "<h5 class='card-title mb-0' style='font-size: 1.125rem;'><strong>$tagPez</strong> - $EspecieCapturada</h5>";
-                    $contenido .= "<details style='cursor: pointer; padding-top: 5px;'>";
+                    $contenido .= "</div>";
+
+                    $contenido .= "<div class='order-2 order-md-2 mt-2 mt-md-0 text-center text-md-end'>";
+                    $contenido .= "<div class='d-flex flex-column align-items-center align-items-md-end'>";
+
+                    // Fecha centrada en móvil, derecha en PC
+                    $contenido .= "<div class='$claseFecha' style='font-size: 1.125rem; white-space: nowrap; margin-bottom: 0.3rem;'>"
+                            . date('d/m/Y H:i', strtotime($FechaCaptura)) . "</div>";
+
+                    // Botón: izquierda en móvil, centrado debajo de la fecha en PC
+                    $contenido .= "<a title='Ver detalles completos' onclick='dibuja_pagina([3,\"$refPez\"])' class='me-auto mx-md-auto'>";
+                    $contenido .= "<img src='Img/DetallesCaptura.png' alt='Ver detalles' style='width: 40px; height: 27px; cursor: pointer; border: none;'>";
+                    $contenido .= "</a>";
+
+                    $contenido .= "</div>"; // fin interno
+                    $contenido .= "</div>"; // fin contenedor fecha + botón
+
+                    $contenido .= "</div>"; // fin flex container
+
+                    // Sección DETAILS (siempre al final)
+                    $contenido .= "<details  style='cursor: pointer;'>";
                     $contenido .= "<summary style='font-size: 1.2rem; font-weight: bold; padding-left: 0;'></summary>";
-    
+
                     $contenido .= "<div class='pt-2' style='padding: 10px; font-size: 1.25em;'>";
-                    $contenido .= "<div class='row g-3'>";
-    
-                    $contenido .= "<div class='col'>";
-                    $contenido .= "<p><span class='text-black'>Zona: </span> <span class='font-weight-bold'><strong>$ZonaCaptura</strong></span></p>";
-                    $contenido .= "<p><span class='text-black'>Barco: </span> <span class='font-weight-bold'><strong>$NombreBarcoCaptura</strong></span></p>";
-                    $contenido .= "<p><span class='text-black'>Armador: </span> <span class='font-weight-bold'><strong>$Armador</strong></span></p>";
-                    $contenido .= "</div>";
-    
-                    $contenido .= "<div class='col'>";
-                    $contenido .= "<p><span class='text-black'>Almacenes visitados: </span> <span class='font-weight-bold'><strong>$TotalAlmacenes</strong></span></p>";
-                    $contenido .= "<p><span class='text-black'>Último Almacén: </span> <span class='font-weight-bold'><strong>$tipoUltimoAlmacen </strong></span></p>";
-                    if($NombreComprador != null){   
-                        $contenido .= "<p><span class='text-black'>Propietario: </span> <span class='font-weight-bold'><strong>$NombreComprador</strong></span></p>";
-                    }
-                    $contenido .= "</div>";
-    
-                    $contenido .= "<div class='col'>";
+
+                    // Grid con una columna en móvil, tres en escritorio
+                    $contenido .= "<div class='row row-cols-1 row-cols-md-3 g-3'>";
+
+                    // 1a fila
+                    $contenido .= "<div><p><span class='text-black'>Zona: </span> <strong>$ZonaCaptura</strong></p></div>";
+                    $contenido .= "<div><p><span class='text-black'>Almacenes visitados: </span> <strong>$TotalAlmacenes</strong></p></div>";
+                    $contenido .= "<div>";
                     if (!empty($fechaUltimaTemperatura)) {
-                        $contenido .= "<p><span class='text-black'>Última Fecha: </span> <span class='font-weight-bold'><strong>" . date('d/m/Y H:i', strtotime($fechaUltimaTemperatura)) . "</strong></span></p>";
+                        $contenido .= "<p><span class='text-black'>Última Fecha: </span> <strong>" . date('d/m/Y H:i', strtotime($fechaUltimaTemperatura)) . "</strong></p>";
                     }
-                    $contenido .= "<p><span class='text-black'>Temp: </span> <span class='$claseTemperaturaMinima'><span class='font-weight-bold'><strong>" . $temperaturaMinima . "°C</span></span><span> / </span> <span class='$claseTemperaturaMaxima'><span class='font-weight-bold'>" . $temperaturaMaxima . "°C</strong></span></span></p>";
                     $contenido .= "</div>";
-    
+
+                    // 2a fila
+                    $contenido .= "<div><p><span class='text-black'>Barco: </span> <strong>$NombreBarcoCaptura</strong></p></div>";
+                    $contenido .= "<div><p><span class='text-black'>Último Almacén: </span> <strong>$tipoUltimoAlmacen</strong></p></div>";
+                    $contenido .= "<div><p><span class='text-black'>Temp: </span> <span class='$claseTemperaturaMinima'><strong>" . $temperaturaMinima . "°C</strong></span> / <span class='$claseTemperaturaMaxima'><strong>" . $temperaturaMaxima . "°C</strong></span></p></div>";
+
+                    // 3a fila
+                    $contenido .= "<div><p><span class='text-black'>Armador: </span> <strong>$Armador</strong></p></div>";
+                    $contenido .= "<div>";
+                    if ($NombreComprador != null) {
+                        $contenido .= "<p><span class='text-black'>Propietario: </span> <strong>$NombreComprador</strong></p>";
+                    }
+                    $contenido .= "</div>";
+                    $contenido .= "<div></div>"; // celda vacía para completar la fila
+
                     $contenido .= "</div>"; // fin row
                     $contenido .= "</div>"; // fin contenido colapsable
                     $contenido .= "</details>"; // fin details
-                    $contenido .= "</div>"; // fin columna izquierda
-    
-                    $contenido .= "<div class='d-flex flex-column align-items-end' style='flex: 0 0 10%;'>";
-                    $contenido .= "<div class='$claseFecha' style='font-size: 1.125rem; text-align: right; white-space: nowrap; margin-bottom: 0.3rem;'>" . date('d/m/Y H:i', strtotime($FechaCaptura)) . "</div>";
 
-                    $contenido .= "<div style='width: fit-content; margin: 0 auto;'>";
-                    $contenido .= "<a title='Ver detalles completos' onclick='dibuja_pagina([3,".'"'.$refPez.'"'." ])'>";
-                    $contenido .= "<img src='Img/DetallesCaptura.png' alt='Ver detalles' style='width: 40px; height: 27px; cursor: pointer; border: none; display: block;'>";
-                    $contenido .= "</a>";
-                    $contenido .= "</div>";
+                    $contenido .= "</div>"; // fin contenedor general
 
-                    $contenido .= "</div>"; // fin columna derecha
                     $contenido .= "</div>"; // fin cabecera
                     $contenido .= "</div>"; // fin tarjeta
                 }
