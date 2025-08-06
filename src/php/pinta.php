@@ -813,7 +813,8 @@
                 $contenido .= "<div class='row' style='width: 100%; flex-grow: 1;'>";
             
                 // Columna izquierda
-                $contenido .= "<div class='col-md-4' style='display: flex; flex-direction: column; height: 100%;'>";
+                // Versión escritorio (visible solo en md y superiores)
+                $contenido .= "<div class='d-none d-md-block col-md-4' style='display: flex; flex-direction: column; height: 100%;'>";
                 $contenido .= "<div class='card p-3 border shadow-sm mb-3' style='flex-shrink: 0; height:100%'>";
                 $contenido .= "<h5><strong> $tagPez - $EspecieCapturada</strong></h5>";
                 $contenido .= "<p>Fecha de Captura: <strong>" . date('d/m/Y H:i', strtotime($FechaCaptura)) . "</strong></p>";
@@ -828,7 +829,27 @@
 
                 $contenido .= "<p><span class='text-black'>Temp: </span> <span class='$claseTemperaturaMinima'><strong>" . $temperaturaMinimaCaptura . "°C</strong></span><span> / </span> <span class='$claseTemperaturaMaxima'><strong>" . $temperaturaMaximaCaptura . "°C</strong></span></p>";
 
-                
+                $contenido .= "</div>";
+                $contenido .= "</div>";
+
+
+                // Versión móvil (visible solo en xs y sm)
+                // Sin height 100%, display block para adaptar altura al contenido
+                $contenido .= "<div class='d-block d-md-none col-12' style='display: block; height: auto;'>";
+                $contenido .= "<div class='card p-3 border shadow-sm mb-3' style='flex-shrink: 0; height:auto;'>";
+                $contenido .= "<h5><strong> $tagPez - $EspecieCapturada</strong></h5>";
+                $contenido .= "<p>Fecha de Captura: <strong>" . date('d/m/Y H:i', strtotime($FechaCaptura)) . "</strong></p>";
+                $contenido .= "<p>Barco:<strong> $NombreBarcoCaptura</strong></p>";
+                $contenido .= "<p><span class='text-black'>Armador del Barco: </span> <strong>$Armador</strong></p>";
+                $contenido .= "<p>Zona:<strong> $ZonaCaptura</strong></p>";
+                $contenido .= "<p><span class='text-black'>Almacén Actual: </span> <strong>$tipoUltimoAlmacenCaptura</strong></p>";
+
+                if($NombreComprador != null){
+                    $contenido .= "<p><span class='text-black'>Propietario: </span> <strong>$NombreComprador</strong></p>";
+                }
+
+                $contenido .= "<p><span class='text-black'>Temp: </span> <span class='$claseTemperaturaMinima'><strong>" . $temperaturaMinimaCaptura . "°C</strong></span><span> / </span> <span class='$claseTemperaturaMaxima'><strong>" . $temperaturaMaximaCaptura . "°C</strong></span></p>";
+
                 $contenido .= "</div>";
                 $contenido .= "</div>";
             
@@ -869,7 +890,7 @@
                     } else {
                         if($idBotonAnterior == $idAlmacen){
                             $contenido .= "<td style='text-align: center; vertical-align: middle;'>
-                                            <button onclick='filtrarAlmacen()' class='btn btn-primary btn-sm'>Deselecionar</button>
+                                            <button onclick='filtrarAlmacen()' class='btn btn-primary btn-sm'>X</button>
                                         </td>";
                         }
                         else{
