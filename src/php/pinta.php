@@ -897,7 +897,12 @@
                     $contenido .= "<table class='table table-borderless mb-0' style='table-layout: fixed; width: 100%;'>";
                     $contenido .= "<tr>";
                     if ($esBodegaDelBarco) {
-                        $contenido .= "<td style='text-align: center; vertical-align: middle;'>Bodega</td>";
+                        $contenido .= "<td style='text-align: center; vertical-align: middle;'>
+                                            <button type='button' class='btn btn-sm btn-outline-success'
+                                                onclick='seleccionarTodosLosToggles()'>
+                                                Seleccionar todos
+                                            </button>
+                                        </td>";
                     } else {
                         $contenido .= "<td style='text-align: center; vertical-align: middle;'>
                                             <div class='form-check form-switch'>
@@ -907,6 +912,10 @@
                                                     checked
                                                     onchange='toggleTramo(\"$idAlmacen\", \"$colorTexto\", this.checked)'>
                                             </div>
+                                            <button type='button' class='btn btn-sm btn-outline-primary mt-1'
+                                                onclick='seleccionarSoloEste(\"$idAlmacen\")'>
+                                                Solo este
+                                            </button>
                                         </td>";
 
 

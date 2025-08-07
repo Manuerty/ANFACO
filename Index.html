@@ -571,6 +571,48 @@ function dibujaGrafica(arraydatos) {
         actualizarConAlmacenesActivos();
     }
 
+
+    function seleccionarSoloEste(idAlmacenSeleccionado) {
+        const toggles = document.querySelectorAll('.form-check-input[type="checkbox"]');
+
+        almacenesActivos.clear();
+        coloresPorAlmacen.clear();
+
+        toggles.forEach(toggle => {
+            const idAlmacen = toggle.id.replace('toggle_', '');
+            if (idAlmacen === idAlmacenSeleccionado) {
+                toggle.checked = true;
+                const color = toggle.dataset.color || '#000000';
+                almacenesActivos.add(idAlmacen);
+                coloresPorAlmacen.set(idAlmacen, color);
+            } else {
+                toggle.checked = false;
+            }
+        });
+
+        actualizarConAlmacenesActivos();
+    }
+
+    function seleccionarTodosLosToggles() {
+        const toggles = document.querySelectorAll('.form-check-input[type="checkbox"]');
+
+        almacenesActivos.clear();
+        coloresPorAlmacen.clear();
+
+        toggles.forEach(toggle => {
+            toggle.checked = true;
+
+            const idAlmacen = toggle.id.replace('toggle_', '');
+            const color = toggle.dataset.color || '#000000';
+
+            almacenesActivos.add(idAlmacen);
+            coloresPorAlmacen.set(idAlmacen, color);
+        });
+
+        actualizarConAlmacenesActivos();
+    }
+
+
     function actualizarConAlmacenesActivos() {
 
         let listaIds;
