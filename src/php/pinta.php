@@ -904,18 +904,19 @@
                                             </button>
                                         </td>";
                     } else {
-                        $contenido .= "<td style='text-align: center; vertical-align: middle;'>
-                                            <div class='form-check form-switch'>
+                        $contenido .= "<td style='text-align: center; vertical-align: middle; display: flex; align-items: center; justify-content: center; gap: 6px;'>
+                                            <button type='button' class='btn btn-sm btn-outline-primary'
+                                                onclick='seleccionarSoloEste(\"$idAlmacen\")'>
+                                                Solo este
+                                            </button>
+
+                                            <div class='form-check form-switch m-0'>
                                                 <input class='form-check-input' type='checkbox' role='switch'
                                                     id='toggle_$idAlmacen'
                                                     data-color='$colorTexto'
                                                     checked
                                                     onchange='toggleTramo(\"$idAlmacen\", \"$colorTexto\", this.checked)'>
                                             </div>
-                                            <button type='button' class='btn btn-sm btn-outline-primary mt-1'
-                                                onclick='seleccionarSoloEste(\"$idAlmacen\")'>
-                                                Solo este
-                                            </button>
                                         </td>";
 
 
