@@ -96,6 +96,13 @@ var datos;
 
 var ctx;
 
+let myChart = null;
+
+// Set global para almacenar IDs activos
+const almacenesActivos = new Set();
+
+// También un Map para guardar colores por id, para no perderlos
+const coloresPorAlmacen = new Map();
 
 //arrayDatos(ElContenidoHtml[0],ElMensajedeError[1],Accion[2],ArrayAuxiliar[3],$accionJs)
 async function dibuja_pagina(arrayDatos = []) {
@@ -163,6 +170,8 @@ async function dibuja_pagina(arrayDatos = []) {
                                         // Verificamos si la gráfica ya fue pintada
                                         if (!canvasExiste.hasAttribute('data-pintada') || canvasExiste.getAttribute('data-pintada') !== 'true') {
                                             // Si no ha sido pintada, dibujamos la gráfica
+
+                                            console.log("Pintando la gráfica con los datos:", respuesta[3]);
                                 
                                             dibujaGrafica(respuesta[3]);
 
@@ -223,6 +232,11 @@ async function dibuja_pagina(arrayDatos = []) {
 
 function dibujaGrafica(arraydatos) {
 
+
+    if (!arraydatos || !arraydatos.datos || !arraydatos.datos.graficaTemperatura) {
+        console.error("Datos de gráfica inválidos o incompletos:", arraydatos);
+        return;
+    }
     const dataset = arraydatos.datos;
     const colores = (arraydatos.color || []).slice().reverse();
 
@@ -332,7 +346,13 @@ function dibujaGrafica(arraydatos) {
         return;
     }
 
-    const myChart = new Chart(ctx, {
+    // ⚠️ Destruir gráfico previo si existe
+    if (myChart) {
+        myChart.destroy();
+    }
+
+    // Crear nuevo gráfico
+    myChart = new Chart(ctx, {
         type: 'line',
         data: {
             datasets: [{
@@ -520,15 +540,46 @@ function dibujaGrafica(arraydatos) {
         const idBoton = id;  // asignar correctamente el valor
         filtrarAlmacenes(seleccionado, idBoton);
     }
+  
 
+    function toggleTramo(idAlmacen, color, isChecked) {
+        if (isChecked) {
+            almacenesActivos.add(idAlmacen);
+            coloresPorAlmacen.set(idAlmacen, color);
+        } else {
+            almacenesActivos.delete(idAlmacen);
+            coloresPorAlmacen.delete(idAlmacen);
+        }
+
+        actualizarConAlmacenesActivos();
+    }
+
+
+    function actualizarConAlmacenesActivos() {
+        let listaIds;
+        let listaColores;
+
+        if (almacenesActivos.size === 0) {
+            // Cuando no hay almacenes activos, en vez de activar todos, 
+            // limpia la gráfica (o muestra un mensaje), sin modificar toggles ni sets.
+            listaIds = [];
+            listaColores = [];
+            // O, si quieres mostrar todos por defecto, hazlo sólo una vez, no siempre aquí.
+        } else {
+            listaIds = Array.from(almacenesActivos);
+            listaColores = listaIds.map(id => coloresPorAlmacen.get(id) || '#000000');
+        }
+
+        const listaConColor = listaIds.map((id, i) => id + '  ' + listaColores[i]);
+
+        filtrarAlmacenes(listaConColor);
+    }
 
 
 
     function filtrarAlmacenes(listaConColor = [], idBoton = 0) {
         const listaIds = [];
         const listaColores = [];
-
-
 
         listaConColor.forEach(item => {
             const [id, color] = item.split('  ');
@@ -537,10 +588,47 @@ function dibujaGrafica(arraydatos) {
         });
 
         if (listaIds.length === 0) {
-            dibuja_pagina([0, 0, '', []]);
+            // Opcional: podrías limpiar la gráfica o mostrar mensaje
+            console.log("No hay IDs seleccionados.");
         } else {
-            // Aquí pasas ambos arrays si lo necesitas
-            dibuja_pagina([0, 0, listaIds, [listaColores, idBoton]]);
+            // Solo actualizar la gráfica, sin redibujar toda la página
+            actualizarGraficaAlmacenes(listaIds, listaColores, idBoton);
+        }
+    }
+
+
+
+    async function actualizarGraficaAlmacenes(listaIds = [], listaColores = [], idBoton = 0) {
+
+        const canvas = document.getElementById('graficaTemperatura');
+        if (!canvas) {
+            console.warn("Canvas 'graficaTemperatura' no encontrado. ¿Está cargado el DOM?");
+            return;
+        }
+        try {
+            const response = await fetch('src/php/index.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({
+                    accion: 'actualizarGrafica',
+                    ids: JSON.stringify(listaIds),
+                    colores: JSON.stringify(listaColores),
+                    idBoton: idBoton
+                })
+            });
+
+            const data = await response.json();
+            console.log("Datos recibidos para la gráfica:", data);
+
+            const canvas = document.getElementById('graficaTemperatura');
+            if (canvas) {
+                // Elimina gráfica anterior, si la hay
+                canvas.removeAttribute('data-pintada');
+                dibujaGrafica(data); // <-- Aquí pintas con los datos recibidos
+                canvas.setAttribute('data-pintada', 'true');
+            }
+        } catch (error) {
+            console.error("Error al actualizar la gráfica:", error);
         }
     }
 

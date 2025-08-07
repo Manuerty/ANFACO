@@ -899,16 +899,17 @@
                     if ($esBodegaDelBarco) {
                         $contenido .= "<td style='text-align: center; vertical-align: middle;'>Bodega</td>";
                     } else {
-                        if($idBotonAnterior == $idAlmacen){
-                            $contenido .= "<td style='text-align: center; vertical-align: middle;'>
-                                            <button onclick='filtrarAlmacen()' class='btn btn-primary btn-sm'>X</button>
-                                        </td>";
-                        }
-                        else{
                         $contenido .= "<td style='text-align: center; vertical-align: middle;'>
-                                            <button onclick='filtrarAlmacenSeleccionado(\"$idAlmacen\", \"$colorTexto\")' class='btn btn-primary btn-sm'>Mostrar</button>
+                                            <div class='form-check form-switch'>
+                                                <input class='form-check-input' type='checkbox' role='switch'
+                                                    id='toggle_$idAlmacen'
+                                                    data-color='$colorTexto'
+                                                    checked
+                                                    onchange='toggleTramo(\"$idAlmacen\", \"$colorTexto\", this.checked)'>
+                                            </div>
                                         </td>";
-                        }
+
+
                     }
                     $contenido .= "<td style='text-align: center; vertical-align: middle; color: $colorTexto;'>$ReferenciaAlmacen</td>";
 

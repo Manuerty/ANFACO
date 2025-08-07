@@ -363,7 +363,7 @@ Class Controlador{
         $this -> miEstado -> dataset = $dataset;
     } 
     
-    function generarDatosGrafica($temperaturasVS, $almacenesVS) {
+    public function generarDatosGrafica($temperaturasVS, $almacenesVS) {
         $temperaturas = $temperaturasVS;
         $almacenes = $almacenesVS;
 
@@ -392,9 +392,13 @@ Class Controlador{
 
         $dataset = array_reverse($datasetAgrupado);
 
-
+        // Guardas en estado si lo necesitas para otra parte
         $this->miEstado->dataset = $dataset;
+
+        // 🔁 Devuelves directamente para el frontend
+        return $dataset;
     }
+
 
     function filtrarSimple($filtro, $pestana){
 
