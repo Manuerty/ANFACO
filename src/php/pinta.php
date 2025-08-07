@@ -338,7 +338,7 @@
                         <option value='Administrador'>Administrador</option>
                         <option value='Armador'>Armador</option>
                         <option value='Conservero'>Conservero</option>
-                        <option value='Comercializador'>Comercializador</option>
+                        <option value='Intermediario'>Intermediario</option>
                     </select>";
 
 
@@ -530,45 +530,46 @@
 
                     $contenido .= "<div class='col-12 col-lg-9 mx-auto'>";
                     $contenido .= "<div class='card p-3 border shadow-sm' style='$backgroundColor margin-bottom: 0;'>";
-            
+
+                    // Row general
                     $contenido .= "<div class='row align-items-center'>";
 
-                    
-
-                    // Nombre en su propia columna (col)
-                    $contenido .= "<div class='col-4'>"; 
+                    // Nombre (col-6 en xs, col-4 en lg)
+                    $contenido .= "<div class='col-6 col-lg-4'>";
                     $contenido .= "<strong>" . htmlspecialchars($usuario["NombreUsuario"]) . "</strong>";
                     $contenido .= "</div>";
 
-                    // Rol en su propia columna (col)
-                    $contenido .= "<div class='col-3'>";
-                    $contenido .= "<span style='font-size: 0.825rem;'>" . htmlspecialchars($tipoUsuario) . "</span>";
+                    // Rol (col-6 en xs, col-3 en lg) con texto alineado a la izquierda en xs y centrado en lg
+                    $contenido .= "<div class='col-6 col-lg-3 d-flex align-items-center justify-content-end justify-content-lg-center' style='font-size: 0.825rem;'>";
+                    $contenido .= htmlspecialchars($tipoUsuario);
                     $contenido .= "</div>";
 
-                    // Botones Entrar y Editar alineados a la derecha
-                    $contenido .= "<div class='col-5 d-flex justify-content-end'>";
+                    // Botones (col-12 en xs, col-5 en lg) con flex justify-content-start en xs y justify-content-lg-end en lg, sin padding izquierda en xs
+                    $contenido .= "<div class='col-12 col-lg-5 d-flex justify-content-start justify-content-lg-end mt-2 mt-lg-0 ps-0'>";
+
                     $onclickEntrar = ($tipoUsuario == "Armador")
                         ? "dibuja_pagina([1, $idUsuario, " . '"' . $NombreUsuario . '"' . "])"
                         : "dibuja_pagina([1.5, $idUsuario, " . '"' . $NombreUsuario . '"' . "])";
 
                     $contenido .= "<button type='button' class='btn btn-sm' onclick='$onclickEntrar'>
-                        <img src='img\IconosAcciones\boton_entrar.png' alt='Entrar' style='width: 32px; height: 32px;'>
+                        <img src='img/IconosAcciones/boton_entrar.png' alt='Entrar' style='width: 32px; height: 32px;'>
                     </button>";
-                    // Botón Editar
+
                     $contenido .= "<button type='button' class='btn btn-sm text-white ms-2' data-id='$idUsuario' data-nombre='$NombreUsuario' data-rol='$tipoUsuario' onclick='abrirModalEdicion(this)'>
-                        <img src='img\IconosAcciones\boton_editar.png' alt='Editar' style='width: 32px; height: 32px;'>
+                        <img src='img/IconosAcciones/boton_editar.png' alt='Editar' style='width: 32px; height: 32px;'>
                     </button>";
 
-                    // Botón Eliminar
                     $contenido .= "<button type='button' class='btn btn-sm text-white ms-2' title='Eliminar' onclick='if(confirm(\"¿Eliminar este usuario?\")) { dibuja_pagina([1, -1, $idUsuario]); }'>
-                        <img src='img\IconosAcciones\boton_eliminar.png' alt='Eliminar' style='width: 32px; height: 32px;'>
+                        <img src='img/IconosAcciones/boton_eliminar.png' alt='Eliminar' style='width: 32px; height: 32px;'>
                     </button>";
-                    $contenido .= "</div>"; // cierre botones
 
-                    $contenido .= "</div>"; // cierre row
-                        
-                    $contenido .= "</div>"; // cierre card
-                    $contenido .= "</div>"; // cierre contenedor ancho limitado
+                    $contenido .= "</div>"; // fin botones
+
+                    $contenido .= "</div>"; // fin row
+                    $contenido .= "</div>"; // fin card
+                    $contenido .= "</div>"; // fin contenedor ancho limitado
+
+
                     
                 }
             }
