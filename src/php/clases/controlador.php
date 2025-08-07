@@ -27,13 +27,11 @@ Class Controlador{
     }
 
     function navegarPestanas($ps){
+
         //volver a la anterior
         if($ps == -1){
 
-
-
             //limpiar Filtros antes de cambiar de pagina//
-
             if($this -> miEstado -> Estado == 0.25) {
                 $this -> resetFilter($this -> miEstado -> Estado);
             }
@@ -50,11 +48,9 @@ Class Controlador{
                 $this -> resetFilter($this -> miEstado -> Estado);
             }
 
-
             //salir del modo formulario
             $estadoAnterior = array_shift($this->miEstado->EstadosAnteriores);
             $this->miEstado->Estado = $estadoAnterior;
-
 
            // Verificar estado y reinicializar según el caso
            //Reiniciar todas las variables si vas al log in
@@ -81,8 +77,6 @@ Class Controlador{
             // Reinicialización común
             $this->miEstado->nombreDocumentoPadre = null;
             $this->miEstado->IdPropietario = null;
-
- 
             
             // Imprimir en el log del servidor
             error_log('nombreDocumentoPadre: ' . $this->miEstado->nombreDocumentoPadre);
@@ -93,7 +87,7 @@ Class Controlador{
             array_unshift($this->miEstado->EstadosAnteriores , $this->miEstado->Estado);
             $this->miEstado->Estado = $ps;
         }
-    
+
         // Reinicializar otras variables
         $this->miEstado->CadenaFiltro = null;
         $this->miEstado->IdsTiposFiltro = array();
@@ -694,6 +688,11 @@ Class Controlador{
             $this->cerrarSesion();
             $this->navegarPestanas(0);
         }
+
+        //Pantalla sobre Nosotros
+        if (isset($arrayDatos[0], $arrayDatos[1]) && $arrayDatos[0] == -1 && $arrayDatos[1] == 10.25) {
+            $this->navegarPestanas(10.25);
+        }
     
         // Botón volver
         elseif (isset($arrayDatos[0]) && $arrayDatos[0] == -1) {
@@ -985,7 +984,7 @@ Class Controlador{
             $this->miEstado->capturasFiltradas = $arrayFiltrado;
             
         }
-        
+
         
 
         $txtErr = "";
@@ -1001,7 +1000,7 @@ Class Controlador{
             $this->miEstado->idBoton,
             implode(",", $this->miEstado->EstadosAnteriores),
             json_encode($arrayDatos, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
-        );  */
+        );   */
 
     
 

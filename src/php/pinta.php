@@ -60,6 +60,11 @@
                 $filename = "../html/documentos.html";
                 $OcultarCabecera = 2;
                 break;
+            case 10.25:
+                $titulo = "Sobre Nosotros";
+                $filename = "../html/documentos.html";
+                $OcultarCabecera = 2;
+                break;
         }
 
         if ($cabecera != ""){
@@ -130,6 +135,12 @@
         }
         elseif($_SESSION["Controlador"] -> miEstado -> Estado == 4){
             $filetext = str_replace("%LineasE%", DibujaTablaGenerica(3),$filetext);
+        }
+        elseif($_SESSION["Controlador"] -> miEstado -> Estado == 10.25){
+            $filetext = str_replace("%LineasE%", sobreNosotros(), $filetext);
+            $filetext = str_replace("%TituloModal%","Sobre Nosotros",$filetext);
+            $filetext = str_replace("%TipoFormulario%", "sobre_nosotros", $filetext);
+            $filetext = str_replace("%BodyModal%", "<p>Información sobre el proyecto y sus objetivos.</p>", $filetext);
         }
 
         /*  if ($_SESSION["Controlador"] -> miEstado -> Estado == 0.5 || $_SESSION["Controlador"] -> miEstado -> Estado == 2 && $_SESSION["Controlador"] -> miEstado -> esAdmin == true){ */
@@ -299,7 +310,7 @@
                         <option value='Administrador'>Administrador</option>
                         <option value='Armador'>Armador</option>
                         <option value='Conservero'>Conservero</option>
-                        <option value='Comercializador'>Comercializador</option>
+                        <option value='Intermediario'>Intermediario</option>
                     </select>";
 
 
@@ -929,6 +940,35 @@
 
     function safe_html($value) {
         return htmlspecialchars($value ?? '', ENT_QUOTES, 'UTF-8');
+    }
+
+    function sobreNosotros(){
+        $contenido = '
+    <div class="container text-center my-4">
+        <h2 class="mb-4" style="color: #007fa3;">Sobre Nosotros</h2>
+
+        <h5 class="mb-3 fw-bold">Nombre del reto:</h5>
+        <p class="mb-4">
+            Sensor/Dispositivo para Trazabilidad y Medición de Parámetros en Túnidos
+        </p>
+
+        <div class="row justify-content-center align-items-center g-4">
+            <div class="col-6 col-md-4">
+                <img src="Img/ANFACO_CYTMA.png" alt="Logo ANFACO" class="img-fluid" style="max-height: 120px;  transform: scale(1.4);">
+            </div>
+            <div class="col-6 col-md-4">
+                <img src="Img/Uvigo_logo.png" alt="Logo UVigo" class="img-fluid" style="max-height: 120px;">
+            </div>
+            <br/>
+            <div class="col-12 mt-3">
+                <h5 class="fw-bold">Diseñado por:</h5>
+                <img src="Img/esquio_logo.png" alt="Logo Esquío" class="img-fluid" style="max-height: 120px;">
+            </div>
+        </div>
+    </div>
+';
+
+        return $contenido;
     }
     
     
