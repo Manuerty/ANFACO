@@ -98,12 +98,6 @@ var ctx;
 
 let myChart = null;
 
-// Set global para almacenar IDs activos
-const almacenesActivos = new Set();
-
-// También un Map para guardar colores por id, para no perderlos
-const coloresPorAlmacen = new Map();
-
 //arrayDatos(ElContenidoHtml[0],ElMensajedeError[1],Accion[2],ArrayAuxiliar[3],$accionJs)
 async function dibuja_pagina(arrayDatos = []) {
     console.log(arrayDatos);
@@ -160,7 +154,7 @@ async function dibuja_pagina(arrayDatos = []) {
                             /***************************************/
                             // Usar Accion s que viene de php para elegir la accion que realizar
                             /***************************************/                   
-                            if (respuesta[4] == 4 ) {
+                            if (respuesta[4] == 4) {
                                 // Esperar a que el DOM se actualice
                                 setTimeout(() => {
                                     const canvasExiste = document.getElementById('graficaTemperatura');
@@ -170,12 +164,14 @@ async function dibuja_pagina(arrayDatos = []) {
                                         // Verificamos si la gráfica ya fue pintada
                                         if (!canvasExiste.hasAttribute('data-pintada') || canvasExiste.getAttribute('data-pintada') !== 'true') {
                                             // Si no ha sido pintada, dibujamos la gráfica
-
                                             console.log("Pintando la gráfica con los datos:", respuesta[3]);
-                                
+
                                             dibujaGrafica(respuesta[3]);
 
-                                            // Marcamos el canvas como "pintado"
+                                            // ✅ Inicializar almacenes activos después de pintar
+                                            inicializarAlmacenesActivos();
+
+                                            // Marcar como pintada
                                             canvasExiste.setAttribute('data-pintada', 'true');
                                         } else {
                                             console.log("La gráfica ya ha sido pintada previamente.");
@@ -185,6 +181,7 @@ async function dibuja_pagina(arrayDatos = []) {
                                     }
                                 }, 100); // Esperar un poco para asegurar que el DOM esté actualizado
                             }
+
                             CargarMapaFichaje();
                             /***************************************/
                             // Mostrar mensaje por pantalla
@@ -540,7 +537,26 @@ function dibujaGrafica(arraydatos) {
         const idBoton = id;  // asignar correctamente el valor
         filtrarAlmacenes(seleccionado, idBoton);
     }
-  
+
+
+    const almacenesActivos = new Set();
+    const coloresPorAlmacen = new Map();
+
+    function inicializarAlmacenesActivos() {
+        const toggles = document.querySelectorAll('.form-check-input[type="checkbox"]:checked');
+
+        almacenesActivos.clear();
+        coloresPorAlmacen.clear();
+
+        toggles.forEach(toggle => {
+            const idAlmacen = toggle.id.replace('toggle_', '');
+            const color = toggle.dataset.color || '#000000';
+            almacenesActivos.add(idAlmacen);
+            coloresPorAlmacen.set(idAlmacen, color);
+        });
+
+        actualizarConAlmacenesActivos();
+    }
 
     function toggleTramo(idAlmacen, color, isChecked) {
         if (isChecked) {
@@ -551,20 +567,18 @@ function dibujaGrafica(arraydatos) {
             coloresPorAlmacen.delete(idAlmacen);
         }
 
+
         actualizarConAlmacenesActivos();
     }
 
-
     function actualizarConAlmacenesActivos() {
+
         let listaIds;
         let listaColores;
 
         if (almacenesActivos.size === 0) {
-            // Cuando no hay almacenes activos, en vez de activar todos, 
-            // limpia la gráfica (o muestra un mensaje), sin modificar toggles ni sets.
             listaIds = [];
             listaColores = [];
-            // O, si quieres mostrar todos por defecto, hazlo sólo una vez, no siempre aquí.
         } else {
             listaIds = Array.from(almacenesActivos);
             listaColores = listaIds.map(id => coloresPorAlmacen.get(id) || '#000000');
@@ -574,8 +588,6 @@ function dibujaGrafica(arraydatos) {
 
         filtrarAlmacenes(listaConColor);
     }
-
-
 
     function filtrarAlmacenes(listaConColor = [], idBoton = 0) {
         const listaIds = [];
@@ -588,10 +600,8 @@ function dibujaGrafica(arraydatos) {
         });
 
         if (listaIds.length === 0) {
-            // Opcional: podrías limpiar la gráfica o mostrar mensaje
             console.log("No hay IDs seleccionados.");
         } else {
-            // Solo actualizar la gráfica, sin redibujar toda la página
             actualizarGraficaAlmacenes(listaIds, listaColores, idBoton);
         }
     }
@@ -1709,6 +1719,9 @@ calendar.render();
         }
 
     }
+
+
+
 
 
     
