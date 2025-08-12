@@ -380,9 +380,8 @@ use Pdo\Sqlite;
         $temperatura = $temperaturaRaw / 10;
 
 
-        // Fecha inicial
-        $fecha = new DateTime("@$timestamp");
-        $fecha->setTimezone(new DateTimeZone('Europe/Madrid'));
+        // Fecha inicial siempre en Madrid
+        $fecha = new DateTime("@$timestamp", new DateTimeZone('Europe/Madrid'));
 
         $resultados = [];
         $resultados[] = $fecha->format('Y-m-d,H:i') . "," . $temperatura;
