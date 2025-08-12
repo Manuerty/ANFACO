@@ -552,15 +552,15 @@
                         : "dibuja_pagina([1.5, $idUsuario, " . '"' . $NombreUsuario . '"' . "])";
 
                     $contenido .= "<button type='button' class='btn btn-sm' onclick='$onclickEntrar'>
-                        <img src='img/IconosAcciones/boton_entrar.png' alt='Entrar' style='width: 32px; height: 32px;'>
+                        <img src='Img/IconosAcciones/boton_entrar.png' alt='Entrar' style='width: 32px; height: 32px;'>
                     </button>";
 
                     $contenido .= "<button type='button' class='btn btn-sm text-white ms-2' data-id='$idUsuario' data-nombre='$NombreUsuario' data-rol='$tipoUsuario' onclick='abrirModalEdicion(this)'>
-                        <img src='img/IconosAcciones/boton_editar.png' alt='Editar' style='width: 32px; height: 32px;'>
+                        <img src='Img/IconosAcciones/boton_editar.png' alt='Editar' style='width: 32px; height: 32px;'>
                     </button>";
 
                     $contenido .= "<button type='button' class='btn btn-sm text-white ms-2' title='Eliminar' onclick='if(confirm(\"¿Eliminar este usuario?\")) { dibuja_pagina([1, -1, $idUsuario]); }'>
-                        <img src='img/IconosAcciones/boton_eliminar.png' alt='Eliminar' style='width: 32px; height: 32px;'>
+                        <img src='Img/IconosAcciones/boton_eliminar.png' alt='Eliminar' style='width: 32px; height: 32px;'>
                     </button>";
 
                     $contenido .= "</div>"; // fin botones
