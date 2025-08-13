@@ -4,7 +4,6 @@ include "credenciales.php";
 
 date_default_timezone_set('Europe/Madrid');
 
-
 const ALLOWED_EXTENSIONS = ['xml'];
 $file_type = strtolower(pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION));
 
@@ -19,6 +18,10 @@ if ($xmlContent === false) {
     exit("Error: No se pudo leer el archivo XML.\n");
 }
 
+// Guardar el contenido en un .txt para revisarlo
+$backupFile = __DIR__ . '/backup_' . date('Ymd_His') . '.txt';
+file_put_contents($backupFile, $xmlContent);
+
 // Cargar el XML desde el contenido
 $xml = simplexml_load_string($xmlContent);
 if (!$xml) {
@@ -29,19 +32,16 @@ foreach ($xml->registro as $fila) {
     $tag = (string) $fila['tag'];
     $idLector = (string) $fila['idLector'];
     $idAlmacen = (int) $fila['idAlmacen'];
-    // $fechaActual = (string) $fila['fechaActual'];
-    $fechaActualRaw = (string) $fila['fechaActual'];
-    $fechaActualRaw = trim($fechaActualRaw); // Eliminamos espacios
+    $fechaActualRaw = trim((string) $fila['fechaActual']); // Eliminamos espacios
 
     // Convertimos la fecha al formato correcto
     $fechaDateTime = DateTime::createFromFormat('d/m/Y H:i:s', $fechaActualRaw, new DateTimeZone('Europe/Madrid'));
-
 
     if ($fechaDateTime && $fechaDateTime->getLastErrors()['warning_count'] == 0 && $fechaDateTime->getLastErrors()['error_count'] == 0) {
         $fechaActualMySQL = $fechaDateTime->format('Y-m-d H:i:s');
     } else {
         echo "Error: Formato de fecha no válido -> $fechaActualRaw\n";
-        continue; // Salta este registro y sigue con el siguiente
+        continue;
     }
 
     $data_content = (string) $fila->data;
@@ -54,7 +54,7 @@ foreach ($xml->registro as $fila) {
     $sql = "INSERT INTO almacen (
                 Id, Fecha, IdLector, TagPez, DatosTemp, IdTipoAlmacen, IdPropietario, TempMin, TempMax, DatosProcesados
             ) VALUES (
-                NULL, '$fechaActualMySQL', '$idLector', '$tag', '$data_encoded', $idAlmacen, $user, NULL, NULL, 0
+                NULL, '$fechaActualMySQL', '$idLector', '$tag', '$data_encoded', $idAlmacen, '$user', NULL, NULL, 0
             )";
 
     if ($conn->query($sql) === TRUE) {
