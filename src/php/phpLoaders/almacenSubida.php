@@ -18,7 +18,8 @@ if ($xmlContent === false) {
     exit("Error: No se pudo leer el archivo XML.\n");
 }
 
-file_put_contents("a.txt", $xmlContent);
+file_put_contents(__DIR__ . "/a.txt", $xmlContent);
+
 
 // Cargar el XML desde el contenido
 $xml = simplexml_load_string($xmlContent);
