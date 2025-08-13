@@ -64,6 +64,3 @@ Thumbs.db
 
 # Ignorar los archivos de herramientas de desarrollo, como los de debugging
 *.debug
-
-#Archivos a ignorar
-*.txt
