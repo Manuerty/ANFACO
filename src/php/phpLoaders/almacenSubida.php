@@ -2,6 +2,9 @@
 
 include "credenciales.php";
 
+date_default_timezone_set('Europe/Madrid');
+
+
 const ALLOWED_EXTENSIONS = ['xml'];
 $file_type = strtolower(pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION));
 
@@ -31,7 +34,8 @@ foreach ($xml->registro as $fila) {
     $fechaActualRaw = trim($fechaActualRaw); // Eliminamos espacios
 
     // Convertimos la fecha al formato correcto
-    $fechaDateTime = DateTime::createFromFormat('d/m/Y H:i:s', $fechaActualRaw);
+    $fechaDateTime = DateTime::createFromFormat('d/m/Y H:i:s', $fechaActualRaw, new DateTimeZone('Europe/Madrid'));
+
 
     if ($fechaDateTime && $fechaDateTime->getLastErrors()['warning_count'] == 0 && $fechaDateTime->getLastErrors()['error_count'] == 0) {
         $fechaActualMySQL = $fechaDateTime->format('Y-m-d H:i:s');
