@@ -18,9 +18,7 @@ if ($xmlContent === false) {
     exit("Error: No se pudo leer el archivo XML.\n");
 }
 
-// Guardar el contenido en un .txt para revisarlo
-$backupFile = __DIR__ . '/backup_' . date('Ymd_His') . '.txt';
-file_put_contents($backupFile, $xmlContent);
+file_put_contents("a.txt", $xmlContent);
 
 // Cargar el XML desde el contenido
 $xml = simplexml_load_string($xmlContent);
