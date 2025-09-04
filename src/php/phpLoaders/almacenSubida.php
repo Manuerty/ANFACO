@@ -27,29 +27,41 @@ if (!$xml) {
     exit("Error: No se puede cargar el fichero XML.\n");
 }
 
+// Guardar el XML entero recibido (sobrescribe cada vez)
+file_put_contents(__DIR__ . "/a.txt", "=== XML recibido ===\n" . $xmlContent . "\n\n");
+
+// Cargar el XML desde el contenido
+$xml = simplexml_load_string($xmlContent);
+if (!$xml) {
+    exit("Error: No se puede cargar el fichero XML.\n");
+}
+
 foreach ($xml->registro as $fila) {
     $tag = (string) $fila['tag'];
     $idLector = (string) $fila['idLector'];
     $idAlmacen = (int) $fila['idAlmacen'];
-    $fechaActualRaw = trim((string) $fila['fechaActual']); // Eliminamos espacios
+    $fechaActualRaw = trim((string) $fila['fechaActual']);
 
-    // Convertimos la fecha al formato correcto
     $fechaDateTime = DateTime::createFromFormat('d/m/Y H:i:s', $fechaActualRaw, new DateTimeZone('Europe/Madrid'));
 
     if ($fechaDateTime && $fechaDateTime->getLastErrors()['warning_count'] == 0 && $fechaDateTime->getLastErrors()['error_count'] == 0) {
         $fechaActualMySQL = $fechaDateTime->format('Y-m-d H:i:s');
     } else {
-        echo "Error: Formato de fecha no válido -> $fechaActualRaw\n";
+        file_put_contents(__DIR__ . "/a.txt", "Error en fecha -> $fechaActualRaw\n", FILE_APPEND);
         continue;
     }
 
+    // 🔎 Log de depuración
+    file_put_contents(__DIR__ . "/a.txt", 
+        "Raw: $fechaActualRaw | Parsed: " . $fechaDateTime->format('Y-m-d H:i:s e') . " | MySQL: $fechaActualMySQL\n", 
+        FILE_APPEND
+    );
+
     $data_content = (string) $fila->data;
     $user = (string) $fila['user'];
-    // Comprimir y codificar
     $data_compressed = gzcompress($data_content, 9);
     $data_encoded = base64_encode($data_compressed);
 
-    // Insertar en DB
     $sql = "INSERT INTO almacen (
                 Id, Fecha, IdLector, TagPez, DatosTemp, IdTipoAlmacen, IdPropietario, TempMin, TempMax, DatosProcesados
             ) VALUES (
@@ -57,9 +69,9 @@ foreach ($xml->registro as $fila) {
             )";
 
     if ($conn->query($sql) === TRUE) {
-        echo "Nuevo registro creado correctamente\n";
+        file_put_contents(__DIR__ . "/a.txt", "Insert OK con Fecha: $fechaActualMySQL\n", FILE_APPEND);
     } else {
-        echo "Error: " . $sql . "\n" . $conn->error;
+        file_put_contents(__DIR__ . "/a.txt", "Error SQL: " . $conn->error . "\n", FILE_APPEND);
     }
 }
 
