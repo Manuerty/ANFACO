@@ -512,7 +512,7 @@
             if($Pestana == 0){
 
                 $contenido = "<section style='border: none; box-shadow: none;'>"; // Elimina bordes y sombra
-                $contenido .= "<div style='max-width: 700px; margin: auto; padding-bottom: 100px;'>"; // Contenedor centrado y limitado
+                $contenido .= "<div style='max-width: 700px; margin: auto; padding-bottom: 30px;'>"; // Contenedor centrado y limitado
                 $contenido .= "<table class='table table-borderless' style='width: 50%; margin: 0 auto;'>"; // Sin bordes y ancho del 50%
             }else{
                 $contenido = "<section>";

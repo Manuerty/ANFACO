@@ -82,11 +82,62 @@ Class Controlador{
             error_log('nombreDocumentoPadre: ' . $this->miEstado->nombreDocumentoPadre);
             error_log('IdPropietario: ' . $this->miEstado->IdPropietario);
             
-        } else {
+        }
+
+        //volver a usuarios 
+        elseif ($ps == -2) {
+
+             //limpiar Filtros antes de cambiar de pagina//
+            if($this -> miEstado -> Estado == 0.25) {
+                $this -> resetFilter($this -> miEstado -> Estado);
+            }
+            elseif ($this -> miEstado -> Estado == 0.5) {
+                $this -> resetFilter($this -> miEstado -> Estado);
+            }
+            elseif ($this -> miEstado -> Estado == 2) {
+                $this -> resetFilter($this -> miEstado -> Estado);
+            }
+            elseif( $this ->miEstado->Estado == 3) {
+                $this -> resetFilter($this -> miEstado -> Estado);
+            }
+            elseif ( $this -> miEstado->Estado == 4) {
+                $this -> resetFilter($this -> miEstado -> Estado);
+            }
+
+            // Buscar la posición de 0.5 en el array
+            $indice = array_search(
+                0.5,
+                array_map('floatval', $this->miEstado->EstadosAnteriores),
+                true
+            );
+
+
+            if ($indice !== false) {
+                // 1️⃣ Fijar el estado en 0.5
+                $this->miEstado->Estado = 0.5;
+
+                // 2️⃣ Conservar solo los estados que vienen después de 0.5
+                $this->miEstado->EstadosAnteriores = array_slice(
+                    $this->miEstado->EstadosAnteriores,
+                    $indice + 1
+                );
+            }
+
+            //reiniciar variables de usuario
+            elseif ($this ->miEstado->Estado == 0.5) {
+                $this -> miEstado -> IdLastUser = $this -> miEstado -> IdUsuarioSeleccionado;
+                $this -> miEstado -> IdUsuarioSeleccionado = null;
+                $this -> resetFilter();
+            }
+
+        }
+        else {
             
             array_unshift($this->miEstado->EstadosAnteriores , $this->miEstado->Estado);
             $this->miEstado->Estado = $ps;
         }
+
+
 
         // Reinicializar otras variables
         $this->miEstado->CadenaFiltro = null;
@@ -693,8 +744,15 @@ Class Controlador{
             $this->navegarPestanas(0);
         }
 
+        //volver a usuarios
+        elseif (isset($arrayDatos[0], $arrayDatos[1]) && $arrayDatos[0] == -1 && $arrayDatos[1] == 10.5) {
+
+            $this->navegarPestanas(-2);
+
+        }
+
         //Pantalla sobre Nosotros
-        if (isset($arrayDatos[0], $arrayDatos[1]) && $arrayDatos[0] == -1 && $arrayDatos[1] == 10.25) {
+        elseif (isset($arrayDatos[0], $arrayDatos[1]) && $arrayDatos[0] == -1 && $arrayDatos[1] == 10.25) {
             $this->navegarPestanas(10.25);
         }
     
@@ -823,8 +881,7 @@ Class Controlador{
 
             //Eliminación de usuario
             if (isset($arrayDatos[2]) && is_numeric($arrayDatos[2])) {
-
-                delete_User($arrayDatos[2]); 
+                delete_User(intval($arrayDatos[2])); 
                 $usuarios = get_usuarios();
                 $this->miEstado->usuarios = $usuarios ?: [];
 
@@ -1004,11 +1061,8 @@ Class Controlador{
             $this->miEstado->idBoton,
             implode(",", $this->miEstado->EstadosAnteriores),
             json_encode($arrayDatos, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
-        );   */
-
+        );  */
     
-
-
     
         return [
             pinta_contenido($this->miEstado->Estado) . $txtErr,

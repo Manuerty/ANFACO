@@ -408,17 +408,36 @@ function dibujaGrafica(arraydatos) {
                     annotations: {
                         lineaUmbral: {
                             type: 'line',
-                            yMin: -18,
-                            yMax: -18,
+                            yMin: -8,
+                            yMax: -8,
                             borderColor: 'red',
                             borderWidth: 1,
                             label: {
-                                content: '-18°C',
+                                content: '-8°C',
                                 enabled: true,
                                 position: 'start', // al principio de la línea (izquierda)
                                 backgroundColor: 'rgba(255,0,0,0.1)',
                                 color: 'red',
                                 yAdjust: -10, // lo sube por encima de la línea
+                                font: {
+                                    weight: 'bold',
+                                    size: 12,
+                                },
+                            },
+                        },
+                        lineaUmbral2: {
+                            type: 'line',
+                            yMin: -12,
+                            yMax: -12,
+                            borderColor: '#FF6600', // naranja más vivo
+                            borderWidth: 1,
+                            label: {
+                                content: '-12°C',
+                                enabled: true,
+                                position: 'start',
+                                backgroundColor: 'rgba(255,102,0,0.1)', // mismo tono con opacidad
+                                color: '#FF6600',
+                                yAdjust: -10,
                                 font: {
                                     weight: 'bold',
                                     size: 12,

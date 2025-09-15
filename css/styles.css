@@ -6,6 +6,7 @@ body {
     height: 100vh;
     margin: 0;
     background-color: #f4f4f9;
+    padding-bottom: 60px;
 }
 
 .login-container {
