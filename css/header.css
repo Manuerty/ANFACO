@@ -1,5 +1,18 @@
 /*\\datos\APLIS\ARCHIVOS ONIX\Esquio20\
 /* Flecha del header */
+
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f4f4f9;
+    padding-bottom: 60px;
+}
+
+
 .flecha_volver{
     all: unset;
     cursor: pointer;
