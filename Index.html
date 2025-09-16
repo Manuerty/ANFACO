@@ -1088,7 +1088,6 @@ function dibujaGrafica(arraydatos) {
             'padding-right': '0'
         });
 
-        valArray = valArray.slice(0, 5);
         // Validación general
         if (campoRequeridoVacio == 1) {
             alert("Complete todos los campos");
@@ -1097,6 +1096,7 @@ function dibujaGrafica(arraydatos) {
 
         // Validaciones específicas según tipo de formulario
         if (tipoFormulario === "crear_usuario") {
+            valArray = valArray.slice(0, 5);
             // Contraseñas no coinciden
             if (valArray[1] != valArray[2]) {
                 alert("Las contraseñas no coinciden");
@@ -1104,7 +1104,11 @@ function dibujaGrafica(arraydatos) {
             }
         } else if (tipoFormulario === "crear_almacen") {
             alert("Almacén creado correctamente");
-        }
+        } else if (tipoFormulario === "crear_barco") {
+            //valArray = valArray.slice(0, 1)
+            valArray = [ valArray[0]];
+            alert("Barco creado correctamente");
+        } 
       
 
         if (erroresEnv === 0) {
@@ -1115,15 +1119,10 @@ function dibujaGrafica(arraydatos) {
     }
 
     function abrirModalEdicion(boton) {
-        console.log("🚀 abrirModalEdicion ejecutada");
 
         const idUsuario = boton.dataset.id;
         const nombre = boton.dataset.nombre;
         const rol = boton.dataset.rol;
-
-        console.log("ID:", idUsuario);
-        console.log("Nombre:", nombre);
-        console.log("Rol:", rol);
 
         // Asignar valores
         const form = document.getElementById("FormularioDinamicoAux");
@@ -1137,84 +1136,104 @@ function dibujaGrafica(arraydatos) {
         $('#modalFormularioDinamicoAuxiliar').modal('show');;
     }
 
+   function abrirModalEditarBarco(boton) {
+        // Leer los data-* del botón
+        const idBarco = boton.dataset.id;
+        const nombreBarco = boton.dataset.nombre;
 
-    function SubmitModalFormAux(nombreForm = null ){
+        // Guardar en el formulario
+        const formulario = document.getElementById("FormularioDinamicoAux");
+        formulario.dataset.idbarco = idBarco;
+        formulario.dataset.nombrebarco = nombreBarco;
 
-        console.log("Entrar en la fucion")
-        
+        document.getElementById("TxtBoxInputNombreBarcoAux").value = nombreBarco;
+
+        // Mostrar modal
+        $('#modalFormularioDinamicoAuxiliar').modal('show');
+    }
+
+
+    function SubmitModalFormAux(nombreForm = null) {
+        if (!nombreForm) return;
+
         event.preventDefault();
-        let campoRequeridoVacio = 0;
-        let erroresEnv = 0;
-
-
 
         $('#'+nombreForm).modal('hide');
         $('.modal-backdrop').hide();
+
+        let campoRequeridoVacio = 0;
+        let erroresEnv = 0;
         let valArray = [];
 
-        // Detectar tipo de formulario
         const formulario = document.getElementById("FormularioDinamicoAux");
         const tipoFormulario = formulario?.dataset.formtipo;
 
-        
-
         $(".formulario_modal :input").not('.reset-button').each(function() {
-            
             let classComprobacion = '#'+ $(this).prop('id') +'_condiciones'; 
-            let comprobacion = $(classComprobacion).text();
-            if(!comprobacion){
-                comprobacion = 'true';
-            }
-            
-            if($(this).prop('required') && ($(this).val() == null || $(this).val() =='' || !eval(comprobacion)) && $(this).closest('form').is(':visible')  ){
-                $(this).closest('form').attr('id');
+            let comprobacion = $(classComprobacion).text() || 'true';
+
+            if($(this).prop('required') && ($(this).val() == null || $(this).val() == '' || !eval(comprobacion)) && $(this).closest('form').is(':visible')) {
                 $(this).addClass("border-danger");
                 let classInput =  '#'+ $(this).prop('id') +'_msgError'; 
                 $(classInput).removeClass('d-none');
                 campoRequeridoVacio = 1;
-            }else{
+            } else {
                 $(this).removeClass("border-danger");
                 let classInput =  '#'+ $(this).prop('id') +'_msgError'; 
                 $(classInput).addClass('d-none');
             }
-            //console.log($(this))
-            valArray.push($(this).hasClass('selectBuscar-input') ? $(this).attr('data-value') : $(this).val());
-        })
 
-        $('body').css({
-            'overflow': 'auto',
-            'padding-right': '0'
+            valArray.push($(this).hasClass('selectBuscar-input') ? $(this).attr('data-value') : $(this).val());
         });
 
-        valArray = valArray.slice(5, 10);
+        $('body').css({'overflow': 'auto', 'padding-right': '0'});
 
-        valArray.unshift(formulario.dataset.idusuario);
-        // Validación general
-        if (campoRequeridoVacio == 1) {
-            alert("Complete todos los campos");
-            return;
-        }
-
-        // Validaciones específicas según tipo de formulario
+        // Mantener lógica de usuarios si el formulario es de usuarios
         if (tipoFormulario === "editar_usuario") {
+            valArray = valArray.slice(5, 10);
+            valArray.unshift(formulario.dataset.idusuario);
+            console.log("valArray slice usuario", valArray);
 
-            console.log("Validación de formulario de edición de usuario");
-            // Contraseñas no coinciden
+            if (campoRequeridoVacio == 1) {
+                alert("Complete todos los campos");
+                return;
+            }
+
             if (valArray[2] != valArray[3]) {
                 alert("Las contraseñas no coinciden");
                 erroresEnv = 1;
             }
+
+            if (erroresEnv === 0) {
+                console.log("valArray usuario", valArray);
+                dibuja_pagina([0, -1, valArray]);
+            }
         }
 
-        if (erroresEnv === 0) {
-            console.log("valArray", valArray);
-            dibuja_pagina([0, -1, valArray]);
+         // Adaptación a barcos: por ejemplo tomamos los valores necesarios
+        if (tipoFormulario === "editar_barco") {
+            // Acceder a los valores del dataset
+            const idBarco = formulario.dataset.idbarco;
+            const nombreBarco = formulario.dataset.nombrebarco;
+
+            console.log("ID Barco:", idBarco);
+            console.log("Nombre Barco:", nombreBarco);
+
+            // Construir valArray
+            valArray = [valArray[1]];   // Ajustar según campos del modal
+            valArray.unshift(idBarco);  // agrega el ID al inicio
+
+            if (campoRequeridoVacio == 1) {
+                alert("Complete todos los campos");
+                return;
+            }
+
+            if (erroresEnv === 0) {
+                console.log("valArray barco", valArray);
+                dibuja_pagina([0, -1, valArray]);
+            }
         }
-    }      
-        
-    
-        
-        
+    }
 
     function SubmitFormularioCambioDatos(){
         var valArray = [];

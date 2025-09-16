@@ -880,21 +880,30 @@ Class Controlador{
         }
 
         // Creación de barco
-        elseif ($c === 2 && isset($arrayDatos[0]) && $arrayDatos[1] == -1 && count($arrayDatos[2]) == 1) {
+        elseif ($c === 2 && isset($arrayDatos[0]) && $arrayDatos[1] == -1) {
 
-            $nombreBarco = $arrayDatos[2][0];
-            $codigoAntiguo = get_last_codigo_barco();
-            $codigoBarco = $this -> incrementarCodigo($codigoAntiguo);
+            //Creacion de barco
+            if (count($arrayDatos[2]) == 1) {
+                $nombreBarco = $arrayDatos[2][0];
+                $codigoAntiguo = get_last_codigo_barco();
+                $codigoBarco = $this -> incrementarCodigo($codigoAntiguo);
 
-            if ($codigoBarco != null && $nombreBarco != null && $codigoBarco != 0 && $codigoBarco != "") {
-                insertBarco($nombreBarco, $codigoBarco, $this->miEstado->IdUsuarioSeleccionado);
-            } else {
-                $msgError = "El nombre del barco y el código son obligatorios.";
+                if ($codigoBarco != null && $nombreBarco != null && $codigoBarco != 0 && $codigoBarco != "") {
+                    insertBarco($nombreBarco, $codigoBarco, $this->miEstado->IdUsuarioSeleccionado);
+                } else {
+                    $msgError = "El nombre del barco y el código son obligatorios.";
+                }
+
+                $barcos = get_Barcos($this->miEstado->IdUsuarioSeleccionado);
+                $this -> miEstado -> barcos = $barcos ?: [];
             }
 
-            $barcos = get_Barcos($this->miEstado->IdUsuarioSeleccionado);
-            $this -> miEstado -> barcos = $barcos ?: [];
-
+            //edición de barco
+            if (is_array($arrayDatos[2]) && count($arrayDatos[2]) == 2) {
+                updateBarco($arrayDatos[2]);
+                $barcos = get_Barcos($this->miEstado->IdUsuarioSeleccionado);
+                $this -> miEstado -> barcos = $barcos ?: [];
+            }
         }
 
         // Dashboard de administrador

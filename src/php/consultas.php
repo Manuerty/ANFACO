@@ -793,6 +793,39 @@ use Pdo\Sqlite;
         }
     }
 
+    function updateBarco($barco){
+        $idBarco = $barco[0];
+        $nuevoNombreBarco = $barco[1];
+        try{
+            $conn = obtener_conexion();
+            if (!$conn) return false;
+
+            $sql = "UPDATE barcos SET Nombre = ? WHERE IdBarco = ?";
+            $stmt = $conn->prepare($sql);
+
+            if (!$stmt) {
+                $conn->close();
+                return false;
+            }
+
+            // Vincular parámetros
+            $stmt->bind_param("si", $nuevoNombreBarco, $idBarco);
+
+            if (!$stmt->execute()) {
+                $stmt->close();
+                $conn->close();
+                return false;
+            }
+
+            $stmt->close();
+            $conn->close();
+
+            return true;
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
     function get_last_codigo_barco(){
 
         try {

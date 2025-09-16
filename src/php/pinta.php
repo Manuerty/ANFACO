@@ -164,8 +164,6 @@
             $filetext .= cargaModal();
         }
 
-
-
         return $filetext;
     }
 
@@ -318,6 +316,7 @@
 
             $PlantillaModalAux = str_replace("%TituloModal%","Edicion de Usuario",$PlantillaModalAux);
             $PlantillaModalAux = str_replace("%TipoFormulario%", "editar_usuario", $PlantillaModalAux);
+            $PlantillaModalAux = str_replace("<button type=\"button\" class=\"btn btn-primary\" id=\"SubmitModalForm\" onclick=\"SubmitModalFormAux()\">Guardar</button>", "<button type=\"button\" class=\"btn btn-primary\" id=\"SubmitModalForm\" onclick=\"SubmitModalFormAux('editar_usuario')\">Guardar</button>", $PlantillaModalAux);
 
             $inputAux = "<label for='TxtBoxInputNombreUsuario'>Nombre de usuario</label>";
             $inputAux .= "<input type='text' class='form-control my-2' id='TxtBoxInputNombreUsuarioAux' placeholder='Nombre de usuario' required>";
@@ -349,8 +348,17 @@
 
             $PlantillaModal = str_replace("%TituloModal%","Creación de Barco",$PlantillaModal);
             $PlantillaModal = str_replace("%TipoFormulario%", "crear_barco", $PlantillaModal);
+            
 
             $input .= "<input type='text' class='form-control my-2' id='TxtBoxInputNombreBarco' placeholder='Nombre del Barco' required>";
+
+            $PlantillaModalAux = str_replace("%TituloModal%","Edicion de Barco",$PlantillaModalAux);
+            $PlantillaModalAux = str_replace("%TipoFormulario%", "editar_barco", $PlantillaModalAux);
+            $PlantillaModalAux = str_replace("<button type=\"button\" class=\"btn btn-primary\" id=\"SubmitModalForm\" onclick=\"SubmitModalFormAux()\">Guardar</button>", "<button type=\"button\" class=\"btn btn-primary\" id=\"SubmitModalForm\" onclick=\"SubmitModalFormAux('editar_barco')\">Guardar</button>", $PlantillaModalAux);
+
+            $inputAux .= "<label for='TxtBoxInputNombreBarcoAux'>Nombre de barco</label>";
+            $inputAux .= "<input type='text' class='form-control my-2' id='TxtBoxInputNombreBarcoAux' placeholder='Nombre del Barco' required>";
+               
 
         }
 
@@ -568,73 +576,68 @@
                     $contenido .= "</div>"; // fin row
                     $contenido .= "</div>"; // fin card
                     $contenido .= "</div>"; // fin contenedor ancho limitado
-
-
                     
                 }
             }
 
             if ($Pestana == 0.25) {
 
-            if ($arraydatos && is_array($arraydatos)) {
-                foreach ($arraydatos as $index => $tipo) {
-                    $backgroundColor = ($index % 2 == 0) ? 'background-color: whitesmoke;' : 'background-color: white;';
+                if ($arraydatos && is_array($arraydatos)) {
+                    foreach ($arraydatos as $index => $tipo) {
+                        $backgroundColor = ($index % 2 == 0) ? 'background-color: whitesmoke;' : 'background-color: white;';
 
-                    $nombreTipo = htmlspecialchars($tipo["NombreTipo"]);
+                        $nombreTipo = htmlspecialchars($tipo["NombreTipo"]);
 
-                    
-                    
+                        $contenido .= "<div class='card p-3 border shadow-sm' style='$backgroundColor margin-bottom: 0;'>";
 
-                    $contenido .= "<div class='card p-3 border shadow-sm' style='$backgroundColor margin-bottom: 0;'>";
+                        // 🔁 Contenedor flex para título + botón
+                        $contenido .= "<div class='d-flex justify-content-between align-items-center mb-2'>";
 
-                    // 🔁 Contenedor flex para título + botón
-                    $contenido .= "<div class='d-flex justify-content-between align-items-center mb-2'>";
+                        // 📍 Nombre del almacén
+                        $contenido .= "<h5 class='card-title mb-0' style='font-size: 1.125rem;'><strong>$nombreTipo</strong></h5>";
 
-                    // 📍 Nombre del almacén
-                    $contenido .= "<h5 class='card-title mb-0' style='font-size: 1.125rem;'><strong>$nombreTipo</strong></h5>";
-
-                    // 🔘 Botón capturas alineado a la derecha
-                    if ($_SESSION["Controlador"]-> miEstado ->EstadosAnteriores[0] != 0.0625){
-                        $contenido .= "<button class='btn btn-outline-primary btn-sm' onclick='capturasDelAlmacen(\"$nombreTipo\")'>Capturas</button>";
-                    }
-
-                    $contenido .= "</div>"; // fin d-flex
-
-                    // ⬇️ Resto del contenido (details)
-                    $contenido .= "<details>";
-                    $contenido .= "<summary style='cursor: pointer; width: fit-content; list-style-type: disclosure-closed;'></summary>";
-
-                    $contenido .= "<div class='pt-2' style='padding: 10px; font-size: 1.1em;'>";
-
-                    if ( $_SESSION["Controlador"] -> miEstado -> esAdmin == true && $_SESSION["Controlador"] -> miEstado -> EstadosAnteriores[0] == 0.0625) {
-
-                        if (isset($tipo["Usuario"]) && $tipo["Usuario"] !== null) {
-                            $contenido .= "<p><span class='text-black'>Propietario: </span> <strong>" . htmlspecialchars($tipo["Usuario"]) . "</strong></p>";
-                        } else {
-                            $contenido .= "<p><span class='text-black'>Propietario: </span> <strong>No asignado</strong></p>";
+                        // 🔘 Botón capturas alineado a la derecha
+                        if ($_SESSION["Controlador"]-> miEstado ->EstadosAnteriores[0] != 0.0625){
+                            $contenido .= "<button class='btn btn-outline-primary btn-sm' onclick='capturasDelAlmacen(\"$nombreTipo\")'>Capturas</button>";
                         }
 
-                    }
-                    if (isset($tipo["Barco"]) && $tipo["Barco"] !== null) {
-                        $contenido .= "<p><span class='text-black'>Barco: </span> <strong>" . htmlspecialchars($tipo["Barco"]) . "</strong></p>";
-                    }
-                    else {
-                        $contenido .= "<p><span class='text-black'>Ubicación: </span> <strong>Almacen de tierra</strong></p>";
-                    }
+                        $contenido .= "</div>"; // fin d-flex
 
-                    if (isset($tipo["Tipo"]) && $tipo["Tipo"] !== null) {
-                        $contenido .= "<p><span class='text-black'>Tipo: </span> <strong>" . htmlspecialchars($tipo["Tipo"]) . "</strong></p>";
-                    }
+                        // ⬇️ Resto del contenido (details)
+                        $contenido .= "<details>";
+                        $contenido .= "<summary style='cursor: pointer; width: fit-content; list-style-type: disclosure-closed;'></summary>";
 
-                    $contenido .= "</div>";
-                    $contenido .= "</details>";
-                    
-                    $contenido .= "</div>"; // fin card
+                        $contenido .= "<div class='pt-2' style='padding: 10px; font-size: 1.1em;'>";
+
+                        if ( $_SESSION["Controlador"] -> miEstado -> esAdmin == true && $_SESSION["Controlador"] -> miEstado -> EstadosAnteriores[0] == 0.0625) {
+
+                            if (isset($tipo["Usuario"]) && $tipo["Usuario"] !== null) {
+                                $contenido .= "<p><span class='text-black'>Propietario: </span> <strong>" . htmlspecialchars($tipo["Usuario"]) . "</strong></p>";
+                            } else {
+                                $contenido .= "<p><span class='text-black'>Propietario: </span> <strong>No asignado</strong></p>";
+                            }
+
+                        }
+                        if (isset($tipo["Barco"]) && $tipo["Barco"] !== null) {
+                            $contenido .= "<p><span class='text-black'>Barco: </span> <strong>" . htmlspecialchars($tipo["Barco"]) . "</strong></p>";
+                        }
+                        else {
+                            $contenido .= "<p><span class='text-black'>Ubicación: </span> <strong>Almacen de tierra</strong></p>";
+                        }
+
+                        if (isset($tipo["Tipo"]) && $tipo["Tipo"] !== null) {
+                            $contenido .= "<p><span class='text-black'>Tipo: </span> <strong>" . htmlspecialchars($tipo["Tipo"]) . "</strong></p>";
+                        }
+
+                        $contenido .= "</div>";
+                        $contenido .= "</details>";
+                        
+                        $contenido .= "</div>"; // fin card
+                    }
+                }else {
+                    $contenido .= "<div class='alert alert-warning'>No se pudieron obtener los tipos de almacén.</div>";
                 }
-            }else {
-                $contenido .= "<div class='alert alert-warning'>No se pudieron obtener los tipos de almacén.</div>";
             }
-        }
 
             // Lógica para buscador de conserveros
 
@@ -657,16 +660,34 @@
                 foreach ($arraydatos as $index => $barco) {
                     $nombreBarcoJS = json_encode($barco["Nombre"]); // Escapar correctamente para JavaScript
                     $backgroundColor = ($index % 2 == 0) ? 'background-color: whitesmoke;' : 'background-color: white;';
+
                     $contenido .= "<div class='card p-3 border shadow-sm' style='$backgroundColor margin-bottom: 0;'>";
 
-                    $contenido .= "<div class='d-flex justify-content-between align-items-start mb-2'>";
-                    $contenido .= "<h5 class='card-title mb-0'><strong>" . htmlspecialchars($barco["Nombre"]) . "</strong></h5>";
-                    $contenido .= "<button class='btn btn-outline-primary btn-sm' onclick='capturasDelBarco($nombreBarcoJS)'>Capturas</button>";
-                    $contenido .= "</div>";
+                    // Contenedor de fila
+                    $contenido .= "<div class='row align-items-start'>";
 
+                    // Columna izquierda: nombre y código
+                    $contenido .= "<div class='col'>";
+                    $contenido .= "<h5 class='card-title mb-1'><strong>" . htmlspecialchars($barco["Nombre"]) . "</strong></h5>";
                     $contenido .= "<div><span>Código: </span><strong>" . htmlspecialchars($barco["CodigoBarco"]) . "</strong></div>";
-
                     $contenido .= "</div>";
+
+                    // Columna derecha: botones apilados verticalmente
+                    $contenido .= "<div class='col-auto d-flex flex-column'>";
+
+                    // Botón Capturas normal
+                    $contenido .= "<button class='btn btn-outline-primary btn-sm mb-1' onclick='capturasDelBarco($nombreBarcoJS)'>Capturas</button>";
+
+                    // Segundo botón con imagen
+                    $contenido .= "<button type='button' class='btn btn-sm' onclick='abrirModalEditarBarco(this)' data-id='" . htmlspecialchars($barco["IdBarco"]) . "' data-nombre='" . htmlspecialchars($barco["Nombre"]) . "'>";
+                    $contenido .= "<img src='Img/IconosAcciones/boton_editar.png' alt='Editar Barco' style='width: 32px; height: 32px;'>";
+                    $contenido .= "</button>";
+
+                    $contenido .= "</div>"; // fin columna botones
+                    $contenido .= "</div>"; // fin fila
+                    $contenido .= "</div>"; // fin card
+
+
                 }
             } 
     
@@ -879,8 +900,6 @@
                 $contenido .= "<div class='card p-3 border shadow-sm' style='flex-grow: 1; overflow-y: auto;'>";
                 $contenido .= "<h5 class='card-title'>Almacenes Visitados</h5>";
                 $contenido .= "<div style='flex-grow: 1; overflow-y: auto;'>";
-
-                $idBotonAnterior = (int) ($_SESSION["Controlador"]->miEstado->idBoton ?? 0);
             
                 foreach ($arraydatosAdiccional as $index => $Almacenes) {
                 
@@ -956,29 +975,29 @@
 
     function sobreNosotros(){
         $contenido = '
-    <div class="container text-center my-4">
-        <h2 class="mb-4" style="color: #007fa3;">Sobre Nosotros</h2>
+            <div class="container text-center my-4">
+                <h2 class="mb-4" style="color: #007fa3;">Sobre Nosotros</h2>
 
-        <h5 class="mb-3 fw-bold">Nombre del reto:</h5>
-        <p class="mb-4">
-            Sensor/Dispositivo para Trazabilidad y Medición de Parámetros en Túnidos
-        </p>
+                <h5 class="mb-3 fw-bold">Nombre del reto:</h5>
+                <p class="mb-4">
+                    Sensor/Dispositivo para Trazabilidad y Medición de Parámetros en Túnidos
+                </p>
 
-        <div class="row justify-content-center align-items-center g-4">
-            <div class="col-6 col-md-4">
-                <img src="Img/ANFACO_CYTMA.png" alt="Logo ANFACO" class="img-fluid" style="max-height: 120px;  transform: scale(1.4);">
+                <div class="row justify-content-center align-items-center g-4">
+                    <div class="col-6 col-md-4">
+                        <img src="Img/ANFACO_CYTMA.png" alt="Logo ANFACO" class="img-fluid" style="max-height: 120px;  transform: scale(1.4);">
+                    </div>
+                    <div class="col-6 col-md-4">
+                        <img src="Img/Uvigo_logo.png" alt="Logo UVigo" class="img-fluid" style="max-height: 120px;">
+                    </div>
+                    <br/>
+                    <div class="col-12 mt-3">
+                        <h5 class="fw-bold">Diseñado por:</h5>
+                        <img src="Img/esquio_logo.png" alt="Logo Esquío" class="img-fluid" style="max-height: 120px;">
+                    </div>
+                </div>
             </div>
-            <div class="col-6 col-md-4">
-                <img src="Img/Uvigo_logo.png" alt="Logo UVigo" class="img-fluid" style="max-height: 120px;">
-            </div>
-            <br/>
-            <div class="col-12 mt-3">
-                <h5 class="fw-bold">Diseñado por:</h5>
-                <img src="Img/esquio_logo.png" alt="Logo Esquío" class="img-fluid" style="max-height: 120px;">
-            </div>
-        </div>
-    </div>
-';
+        ';
 
         return $contenido;
     }
