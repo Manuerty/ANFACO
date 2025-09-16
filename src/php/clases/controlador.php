@@ -388,32 +388,6 @@ Class Controlador{
     }
 
 
-    function generarDatosGrafica2($temperaturasVS, $almacenesVS) {
-
-       
-        
-        $temperaturas = $temperaturasVS;
-        $almacenes = $almacenesVS;
-
-
-        //$temperaturas =  procesarTemperaturas(4, 0);
-        
-        $dataset = [];
-        foreach ($temperaturas as $temp) {
-            foreach ($almacenes as $almacen) {
-                if ($temp['IdAlmacen'] == $almacen['IdAlmacen']) {
-                    $dataset[] = [
-                        "x" => strtotime($temp["FechaTemperatura"]) * 1000,
-                        "y" => $temp["ValorTemperatura"],
-                        "almacen" =>  $almacen["NombreTipo"],
-                    ];
-                    break;
-                }
-            }
-        }
-        $this -> miEstado -> dataset = $dataset;
-    } 
-    
     public function generarDatosGrafica($temperaturasVS, $almacenesVS) {
         $temperaturas = $temperaturasVS;
         $almacenes = $almacenesVS;
@@ -434,9 +408,23 @@ Class Controlador{
             }
 
             if (!empty($datos)) {
+
+                $ultimo = end($datos);  // último punto de este almacén
+
+                // convertir timestamp (ms) a fecha legible
+                $fecha = new DateTime('@' . ($ultimo['x'] / 1000));
+                $fecha->setTimezone(new DateTimeZone('Europe/Madrid'));
+
+                var_dump([
+                    'almacen'       => $claveAlmacen,
+                    'x'             => $ultimo['x'],                  // timestamp en ms
+                    'y'             => $ultimo['y'],                  // temperatura
+                    'fecha_legible' => $fecha->format('Y-m-d H:i:s') // fecha legible
+                ]);
+
                 $datasetAgrupado[] = [
                     "almacen" => $claveAlmacen,
-                    "datos" => $datos
+                    "datos"   => $datos
                 ];
             }
         }
