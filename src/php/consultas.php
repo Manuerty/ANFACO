@@ -826,6 +826,36 @@ use Pdo\Sqlite;
         }
     }
 
+    function delete_Barco($IdBarco) {
+        try {
+            $conn = obtener_conexion();
+            if (!$conn) return false;
+
+            $sql = "DELETE FROM barcos WHERE IdBarco = ?";
+            $stmt = $conn->prepare($sql);
+
+            if (!$stmt) {
+                $conn->close();
+                return false;
+            }
+
+            $stmt->bind_param("i", $IdBarco);
+
+            if (!$stmt->execute()) {
+                $stmt->close();
+                $conn->close();
+                return false;
+            }
+
+            $stmt->close();
+            $conn->close();
+
+            return true;
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
     function get_last_codigo_barco(){
 
         try {

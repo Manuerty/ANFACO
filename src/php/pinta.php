@@ -663,30 +663,34 @@
 
                     $contenido .= "<div class='card p-3 border shadow-sm' style='$backgroundColor margin-bottom: 0;'>";
 
-                    // Contenedor de fila
-                    $contenido .= "<div class='row align-items-start'>";
+                // Contenedor de fila
+                $contenido .= "<div class='row align-items-start'>";
 
-                    // Columna izquierda: nombre y código
-                    $contenido .= "<div class='col'>";
-                    $contenido .= "<h5 class='card-title mb-1'><strong>" . htmlspecialchars($barco["Nombre"]) . "</strong></h5>";
-                    $contenido .= "<div><span>Código: </span><strong>" . htmlspecialchars($barco["CodigoBarco"]) . "</strong></div>";
-                    $contenido .= "</div>";
+                // Columna izquierda: nombre y código
+                $contenido .= "<div class='col'>";
+                $contenido .= "<h5 class='card-title mb-1'><strong>" . htmlspecialchars($barco["Nombre"]) . "</strong></h5>";
+                $contenido .= "<div><span>Código: </span><strong>" . htmlspecialchars($barco["CodigoBarco"]) . "</strong></div>";
+                $contenido .= "</div>";
 
-                    // Columna derecha: botones apilados verticalmente
-                    $contenido .= "<div class='col-auto d-flex flex-column'>";
+                // Columna derecha: botones en línea
+                $contenido .= "<div class='col-auto d-flex align-items-center gap-1'>";
 
-                    // Botón Capturas normal
-                    $contenido .= "<button class='btn btn-outline-primary btn-sm mb-1' onclick='capturasDelBarco($nombreBarcoJS)'>Capturas</button>";
+                // Tercer botón con imagen (Eliminar)
+                $contenido .= "<button type='button' class='btn btn-sm text-white ms-2' title='Eliminar' onclick='if(confirm(\"¿Eliminar este barco?\")) { dibuja_pagina([1, -1, " . htmlspecialchars($barco["IdBarco"]) . "]); }'>";
+                $contenido .= "<img src='Img/IconosAcciones/boton_eliminar.png' alt='Eliminar Barco' style='width: 32px; height: 32px;'>";
+                $contenido .= "</button>";
 
-                    // Segundo botón con imagen
-                    $contenido .= "<button type='button' class='btn btn-sm' onclick='abrirModalEditarBarco(this)' data-id='" . htmlspecialchars($barco["IdBarco"]) . "' data-nombre='" . htmlspecialchars($barco["Nombre"]) . "'>";
-                    $contenido .= "<img src='Img/IconosAcciones/boton_editar.png' alt='Editar Barco' style='width: 32px; height: 32px;'>";
-                    $contenido .= "</button>";
+                // Segundo botón con imagen (Editar)
+                $contenido .= "<button type='button' class='btn btn-sm' onclick='abrirModalEditarBarco(this)' data-id='" . htmlspecialchars($barco["IdBarco"]) . "' data-nombre='" . htmlspecialchars($barco["Nombre"]) . "'>";
+                $contenido .= "<img src='Img/IconosAcciones/boton_editar.png' alt='Editar Barco' style='width: 32px; height: 32px;'>";
+                $contenido .= "</button>";
 
-                    $contenido .= "</div>"; // fin columna botones
-                    $contenido .= "</div>"; // fin fila
-                    $contenido .= "</div>"; // fin card
+                // Botón Capturas normal
+                $contenido .= "<button class='btn btn-outline-primary btn-sm' onclick='capturasDelBarco($nombreBarcoJS)'>Capturas</button>";
 
+                $contenido .= "</div>"; // fin columna botones
+                $contenido .= "</div>"; // fin fila
+                $contenido .= "</div>"; // fin card
 
                 }
             } 

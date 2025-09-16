@@ -882,8 +882,15 @@ Class Controlador{
         // Creación de barco
         elseif ($c === 2 && isset($arrayDatos[0]) && $arrayDatos[1] == -1) {
 
+            //eliminación de barco
+            if (isset($arrayDatos[2]) && is_numeric($arrayDatos[2])) {
+                delete_Barco(intval($arrayDatos[2])); 
+                $barcos = get_Barcos($this->miEstado->IdUsuarioSeleccionado);
+                $this -> miEstado -> barcos = $barcos ?: [];
+            }
+
             //Creacion de barco
-            if (count($arrayDatos[2]) == 1) {
+            else if (count($arrayDatos[2]) == 1) {
                 $nombreBarco = $arrayDatos[2][0];
                 $codigoAntiguo = get_last_codigo_barco();
                 $codigoBarco = $this -> incrementarCodigo($codigoAntiguo);
@@ -899,7 +906,7 @@ Class Controlador{
             }
 
             //edición de barco
-            if (is_array($arrayDatos[2]) && count($arrayDatos[2]) == 2) {
+            else if (is_array($arrayDatos[2]) && count($arrayDatos[2]) == 2) {
                 updateBarco($arrayDatos[2]);
                 $barcos = get_Barcos($this->miEstado->IdUsuarioSeleccionado);
                 $this -> miEstado -> barcos = $barcos ?: [];
