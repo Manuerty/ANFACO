@@ -398,96 +398,163 @@ use Pdo\Sqlite;
 
     function procesarInformacion() {
         try {
-            // Obtener una única conexión
             $conn = obtener_conexion();
             if (!$conn) return false;
-    
-            // Iniciar la transacción
+
             $conn->begin_transaction();
-    
-            // Consulta para obtener los datos de almacenes no procesados
-            $sql = "SELECT DatosTemp, TempMax, TempMin, Id FROM almacen WHERE DatosProcesados = 0";
+
+            // 1) Traer registros no procesados
+            $sql = "SELECT Id, TagPez, DatosTemp
+                    FROM almacen
+                    WHERE DatosProcesados = 0";
             $stmt = $conn->prepare($sql);
-            if (!$stmt->execute()) {
-                $conn->rollback();  // Deshacer cambios si ocurre un error
-                $stmt->close();
+            if (!$stmt) {
                 $conn->close();
                 return false;
             }
-    
+            if (!$stmt->execute()) {
+                $stmt->close();
+                $conn->rollback();
+                $conn->close();
+                return false;
+            }
+
             $result = $stmt->get_result();
             $almacenesProcesar = [];
-    
-            // Almacenar los datos de los almacenes en un array
             while ($row = $result->fetch_assoc()) {
                 $almacenesProcesar[] = [
-                    "DatosTemp" => $row["DatosTemp"],
-                    "TempMax" => $row["TempMax"],
-                    "TempMin" => $row["TempMin"],
                     "IdAlmacen" => $row["Id"],
+                    "TagPez"    => $row["TagPez"],
+                    "DatosTemp" => $row["DatosTemp"]
                 ];
             }
-    
             $stmt->close();
-    
-            // 2. Procesar los datos de cada almacén
+
+            // 2) Preparar statement para obtener FechaCaptura (primera captura) por TagPez
+            $sqlCaptura = "SELECT FechaCaptura
+                        FROM capturas
+                        WHERE TagPez = ?";
+            $stmtCaptura = $conn->prepare($sqlCaptura);
+            if (!$stmtCaptura) {
+                $conn->rollback();
+                $conn->close();
+                return false;
+            }
+
+            // 3) Procesar cada registro de almacen por separado
             foreach ($almacenesProcesar as $almacen) {
-                // Procesar las temperaturas
-                $procesardatos =  descomprimirTemperaturas($almacen["DatosTemp"]);
+                // Descomprimir y parsear el string a array de registros
+                $procesardatos = descomprimirTemperaturas($almacen["DatosTemp"]);
                 $datos = procesarTemperaturasString($procesardatos, $almacen["IdAlmacen"]);
-    
-                if (empty($datos)) {
-                    continue;  // Si no hay datos, saltar al siguiente almacén
+                if (empty($datos)) continue; // nada que procesar en este registro
+
+                // 3.a) Obtener FechaCaptura de la tabla capturas para este TagPez
+                $tag = $almacen['TagPez'];
+                $stmtCaptura->bind_param("s", $tag);
+                if (!$stmtCaptura->execute()) {
+                    $stmtCaptura->close();
+                    $conn->rollback();
+                    $conn->close();
+                    return false;
                 }
-    
-                // Obtener los valores de temperatura
-                $valores = array_column($datos, 'ValorTemperatura');
-    
-                // Calcular el valor máximo y mínimo de las temperaturas
-                $maximo = max($valores);
-                $minimo = min($valores);
-    
-                // Consulta de actualización de temperaturas
-                $sqlUpdate = 'UPDATE almacen
-                              SET TempMax = ?, TempMin = ?, DatosProcesados = 1
-                              WHERE Id = ?';
-    
+
+                $resCap = $stmtCaptura->get_result();
+                $rowCap = $resCap->fetch_assoc();
+
+                // 3.b) Determinar fecha límite (FechaCaptura + 24h).
+                // Si no hay FechaCaptura en la BBDD, se usa como fallback la primera fecha del propio string.
+                $fechaLimiteDT = null;
+                if (!empty($rowCap['FechaCaptura'])) {
+                    try {
+                        $fechaCap = new DateTime($rowCap['FechaCaptura'], new DateTimeZone('Europe/Madrid'));
+                        $fechaCap->modify('+1 day');
+                        $fechaLimiteDT = $fechaCap;
+                    } catch (Exception $e) {
+                        $fechaLimiteDT = null;
+                    }
+                }
+
+                if ($fechaLimiteDT === null) {
+                    // Fallback: usar la primera temperatura del string (índice 0)
+                    // Asumimos que procesarTemperaturasString devuelve registros en orden cronológico.
+                    try {
+                        $fechaPrimTemp = new DateTime($datos[0]['FechaTemperatura'], new DateTimeZone('Europe/Madrid'));
+                        $fechaPrimTemp->modify('+1 day');
+                        $fechaLimiteDT = $fechaPrimTemp;
+                    } catch (Exception $e) {
+                        // Si tampoco se puede parsear, no hay base para excluir 24h: considerar todo el registro
+                        $fechaLimiteDT = null;
+                    }
+                }
+
+                // 3.c) Filtrar las temperaturas del registro que sean posteriores a fechaLimiteDT
+                if ($fechaLimiteDT !== null) {
+                    $datosFiltrados = array_filter($datos, function($d) use ($fechaLimiteDT) {
+                        try {
+                            $dt = new DateTime($d['FechaTemperatura'], new DateTimeZone('Europe/Madrid'));
+                        } catch (Exception $e) {
+                            return false;
+                        }
+                        return $dt > $fechaLimiteDT; // estrictamente posteriores a las primeras 24h
+                    });
+                } else {
+                    // Si no tenemos referencia de fecha, no filtramos (tomamos todo)
+                    $datosFiltrados = $datos;
+                }
+
+                // 3.d) Calcular max/min (o null si no hay datos válidos)
+                if (!empty($datosFiltrados)) {
+                    $valores = array_column($datosFiltrados, 'ValorTemperatura');
+                    $maximo = max($valores);
+                    $minimo = min($valores);
+                } else {
+                    $maximo = null;
+                    $minimo = null;
+                }
+
+                // 3.e) Actualizar SOLO este registro de almacen
+                // bind_param con tipos 'd' no acepta null fácilmente, por eso construimos la parte SET dinámicamente
+                // Aseguramos que el decimal use '.' como separador.
+                $maxSql = ($maximo !== null) ? str_replace(',', '.', (string)$maximo) : "NULL";
+                $minSql = ($minimo !== null) ? str_replace(',', '.', (string)$minimo) : "NULL";
+
+                $sqlUpdate = "UPDATE almacen
+                            SET TempMax = " . ($maximo !== null ? $maxSql : "NULL") . ",
+                                TempMin = " . ($minimo !== null ? $minSql : "NULL") . ",
+                                DatosProcesados = 1
+                            WHERE Id = ?";
                 $stmtUpdate = $conn->prepare($sqlUpdate);
                 if (!$stmtUpdate) {
-                    $conn->rollback();  // Deshacer cambios si hay error
+                    $stmtCaptura->close();
+                    $conn->rollback();
                     $conn->close();
                     return false;
                 }
-    
-                // Vincular parámetros y ejecutar la consulta de actualización
-                $stmtUpdate->bind_param("dds", $maximo, $minimo, $almacen['IdAlmacen']);
+                $stmtUpdate->bind_param("i", $almacen['IdAlmacen']);
                 if (!$stmtUpdate->execute()) {
                     $stmtUpdate->close();
-                    $conn->rollback();  // Deshacer cambios si hay error
+                    $stmtCaptura->close();
+                    $conn->rollback();
                     $conn->close();
                     return false;
                 }
-    
-                // Cerrar la declaración de actualización
                 $stmtUpdate->close();
-            }
-    
-            // Si todo ha ido bien, hacer commit de la transacción
+            } // foreach
+
+            $stmtCaptura->close();
             $conn->commit();
-    
-            // Cerrar la conexión después de procesar todos los almacenes
             $conn->close();
             return true;
-    
+
         } catch (Exception $e) {
-            // En caso de error, hacer rollback de la transacción y cerrar la conexión
-            if ($conn) {
-                $conn->rollback();  // Deshacer cambios
+            if (isset($conn) && $conn) {
+                $conn->rollback();
                 $conn->close();
             }
             return false;
         }
     }
+
 
     function get_Almacenes($tagPez, $fechaLimite = null) {
         try {
