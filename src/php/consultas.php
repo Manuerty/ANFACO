@@ -351,50 +351,45 @@ use Pdo\Sqlite;
 
     function descomprimirTemperaturas($datosTemp) {
 
-    $datosTemp = base64_decode($datosTemp);
-    $datosTemp = gzuncompress($datosTemp);
+        $datosTemp = base64_decode($datosTemp);
+        $datosTemp = gzuncompress($datosTemp);
 
-    // Separar por ';'
-    $partes = explode(';', $datosTemp);
+        // Separar por ';'
+        $partes = explode(';', $datosTemp);
 
-    // Tiempo de muestreo
-    $tiempoMuestreoHex = trim($partes[0], '-');
-    $tiempoMuestreoSeg = hexdec($tiempoMuestreoHex);
+        // Tiempo de muestreo
+        $tiempoMuestreoHex = trim($partes[0], '-');
+        $tiempoMuestreoSeg = hexdec($tiempoMuestreoHex);
 
-    // Primer trama completa con timestamp y temperatura
-    $primerTrama = preg_replace('/\s+/', '', $partes[1]);
-    $timestampHex = substr($primerTrama, 0, 8);
-    $tempHex = substr($primerTrama, 8, 4);
+        // Primer trama completa con timestamp y temperatura
+        $primerTrama = preg_replace('/\s+/', '', $partes[1]);
+        $timestampHex = substr($primerTrama, 0, 8);
+        $tempHex = substr($primerTrama, 8, 4);
 
-    $timestamp = hexdec($timestampHex);
-    $temperaturaRaw = complementoA2($tempHex);
-    $temperatura = $temperaturaRaw / 10;
-
-    // Fecha inicial siempre en Madrid
-    $fecha = new DateTime("@$timestamp", new DateTimeZone('Europe/Madrid'));
-
-    $resultados = [];
-    $resultados[] = $fecha->format('Y-m-d,H:i') . "," . $temperatura;
-
-    for ($i = 2; $i < count($partes); $i++) {
-        $tempHex = trim($partes[$i]); // elimina espacios y saltos de línea
-        if (strlen($tempHex) != 4) continue;
-
+        $timestamp = hexdec($timestampHex);
         $temperaturaRaw = complementoA2($tempHex);
         $temperatura = $temperaturaRaw / 10;
 
-        $fecha->add(new DateInterval('PT' . $tiempoMuestreoSeg . 'S'));
+        // Fecha inicial siempre en Madrid
+        $fecha = new DateTime("@$timestamp", new DateTimeZone('Europe/Madrid'));
+
+        $resultados = [];
         $resultados[] = $fecha->format('Y-m-d,H:i') . "," . $temperatura;
+
+        for ($i = 2; $i < count($partes); $i++) {
+            $tempHex = trim($partes[$i]); // elimina espacios y saltos de línea
+            if (strlen($tempHex) != 4) continue;
+
+            $temperaturaRaw = complementoA2($tempHex);
+            $temperatura = $temperaturaRaw / 10;
+
+            $fecha->add(new DateInterval('PT' . $tiempoMuestreoSeg . 'S'));
+            $resultados[] = $fecha->format('Y-m-d,H:i') . "," . $temperatura;
+        }
+
+        $resultadoFinal = "#" . implode(";", $resultados) . ";#";
+        return $resultadoFinal;
     }
-
-    $resultadoFinal = "#" . implode(";", $resultados) . ";#";
-    return $resultadoFinal;
-}
-
-
-
-
-
 
     function procesarInformacion() {
         try {

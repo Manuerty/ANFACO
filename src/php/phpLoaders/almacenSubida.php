@@ -18,16 +18,7 @@ if ($xmlContent === false) {
     exit("Error: No se pudo leer el archivo XML.\n");
 }
 
-file_put_contents(__DIR__ . "/a.txt", $xmlContent);
-
-
-// Cargar el XML desde el contenido
-$xml = simplexml_load_string($xmlContent);
-if (!$xml) {
-    exit("Error: No se puede cargar el fichero XML.\n");
-}
-
-// Guardar el XML entero recibido (sobrescribe cada vez)
+// Guardar el XML recibido
 file_put_contents(__DIR__ . "/a.txt", "=== XML recibido ===\n" . $xmlContent . "\n\n");
 
 // Cargar el XML desde el contenido
@@ -51,11 +42,15 @@ foreach ($xml->registro as $fila) {
         continue;
     }
 
-    // 🔎 Log de depuración
-    file_put_contents(__DIR__ . "/a.txt", 
-        "Raw: $fechaActualRaw | Parsed: " . $fechaDateTime->format('Y-m-d H:i:s e') . " | MySQL: $fechaActualMySQL\n", 
-        FILE_APPEND
-    );
+    // 🔎 Log de depuración completo
+    $logFile = __DIR__ . DIRECTORY_SEPARATOR . "a.txt";
+    $log = "=== DEPURACIÓN REGISTRO ===\n";
+    $log .= "Raw XML: $fechaActualRaw\n";
+    $log .= "DateTime object: " . $fechaDateTime->format('Y-m-d H:i:s e') . "\n";
+    $log .= "Para MySQL: $fechaActualMySQL\n";
+    $log .= "Tag: $tag | IdLector: $idLector | IdAlmacen: $idAlmacen\n";
+    $log .= "----------------------------\n";
+    file_put_contents($logFile, $log, FILE_APPEND);
 
     $data_content = (string) $fila->data;
     $user = (string) $fila['user'];
@@ -69,9 +64,9 @@ foreach ($xml->registro as $fila) {
             )";
 
     if ($conn->query($sql) === TRUE) {
-        file_put_contents(__DIR__ . "/a.txt", "Insert OK con Fecha: $fechaActualMySQL\n", FILE_APPEND);
+        file_put_contents($logFile, "Insert OK con Fecha: $fechaActualMySQL\n----------------------------\n", FILE_APPEND);
     } else {
-        file_put_contents(__DIR__ . "/a.txt", "Error SQL: " . $conn->error . "\n", FILE_APPEND);
+        file_put_contents($logFile, "Error SQL: " . $conn->error . "\n----------------------------\n", FILE_APPEND);
     }
 }
 
