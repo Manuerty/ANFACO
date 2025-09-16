@@ -389,6 +389,8 @@ Class Controlador{
 
 
     public function generarDatosGrafica($temperaturasVS, $almacenesVS) {
+        echo date_default_timezone_get();
+
         $temperaturas = $temperaturasVS;
         $almacenes = $almacenesVS;
 
