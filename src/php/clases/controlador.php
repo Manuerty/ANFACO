@@ -411,17 +411,6 @@ Class Controlador{
             }
 
             if (!empty($datos)) {
-                $ultimo = end($datos);
-
-                $fecha = new DateTime('@' . ($ultimo['x'] / 1000));
-                $fecha->setTimezone(new DateTimeZone('Europe/Madrid'));
-
-                var_dump([
-                    'almacen'       => $claveAlmacen,
-                    'x'             => $ultimo['x'],
-                    'y'             => $ultimo['y'],
-                    'fecha_legible' => $fecha->format('Y-m-d H:i:s')
-                ]);
 
                 $datasetAgrupado[] = [
                     "almacen" => $claveAlmacen,
