@@ -389,9 +389,6 @@ Class Controlador{
 
 
     public function generarDatosGrafica($temperaturasVS, $almacenesVS) {
-        // 🔹 Forzar zona horaria Madrid
-        date_default_timezone_set('Europe/Madrid');
-
         $temperaturas = $temperaturasVS;
         $almacenes = $almacenesVS;
 
@@ -411,16 +408,19 @@ Class Controlador{
             }
 
             if (!empty($datos)) {
-
                 $datasetAgrupado[] = [
                     "almacen" => $claveAlmacen,
-                    "datos"   => $datos
+                    "datos" => $datos
                 ];
             }
         }
-
+        
         $dataset = array_reverse($datasetAgrupado);
+
+        // Guardas en estado si lo necesitas para otra parte
         $this->miEstado->dataset = $dataset;
+
+        // 🔁 Devuelves directamente para el frontend
         return $dataset;
     }
 
