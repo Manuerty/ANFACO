@@ -389,7 +389,8 @@ Class Controlador{
 
 
     public function generarDatosGrafica($temperaturasVS, $almacenesVS) {
-        echo date_default_timezone_get();
+        // Forzar zona horaria UTC (o la que quieras)
+        date_default_timezone_set('UTC'); 
 
         $temperaturas = $temperaturasVS;
         $almacenes = $almacenesVS;
@@ -402,9 +403,13 @@ Class Controlador{
 
             foreach ($temperaturas as $temp) {
                 if ($temp['IdAlmacen'] == $almacen['IdAlmacen']) {
+                    // Crear objeto DateTime en UTC
+                    $fechaUTC = new DateTime($temp["FechaTemperatura"], new DateTimeZone('UTC'));
+
                     $datos[] = [
-                        "x" => strtotime($temp["FechaTemperatura"]) * 1000,
-                        "y" => $temp["ValorTemperatura"]
+                        "x" => $fechaUTC->getTimestamp() * 1000,
+                        "y" => $temp["ValorTemperatura"],
+                        "fecha_legible" => $fechaUTC->format('Y-m-d H:i:s') // ahora legible en UTC
                     ];
                 }
             }
@@ -416,13 +421,13 @@ Class Controlador{
                 ];
             }
         }
-        
+
         $dataset = array_reverse($datasetAgrupado);
 
         // Guardas en estado si lo necesitas para otra parte
         $this->miEstado->dataset = $dataset;
 
-        // 🔁 Devuelves directamente para el frontend
+        // Devuelves directamente para el frontend
         return $dataset;
     }
 
