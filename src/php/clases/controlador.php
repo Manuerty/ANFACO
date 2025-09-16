@@ -389,6 +389,9 @@ Class Controlador{
 
 
     public function generarDatosGrafica($temperaturasVS, $almacenesVS) {
+        // 🔹 Forzar zona horaria Madrid
+        date_default_timezone_set('Europe/Madrid');
+
         $temperaturas = $temperaturasVS;
         $almacenes = $almacenesVS;
 
@@ -408,18 +411,16 @@ Class Controlador{
             }
 
             if (!empty($datos)) {
+                $ultimo = end($datos);
 
-                $ultimo = end($datos);  // último punto de este almacén
-
-                // convertir timestamp (ms) a fecha legible
                 $fecha = new DateTime('@' . ($ultimo['x'] / 1000));
                 $fecha->setTimezone(new DateTimeZone('Europe/Madrid'));
 
                 var_dump([
                     'almacen'       => $claveAlmacen,
-                    'x'             => $ultimo['x'],                  // timestamp en ms
-                    'y'             => $ultimo['y'],                  // temperatura
-                    'fecha_legible' => $fecha->format('Y-m-d H:i:s') // fecha legible
+                    'x'             => $ultimo['x'],
+                    'y'             => $ultimo['y'],
+                    'fecha_legible' => $fecha->format('Y-m-d H:i:s')
                 ]);
 
                 $datasetAgrupado[] = [
@@ -430,11 +431,7 @@ Class Controlador{
         }
 
         $dataset = array_reverse($datasetAgrupado);
-
-        // Guardas en estado si lo necesitas para otra parte
         $this->miEstado->dataset = $dataset;
-
-        // 🔁 Devuelves directamente para el frontend
         return $dataset;
     }
 
