@@ -193,9 +193,7 @@ use Pdo\Sqlite;
         }
     }
 
-
     function get_Barcos($idUsuario = null) {
-
         
         try{
             $conn = obtener_conexion();
@@ -569,7 +567,6 @@ use Pdo\Sqlite;
                                             FROM capturas
                                             WHERE capturas.TagPez = ?
                                             ORDER BY FECHA DESC;";
-
     
             $stmt = $conn->prepare($sql);
     
@@ -680,7 +677,6 @@ use Pdo\Sqlite;
         $NombreUsuario = $usuario[0];
         $Contrasena = $usuario[1];
         $Rol = $usuario[4];
-
 
         try {
             $conn = obtener_conexion();
@@ -951,7 +947,6 @@ use Pdo\Sqlite;
         } catch (Exception $e) {
             return false;
         }
-    }
-    
+    }  
     
 ?>
