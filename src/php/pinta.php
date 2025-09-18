@@ -717,9 +717,9 @@
                     $Armador = safe_html($captura["Armador"] ?? null);
                     $refPez = $captura["TagPez"];
     
-                    $claseTemperaturaMaxima = ($temperaturaMaxima > -18) ? "text-danger" : "text-success";
-                    $claseTemperaturaMinima = ($temperaturaMinima > -18) ? "text-danger" : "text-success";
-                    $claseFecha = ($temperaturaMaxima > -18) ? "text-danger" : "text-success";
+                    $claseTemperaturaMaxima = ($temperaturaMaxima > -8) ? "text-danger" : "text-success";
+                    $claseTemperaturaMinima = ($temperaturaMinima > -8) ? "text-danger" : "text-success";
+                    $claseFecha = ($temperaturaMaxima > -8) ? "text-danger" : "text-success";
     
                     $contenido .= "<div class='card p-3 border shadow-sm' style='$backgroundColor margin-bottom: 0;'>";
     
@@ -845,8 +845,8 @@
                 $Armador = safe_html($capturaDetalle["Armador"] ?? '');
                 $NombreComprador = safe_html($capturaDetalle["NombreComprador"] ?? '');
             
-                $claseTemperaturaMaxima = ($temperaturaMaximaCaptura > -18) ? "text-danger" : "text-success";
-                $claseTemperaturaMinima = ($temperaturaMinimaCaptura > -18) ? "text-danger" : "text-success";
+                $claseTemperaturaMaxima = ($temperaturaMaximaCaptura > -8) ? "text-danger" : "text-success";
+                $claseTemperaturaMinima = ($temperaturaMinimaCaptura > -8) ? "text-danger" : "text-success";
             
                 $contenido = "<div class='container-fluid' style='display: flex; height: 77.5vh;'>";
                 $contenido .= "<div class='row' style='width: 100%; flex-grow: 1;'>";
