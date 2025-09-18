@@ -698,33 +698,13 @@
     
                     $contenido .= "<div class='w-100'>";
 
-                    // Contenedor responsive
                     $contenido .= "<div class='d-flex flex-column flex-md-row justify-content-between align-items-start'>";
 
-                    // Título (siempre primero)
+                    // ── Columna izquierda: Título + details
                     $contenido .= "<div class='order-1 w-100'>";
-                    $contenido .= "<h5 class='card-title mb-0' style='font-size: 1.125rem;'><strong>$tagPez</strong> - $EspecieCapturada</h5>";
-                    $contenido .= "</div>";
+                    $contenido .= "   <h5 class='card-title mb-0' style='font-size:1.125rem;'><strong>$tagPez</strong> - $EspecieCapturada</h5>";
 
-                    $contenido .= "<div class='order-2 order-md-2 mt-2 mt-md-0 text-center text-md-end'>";
-                    $contenido .= "<div class='d-flex flex-column align-items-center align-items-md-end'>";
-
-                    // Fecha centrada en móvil, derecha en PC
-                    $contenido .= "<div class='$claseFecha' style='font-size: 1.125rem; white-space: nowrap; margin-bottom: 0.3rem;'>"
-                            . date('d/m/Y H:i', strtotime($FechaCaptura)) . "</div>";
-
-                    // Botón: izquierda en móvil, centrado debajo de la fecha en PC
-                    $contenido .= "<a title='Ver detalles completos' onclick='dibuja_pagina([3,\"$refPez\"])' class='me-auto mx-md-auto'>";
-                    $contenido .= "<img src='Img/DetallesCaptura.png' alt='Ver detalles' style='width: 40px; height: 27px; cursor: pointer; border: none;'>";
-                    $contenido .= "</a>";
-
-                    $contenido .= "</div>"; // fin interno
-                    $contenido .= "</div>"; // fin contenedor fecha + botón
-
-                    $contenido .= "</div>"; // fin flex container
-
-                    // Sección DETAILS (siempre al final)
-                    $contenido .= "<details>";
+                    $contenido .= "<details style='margin-top: 10px;'>";
                     $contenido .= "<summary style='font-size: 1.2rem;
                                                 font-weight: bold;
                                                 padding-left: 0;
@@ -764,6 +744,21 @@
                     $contenido .= "</div>"; // fin row
                     $contenido .= "</div>"; // fin contenido colapsable
                     $contenido .= "</details>"; // fin details
+
+                    $contenido .= "</div>"; // fin columna Título + details
+
+                    // ── Columna derecha: Fecha + botón
+                    $contenido .= "<div class='order-2 order-md-2 mt-2 mt-md-0 text-center text-md-end'>";
+                    $contenido .= "   <div class='d-flex flex-column align-items-center align-items-md-end'>";
+                    $contenido .= "       <div class='$claseFecha' style='font-size:1.125rem;white-space:nowrap;margin-bottom:0.3rem;'>"
+                                    . date('d/m/Y H:i', strtotime($FechaCaptura)) . "</div>";
+                    $contenido .= "       <a title='Ver detalles completos' onclick='dibuja_pagina([3,\"$refPez\"])' class='me-auto mx-md-auto'>";
+                    $contenido .= "           <img src='Img/DetallesCaptura.png' alt='Ver detalles' style='width:40px;height:27px;cursor:pointer;border:none;'>";
+                    $contenido .= "       </a>";
+                    $contenido .= "   </div>";
+                    $contenido .= "</div>"; // fin columna derecha
+
+                    $contenido .= "</div>"; // fin flex container
 
                     $contenido .= "</div>"; // fin contenedor general
 
