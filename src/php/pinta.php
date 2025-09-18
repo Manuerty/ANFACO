@@ -552,6 +552,7 @@
                 }
             }
 
+            // Lógica específica para almacenes
             if ($Pestana == 0.25) {
 
                 if ($arraydatos && is_array($arraydatos)) {
@@ -577,7 +578,7 @@
 
                         // ⬇️ Resto del contenido (details)
                         $contenido .= "<details>";
-                        $contenido .= "<summary style='cursor: pointer; width: fit-content; list-style-type: disclosure-closed;'></summary>";
+                        $contenido .= "<summary style='cursor: pointer; width: fit-content; list-style-type: disclosure-closed|open;'></summary>";
                         $contenido .= "<div class='pt-2' style='padding: 10px; font-size: 1.1em;'>";
 
                         if ( $_SESSION["Controlador"] -> miEstado -> esAdmin == true && $_SESSION["Controlador"] -> miEstado -> EstadosAnteriores[0] == 0.0625) {
@@ -723,8 +724,14 @@
                     $contenido .= "</div>"; // fin flex container
 
                     // Sección DETAILS (siempre al final)
-                    $contenido .= "<details  style='cursor: pointer;'>";
-                    $contenido .= "<summary style='font-size: 1.2rem; font-weight: bold; padding-left: 0;'></summary>";
+                    $contenido .= "<details>";
+                    $contenido .= "<summary style='font-size: 1.2rem;
+                                                font-weight: bold;
+                                                padding-left: 0;
+                                                cursor: pointer;
+                                                width: fit-content;
+                                                list-style-type: disclosure-closed|open;'>
+                    </summary>";
 
                     $contenido .= "<div class='pt-2' style='padding: 10px; font-size: 1.25em;'>";
 
