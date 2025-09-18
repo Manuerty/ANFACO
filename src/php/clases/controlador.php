@@ -8,7 +8,6 @@ require_once "consultas.php";
 
 Class Controlador{
 
-
     public $miEstado;
 
     function __construct($Estado = null){
@@ -111,7 +110,6 @@ Class Controlador{
                 true
             );
 
-
             if ($indice !== false) {
                 // 1️⃣ Fijar el estado en 0.5
                 $this->miEstado->Estado = 0.5;
@@ -137,8 +135,6 @@ Class Controlador{
             $this->miEstado->Estado = $ps;
         }
 
-
-
         // Reinicializar otras variables
         $this->miEstado->CadenaFiltro = null;
         $this->miEstado->IdsTiposFiltro = array();
@@ -150,6 +146,7 @@ Class Controlador{
     }
 
     function IniciarSesion($usuario, $contrasena) {
+
         $datosSesion = comprueba_usuario($usuario, $contrasena);
         $this->miEstado = new Estado();
         $this->miEstado->Estado = 0;
@@ -165,7 +162,6 @@ Class Controlador{
 
             // Determinar si es conservero
             $this  -> miEstado -> esArmador = ($datosSesion[3] === "Armador");
-
 
             // Inicializar variables
             $usuarios = [];
@@ -207,6 +203,7 @@ Class Controlador{
 
 
     function cerrarSesion(){
+
     //Cerrar sesion reinicializando variables
         $this -> miEstado = new Estado();
         $this -> miEstado -> Estado = 0;
@@ -234,8 +231,6 @@ Class Controlador{
 
     function setNewUser($IdUser, $UserName){
 
-        
-
         if ($IdUser == $this -> miEstado -> IdLastUser) {
             return;
         }
@@ -251,6 +246,7 @@ Class Controlador{
 
 
     function setNewCaptura($tagPez) {
+
         // Buscar la captura por TagPez (en ambos casos se necesita)
         $capturaEncontrada = null;
 
@@ -307,9 +303,8 @@ Class Controlador{
         $this->details_Captura($tagPez);
     }
 
-    
-
     function details_Captura($tagPez){
+
         // Verificar si las capturas están disponibles en la sesión
         if (isset($this -> miEstado -> capturas) && !empty($this -> miEstado -> capturas)) {
             
@@ -334,6 +329,7 @@ Class Controlador{
     }
 
     function incrementarCodigo($codigo) {
+
         // Extrae el signo, el número y la letra
         preg_match('/^(-?)(\d{8})([A-Z]+)$/i', $codigo, $partes);
         
@@ -361,6 +357,7 @@ Class Controlador{
     }
 
     function incrementarLetra($letra) {
+
         $letra = strtoupper($letra);
         $long = strlen($letra);
         $abc = range('A', 'Z');
@@ -387,8 +384,8 @@ Class Controlador{
         return $nuevaLetra;
     }
 
-
     public function generarDatosGrafica($temperaturasVS, $almacenesVS) {
+
         // Forzar zona horaria UTC (o la que quieras)
         date_default_timezone_set('UTC'); 
 
@@ -430,7 +427,6 @@ Class Controlador{
         // Devuelves directamente para el frontend
         return $dataset;
     }
-
 
     function filtrarSimple($filtro, $pestana){
 
@@ -482,7 +478,6 @@ Class Controlador{
                 return in_array($item["IdAlmacen"], $filtro);
             });
 
-            
         }
 
         return $arrayFiltrado;
@@ -495,10 +490,7 @@ Class Controlador{
 
     function filtrarDesplegable($data, $arrayFiltros) {
 
-
         //FECHAS//
-
-
         // Limpiamos las fechas recibidas desde JS
         $fechaInicioLimpia = $this->limpiarFechaJS($arrayFiltros[0]);
         $fechaFinLimpia = $this->limpiarFechaJS($arrayFiltros[1]);
@@ -508,35 +500,28 @@ Class Controlador{
         $diaFin = new DateTime($fechaFinLimpia);
 
         //TEMPERATURAS//
-
         // Asegurar valores válidos, incluso si son 0
         $temperaturaMin = (isset($arrayFiltros[2]) && $arrayFiltros[2] !== '') ? (float)$arrayFiltros[2] : null;
         $temperaturaMax = (isset($arrayFiltros[3]) && $arrayFiltros[3] !== '') ? (float)$arrayFiltros[3] : null;
-
 
         //BARCOS//
         $nombreBarco = $arrayFiltros[4];
 
         //ZONA DE CAPTURA//
-
         $zonaCaptura = $arrayFiltros[5];
 
         //ESPECIE//
-
         $especieCaptura = $arrayFiltros[6];
 
         //TAG PEZ//
-
         $tagPezCaptura = $arrayFiltros[7];
 
         //ALMACEN//
-
         $almacenCaptura = $arrayFiltros[8];
 
         $resultado = array_filter($data, function($item) use ($diaInicio, $diaFin, $temperaturaMin, $temperaturaMax, $fechaInicioLimpia, $fechaFinLimpia, $nombreBarco, $zonaCaptura, $especieCaptura, $tagPezCaptura, $almacenCaptura) {
 
             //FECHAS//
-
             // Validar rango de fechas si se proporciona
             if (!empty($item['FechaCaptura'])) {
                 $fechaCaptura = new DateTime(substr($item['FechaCaptura'], 0, 10));
@@ -560,7 +545,6 @@ Class Controlador{
             }
 
             //TEMPERATURAS//
-
             // Si falta alguna temperatura en el item, no lo incluimos
             if (!isset($item['TemperaturaMinima']) || !isset($item['TemperaturaMaxima'])) {
                 return false;
@@ -577,25 +561,21 @@ Class Controlador{
             }
 
             //BARCOS//
-
             if(!empty($nombreBarco) && $item['NombreBarco'] != $nombreBarco ){
                     return false;
             }
     
             //ZONA DE CAPTURA//
-
             if($zonaCaptura != 0 && $item['Zona'] != $zonaCaptura ){
                 return false;
             }
 
             //ESPECIE//
-
             if($especieCaptura != 0 && $item['Especie'] != $especieCaptura ){
                 return false;
             }
 
             //TAG PEZ//
-
             if(!empty($tagPezCaptura) && $tagPezCaptura != $item['TagPez'] ){
                 return false;
             }
@@ -605,22 +585,15 @@ Class Controlador{
                 return false;
             }
 
-
-
             return true;
         });
-
-
 
         if ($resultado == null){
             $resultado = [];
         }
 
-
         return array_values($resultado); // Reindexamos
     }
-
-
 
     function resetFilter($data = null){
 
@@ -699,7 +672,6 @@ Class Controlador{
         return array_values($index);
     }
 
-
     function generarContenido($arrayDatos = array()) {
 
         //var_dump($arrayDatos);
@@ -714,7 +686,6 @@ Class Controlador{
         else{
             $c = intval($this->miEstado->Estado);
         }
-        
 
         $arraycolor = $arrayDatos[3][0] ?? null;
         $this ->miEstado -> idBoton = $arrayDatos[3][1] ?? 0;
@@ -773,8 +744,6 @@ Class Controlador{
 
                 $this->navegarPestanas($pestana);
 
-                
-                
             }
 
         }
@@ -790,8 +759,6 @@ Class Controlador{
                 if ($resultadoValidacion['validado']) {
                     $tiposAlmacenAntiguos = $this->miEstado->tiposalmacenAdmin ?? [];
 
-
-
                     $nombreTipo = $arrayDatos[2][0];
                     $idUsuario  = $arrayDatos[2][1];
                     $idBarco    = $arrayDatos[2][2];
@@ -804,12 +771,10 @@ Class Controlador{
 
                     $nuevosTiposAlmacen = get_tiposAlmacen($this->miEstado->IdUsuarioSeleccionado);
 
-
                     $this->miEstado->tiposalmacenAdmin = $this->mergeSinDuplicadosPorNombreTipo(
                         $tiposAlmacenAntiguos ?: [],
                         $nuevosTiposAlmacen ?: []
                     );
-
 
                     $this->miEstado->tiposalmacen = $nuevosTiposAlmacen ?: [];
 
@@ -837,7 +802,6 @@ Class Controlador{
                         insertTipoAlmacen($nombreTipo, $idUsuario); 
                     } 
 
-                    
                     $tiposAlmacen = get_tiposAlmacen();
                     $this->miEstado->tiposalmacen = $tiposAlmacen ?: [];
 
@@ -915,18 +879,14 @@ Class Controlador{
 
         // Dashboard de administrador
         elseif ($c === 0.0625 && isset($arrayDatos[0])) {
-                
-
                 $barcos = is_array($this -> miEstado -> barcos) ? $this -> miEstado -> barcos : [];
                 $usuarios = is_array($this -> miEstado -> usuarios) ? $this -> miEstado -> usuarios : [];
 
                 $arrayAuxiliarHtml = ["barcos" => $barcos, "usuarios" => $usuarios];
                 $accionJs = 5;
 
-
                 $this->navegarPestanas($arrayDatos[0]);
         }
-
 
         // Dashboard de comercial
         elseif ($c === 0.125 || $c === 1 && isset($arrayDatos[0])) {
@@ -943,7 +903,6 @@ Class Controlador{
 
             $this->navegarPestanas(3);
         }  
-
         
         // Selección de usuario
         elseif ($c === 0.5 && isset($arrayDatos[0]) && ($arrayDatos[0] == 1 || $arrayDatos[0] == 1.5)) {
@@ -969,7 +928,6 @@ Class Controlador{
 
             $this->navegarPestanas(3);
         }
-
     
         // Detalles de captura
         elseif ($c === 3 && isset($arrayDatos[0]) && $arrayDatos[0] == 3) {
@@ -982,12 +940,9 @@ Class Controlador{
             $this->navegarPestanas(4);
         }
     
-    
         // Filtros
         //Header
         elseif (!empty($arrayDatos) && $arrayDatos[0] == 0 && $arrayDatos[1] == 0 && isset($arrayDatos[2])) {
-
-           
 
             if ($arrayDatos[2] == null) {
 
@@ -1003,8 +958,7 @@ Class Controlador{
 
             }
             else{
-                $arrayFiltrado = $this->filtrarSimple($arrayDatos[2], $c);
-                
+                $arrayFiltrado = $this->filtrarSimple($arrayDatos[2], $c);      
         
                 switch ($c) {
                     case 0.25:
@@ -1041,9 +995,7 @@ Class Controlador{
             $arrayFiltrado = $this-> filtrarDesplegable($this -> miEstado -> capturas, $arrayDatos[2]);            
             $this->miEstado->capturasFiltradas = $arrayFiltrado;
             
-        }
-
-        
+        } 
 
         $txtErr = "";
 
@@ -1060,7 +1012,6 @@ Class Controlador{
             json_encode($arrayDatos, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
         );  */
     
-    
         return [
             pinta_contenido($this->miEstado->Estado) . $txtErr,
             $msgError,
@@ -1069,10 +1020,6 @@ Class Controlador{
             $accionJs,
         ];
     }
-
-
-    
         
 }
-
 ?>
