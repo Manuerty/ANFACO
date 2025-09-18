@@ -98,7 +98,6 @@
 
         }
 
-
         if(isset($filename) && $filename != "" ){
             $file = fopen($filename, "r");
             $filesize = filesize($filename);
@@ -199,12 +198,10 @@
         return $txt_filtros;
     }
 
-
     function cargaModal(){
 
         $input = "";
         $inputAux = "";
-
 
         if(!isset($_SESSION["PlantillaModalForm"])){
             $fileModal = fopen('../html/PlantillaModalFormulario.html', "r");
@@ -223,8 +220,6 @@
         }
 
         $PlantillaModalAux = $_SESSION["PlantillaModalFormAuxiliar"];
-        
-
 
         // Modal para creación de almacén
         if ($_SESSION["Controlador"] -> miEstado -> Estado == 0.25){
@@ -291,7 +286,6 @@
 
             $input = "<label for='TxtBoxInputNombreUsuario'>Nombre de usuario</label>";
             $input .= "<input type='text' class='form-control my-2' id='TxtBoxInputNombreUsuario' placeholder='Nombre de usuario' required>";
-
             $input .= "<label for='TxtBoxContraseña'>Contraseña</label>";
             $input .= "<input type='password' class='form-control my-2' id='TxtBoxContraseña' placeholder='Contraseña' required>";
             $input .= "<input type='password' class='form-control my-2' id='TxtBoxConfirmarContraseña' placeholder='Confirmar contraseña' required>";
@@ -301,7 +295,6 @@
             $input .= "<input type='checkbox' class='form-check-input' id='MostrarContraseñas'  onclick=\"document.getElementById('TxtBoxContraseña').type = this.checked ? 'text' : 'password'; document.getElementById('TxtBoxConfirmarContraseña').type = this.checked ? 'text' : 'password';\">";
             $input .= "<label class='form-check-label' for='MostrarContraseñas'>Mostrar contraseñas</label>";
             $input .= "</div>";
-
             $input .= "<label for='SelectRol'>Rol</label>";
             $input .= "<select class='form-control my-2' id='SelectRol' required>
                         <option value='' disabled selected>Seleccione un rol</option>
@@ -320,7 +313,6 @@
 
             $inputAux = "<label for='TxtBoxInputNombreUsuario'>Nombre de usuario</label>";
             $inputAux .= "<input type='text' class='form-control my-2' id='TxtBoxInputNombreUsuarioAux' placeholder='Nombre de usuario' required>";
-
             $inputAux .= "<label for='TxtBoxContraseña'>Contraseña</label>";
             $inputAux .= "<input type='password' class='form-control my-2' id='TxtBoxContraseñaAux' placeholder='Contraseña' required>";
             $inputAux .= "<input type='password' class='form-control my-2' id='TxtBoxConfirmarContraseñaAux' placeholder='Confirmar contraseña' required>";
@@ -330,7 +322,6 @@
             $inputAux .= "<input type='checkbox' class='form-check-input' id='MostrarContraseñasAux'  onclick=\"document.getElementById('TxtBoxContraseñaAux').type = this.checked ? 'text' : 'password'; document.getElementById('TxtBoxConfirmarContraseñaAux').type = this.checked ? 'text' : 'password';\">";
             $inputAux .= "<label class='form-check-label' for='MostrarContraseñas'>Mostrar contraseñas</label>";
             $inputAux .= "</div>";
-
             $inputAux .= "<label for='SelectRolAux'>Rol</label>";
             $inputAux .= "<select class='form-control my-2' id='SelectRolAux' required>
                         <option value='' disabled selected>Seleccione un rol</option>
@@ -340,7 +331,6 @@
                         <option value='Intermediario'>Intermediario</option>
                     </select>";
 
-
         }
 
         //Modal para creación de barco//
@@ -348,7 +338,6 @@
 
             $PlantillaModal = str_replace("%TituloModal%","Creación de Barco",$PlantillaModal);
             $PlantillaModal = str_replace("%TipoFormulario%", "crear_barco", $PlantillaModal);
-            
 
             $input .= "<input type='text' class='form-control my-2' id='TxtBoxInputNombreBarco' placeholder='Nombre del Barco' required>";
 
@@ -358,19 +347,15 @@
 
             $inputAux .= "<label for='TxtBoxInputNombreBarcoAux'>Nombre de barco</label>";
             $inputAux .= "<input type='text' class='form-control my-2' id='TxtBoxInputNombreBarcoAux' placeholder='Nombre del Barco' required>";
-               
 
         }
 
-
         $modalPrincipal = str_replace("%BodyModal%", $input, $PlantillaModal);
         $modalAuxiliar = str_replace("%BodyModal%", $inputAux ?? '', $PlantillaModalAux ?? '');
-
         
         return $modalPrincipal . $modalAuxiliar;
         
     }
-
 
     function dibujaOpciones($tab = 0){
 
@@ -392,7 +377,6 @@
                 $contenido .= '<option value="' . htmlspecialchars($barco) . '">' . htmlspecialchars($barco) . '</option>';
             }
         }
-        
 
         if ($tab == 2) {
             
@@ -418,7 +402,6 @@
             foreach ($especiesUnicas as $especie) {
                 $contenido .= '<option value="' . htmlspecialchars($especie) . '">' . htmlspecialchars($especie) . '</option>';
             }
-
 
         }
 
@@ -499,16 +482,6 @@
 
             $arraydatosAdiccional = $_SESSION["Controlador"]->miEstado->almacenes;
 
-            /* // Lógica de filtrado para almacenes
-            if (!isset($_SESSION["Controlador"]->miEstado->almacenesFiltrados) || 
-                $_SESSION["Controlador"]->miEstado->almacenesFiltrados === null) {
-
-                $arraydatosAdiccional = $_SESSION["Controlador"]->miEstado->almacenes;
-
-            } else {
-                $arraydatosAdiccional = $_SESSION["Controlador"]->miEstado->almacenesFiltrados;
-            }
- */
             // Captura detalle siempre asignado
             $capturaDetalle = $_SESSION['Controlador']->miEstado->capturaDetalle;
         }
@@ -572,7 +545,6 @@
                     </button>";
 
                     $contenido .= "</div>"; // fin botones
-
                     $contenido .= "</div>"; // fin row
                     $contenido .= "</div>"; // fin card
                     $contenido .= "</div>"; // fin contenedor ancho limitado
@@ -606,7 +578,6 @@
                         // ⬇️ Resto del contenido (details)
                         $contenido .= "<details>";
                         $contenido .= "<summary style='cursor: pointer; width: fit-content; list-style-type: disclosure-closed;'></summary>";
-
                         $contenido .= "<div class='pt-2' style='padding: 10px; font-size: 1.1em;'>";
 
                         if ( $_SESSION["Controlador"] -> miEstado -> esAdmin == true && $_SESSION["Controlador"] -> miEstado -> EstadosAnteriores[0] == 0.0625) {
@@ -640,10 +611,9 @@
             }
 
             // Lógica para buscador de conserveros
-
             if ($Pestana == 0.5) {
-                $contenido = "";
 
+                $contenido = "";
                 $contenido .= "<div class='d-flex justify-content-center align-items-center' style='min-height: 100vh;'>";
                 $contenido .= "<div class='card p-3 border shadow-sm mb-3' style='background-color: white; width: 100%; max-width: 500px;'>"; // max-width para limitar el tamaño
                 $contenido .= "<div class='d-flex align-items-center'>";
@@ -871,7 +841,6 @@
                 $contenido .= "</div>";
                 $contenido .= "</div>";
 
-
                 // Versión móvil (visible solo en xs y sm)
                 // Sin height 100%, display block para adaptar altura al contenido
                 $contenido .= "<div class='d-block d-md-none col-12' style='display: block; height: auto;'>";
@@ -1007,6 +976,5 @@
 
         return $contenido;
     }
-    
     
 ?>
