@@ -304,7 +304,6 @@
                         <option value='Intermediario'>Intermediario</option>
                     </select>";
 
-
             // Usar PlantillaModalAux para la modificación de usuario
 
             $PlantillaModalAux = str_replace("%TituloModal%","Edicion de Usuario",$PlantillaModalAux);
