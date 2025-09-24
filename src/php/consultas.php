@@ -460,7 +460,7 @@ use Pdo\Sqlite;
                 if (!empty($rowCap['FechaCaptura'])) {
                     try {
                         $fechaCap = new DateTime($rowCap['FechaCaptura'], new DateTimeZone('Europe/Madrid'));
-                        $fechaCap->modify('+1 day');
+                        $fechaCap->modify('+36 hours');
                         $fechaLimiteDT = $fechaCap;
                     } catch (Exception $e) {
                         $fechaLimiteDT = null;
@@ -472,7 +472,7 @@ use Pdo\Sqlite;
                     // Asumimos que procesarTemperaturasString devuelve registros en orden cronológico.
                     try {
                         $fechaPrimTemp = new DateTime($datos[0]['FechaTemperatura'], new DateTimeZone('Europe/Madrid'));
-                        $fechaPrimTemp->modify('+1 day');
+                        $fechaPrimTemp->modify('+36 hours');
                         $fechaLimiteDT = $fechaPrimTemp;
                     } catch (Exception $e) {
                         // Si tampoco se puede parsear, no hay base para excluir 24h: considerar todo el registro
