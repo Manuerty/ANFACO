@@ -2,15 +2,11 @@
 
 include "credenciales.php";
 
-// ❗ No fijamos ninguna zona horaria ni convertimos nada
-// date_default_timezone_set(...)  <-- ELIMINADO
-
 const ALLOWED_EXTENSIONS = ['xml'];
 $file_type = strtolower(pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION));
 
 if (!in_array($file_type, ALLOWED_EXTENSIONS)) {
-    echo "Tipos permitidos: " . implode(", ", ALLOWED_EXTENSIONS) . "\n";
-    exit("Error: Tipo de archivo no permitido.\n");
+    exit("Error: Tipo de archivo no permitido. Solo se permiten: " . implode(", ", ALLOWED_EXTENSIONS) . "\n");
 }
 
 // Leer el contenido directamente desde el archivo temporal
@@ -19,8 +15,14 @@ if ($xmlContent === false) {
     exit("Error: No se pudo leer el archivo XML.\n");
 }
 
-// Guardar el XML recibido (log)
-file_put_contents(__DIR__ . "/a.txt", "=== XML recibido ===\n" . $xmlContent . "\n\n");
+// Guardar el XML completo en la tabla log_registros
+$nombreArchivo = $_FILES['file']['name'];
+$archivoComprimido = base64_encode(gzcompress($xmlContent, 9));
+$fechaRegistro = date('Y-m-d H:i:s');
+
+$sql_log = "INSERT INTO log_registros (nombre_archivo, fecha_registro, archivo_comprimido)
+            VALUES ('$nombreArchivo', '$fechaRegistro', '$archivoComprimido')";
+$conn->query($sql_log); // No necesitamos validar éxito para continuar con la lógica principal
 
 // Cargar el XML
 $xml = simplexml_load_string($xmlContent);
@@ -34,28 +36,16 @@ foreach ($xml->registro as $fila) {
     $idAlmacen  = (int)    $fila['idAlmacen'];
     $fechaActualRaw = trim((string) $fila['fechaActual']);
 
-    // ✅ NO convertimos zonas: simplemente parseamos para validar formato
     $fechaDateTime = DateTime::createFromFormat('d/m/Y H:i:s', $fechaActualRaw);
 
     if ($fechaDateTime && $fechaDateTime->getLastErrors()['warning_count'] == 0
         && $fechaDateTime->getLastErrors()['error_count'] == 0) {
 
-        // ✅ Guardamos exactamente la misma hora que viene en el XML
         $fechaActualMySQL = $fechaDateTime->format('Y-m-d H:i:s');
 
     } else {
-        file_put_contents(__DIR__ . "/a.txt", "Error en fecha -> $fechaActualRaw\n", FILE_APPEND);
         continue;
     }
-
-    // Log de depuración
-    $logFile = __DIR__ . DIRECTORY_SEPARATOR . "a.txt";
-    $log  = "=== DEPURACIÓN REGISTRO ===\n";
-    $log .= "Raw XML: $fechaActualRaw\n";
-    $log .= "Fecha para MySQL (sin cambios): $fechaActualMySQL\n";
-    $log .= "Tag: $tag | IdLector: $idLector | IdAlmacen: $idAlmacen\n";
-    $log .= "----------------------------\n";
-    file_put_contents($logFile, $log, FILE_APPEND);
 
     $data_content   = (string) $fila->data;
     $user           = (string) $fila['user'];
@@ -70,11 +60,7 @@ foreach ($xml->registro as $fila) {
                 $idAlmacen, '$user', NULL, NULL, 0
             )";
 
-    if ($conn->query($sql) === TRUE) {
-        file_put_contents($logFile, "Insert OK con Fecha: $fechaActualMySQL\n----------------------------\n", FILE_APPEND);
-    } else {
-        file_put_contents($logFile, "Error SQL: " . $conn->error . "\n----------------------------\n", FILE_APPEND);
-    }
+    $conn->query($sql);
 }
 
 $conn->close();
